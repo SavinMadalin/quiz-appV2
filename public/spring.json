@@ -1,0 +1,102 @@
+[
+  {
+    "question": "What is Spring Framework?",
+    "answers": [
+      "A database management system",
+      "A web browser",
+      "A comprehensive open-source application framework for Java",
+      "A JavaScript library"
+    ],
+    "correctAnswer": "A comprehensive open-source application framework for Java"
+  },
+  {
+    "question": "What is Dependency Injection (DI) in Spring?",
+    "answers": [
+      "A type of loop",
+      "A way to inject code into the JVM",
+      "A design pattern where dependencies are provided to an object externally",
+      "A method to create new classes"
+    ],
+    "correctAnswer": "A design pattern where dependencies are provided to an object externally"
+  },
+  {
+    "question": "What is an Application Context in Spring?",
+    "answers": [
+      "A database",
+      "The container that manages Spring beans",
+      "A web server",
+      "A text editor"
+    ],
+    "correctAnswer": "The container that manages Spring beans"
+  },
+  {
+    "question": "What is a Spring Bean?",
+    "answers": [
+      "A type of variable",
+      "An object managed by the Spring IoC container",
+      "A conditional statement",
+      "A type of loop"
+    ],
+    "correctAnswer": "An object managed by the Spring IoC container"
+  },
+  {
+    "question": "What is Aspect-Oriented Programming (AOP) in Spring?",
+    "answers": [
+      "A style of programming that uses objects",
+      "A programming paradigm that increases modularity by cross-cutting concerns",
+      "A way to manage data structures",
+      "A method for testing code"
+    ],
+    "correctAnswer": "A programming paradigm that increases modularity by cross-cutting concerns"
+  },
+  {
+    "question": "What is Spring Boot?",
+    "answers": [
+      "A different version of Spring",
+      "A database for Spring applications",
+      "An extension to Spring that simplifies application setup and deployment",
+      "A JavaScript framework"
+    ],
+    "correctAnswer": "An extension to Spring that simplifies application setup and deployment"
+  },
+  {
+    "question": "What is Spring MVC?",
+    "answers": [
+      "A way to connect to databases",
+      "A module for web application development",
+      "A tool for code optimization",
+      "A type of logging framework"
+    ],
+    "correctAnswer": "A module for web application development"
+  },
+  {
+    "question": "What is the purpose of `@Autowired` annotation in Spring?",
+    "answers": [
+      "To create a new object",
+      "To define a loop",
+      "To mark a field for automatic dependency injection",
+      "To create a new class"
+    ],
+    "correctAnswer": "To mark a field for automatic dependency injection"
+  },
+  {
+    "question": "What does `@Controller` annotation do in Spring MVC?",
+    "answers": [
+      "Defines a database entity",
+      "Indicates a class that handles HTTP requests",
+      "Creates a Spring bean",
+      "Specifies a configuration file"
+    ],
+    "correctAnswer": "Indicates a class that handles HTTP requests"
+  },
+  {
+    "question": "What is the purpose of the `@RequestMapping` annotation?",
+    "answers": [
+      "To map HTTP requests to methods",
+      "To define a new interface",
+      "To create a new list",
+      "To configure the security settings"
+    ],
+    "correctAnswer": "To map HTTP requests to methods"
+  }
+]

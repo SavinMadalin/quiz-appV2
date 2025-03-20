@@ -1,13 +1,65 @@
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Light Theme Variables */
+:root {
+  --background-color: #e0f2f7; /* Lightest blue */
+  --text-color: #2d2d2d; /* Dark gray */
+  --primary-color: #87ceeb; /* Light blue matte */
+  --secondary-color: #add8e6; /* Lighter blue */
+  --accent-color: #2ecc71; /* Green */
+  --white-color: #ffffff;
+  --gray-color: #d3d3d3; /*Light gray*/
+}
+
+/* Dark Theme Variables */
+.dark {
+  --background-color: #191970; /* Dark blue matte */
+  --text-color: #f0f0f0; /* Light gray */
+  --primary-color: #000080; /* Darker blue */
+  --secondary-color: #00008b; /* Even darker blue */
+  --accent-color: #2ecc71; /* Green */
+  --white-color: #333;
+  --gray-color: #4d4d4d; /*Dark gray*/
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-color); /* Use CSS variable */
+  color: var(--text-color); /* Use CSS variable */
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+h1,
+h2,
+h3 {
+  font-family: "Poppins", sans-serif; /* Ensure the font is loaded properly */
+}
+
+button {
+  @apply font-semibold;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top: 4px solid var(--primary-color); /* Blue color */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

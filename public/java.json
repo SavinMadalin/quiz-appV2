@@ -1,0 +1,102 @@
+[
+    {
+      "question": "What is the output of the following Java code?\n\n```java\npublic class Main {\n    public static void main(String[] args) {\n        int x = 5;\n        System.out.println(x++ + ++x);\n    }\n}\n```",
+      "answers": [
+        "10",
+        "11",
+        "12",
+        "13"
+      ],
+      "correctAnswer": "12"
+    },
+    {
+      "question": "Which of the following is NOT a primitive data type in Java?",
+      "answers": [
+        "int",
+        "boolean",
+        "String",
+        "char"
+      ],
+      "correctAnswer": "String"
+    },
+    {
+      "question": "What is the purpose of the 'static' keyword in Java?",
+      "answers": [
+        "To make a variable unchangeable",
+        "To define a method that can be called without creating an object",
+        "To create a variable that is only accessible within the same class",
+        "To define a constant value"
+      ],
+      "correctAnswer": "To define a method that can be called without creating an object"
+    },
+    {
+      "question": "What is the concept of 'inheritance' in Java?",
+      "answers": [
+        "Creating multiple objects from the same class",
+        "Defining a class inside another class",
+        "A mechanism where one class acquires the properties of another class",
+        "The process of hiding data within a class"
+      ],
+      "correctAnswer": "A mechanism where one class acquires the properties of another class"
+    },
+    {
+      "question": "What is the output of the following Java code?\n\n```java\npublic class Main {\n    public static void main(String[] args) {\n        for (int i = 0; i < 5; i++) {\n            if (i % 2 == 0) {\n                continue;\n            }\n            System.out.print(i + \" \");\n        }\n    }\n}\n```",
+      "answers": [
+        "0 1 2 3 4",
+        "1 3",
+        "0 2 4",
+        "1 2 3 4"
+      ],
+      "correctAnswer": "1 3"
+    },
+    {
+      "question": "What is the purpose of the 'final' keyword in Java?",
+      "answers": [
+        "To indicate that a loop has ended",
+        "To prevent a class from being inherited or a method from being overridden",
+        "To define a variable that can be changed later",
+        "To declare a variable outside any method"
+      ],
+      "correctAnswer": "To prevent a class from being inherited or a method from being overridden"
+    },
+    {
+      "question": "What is an interface in Java?",
+      "answers": [
+        "A blueprint of a class",
+        "A concrete class",
+        "A contract specifying methods that a class must implement",
+        "A class with only static methods"
+      ],
+      "correctAnswer": "A contract specifying methods that a class must implement"
+    },
+    {
+      "question": "What does the acronym JVM stand for in the context of Java?",
+      "answers": [
+        "Java Visual Machine",
+        "Java Virtual Method",
+        "Java Virtual Machine",
+        "Java Verified Machine"
+      ],
+      "correctAnswer": "Java Virtual Machine"
+    },
+    {
+      "question": "What is the purpose of a constructor in Java?",
+      "answers": [
+        "To create new classes",
+        "To initialize the object's instance variables",
+        "To define static methods",
+        "To declare the main method"
+      ],
+      "correctAnswer": "To initialize the object's instance variables"
+    },
+    {
+      "question": "What is 'polymorphism' in Java?",
+      "answers": [
+        "The ability of an object to take on many forms",
+        "The ability of a class to have multiple parents",
+        "The process of creating multiple objects",
+        "The process of hiding data"
+      ],
+      "correctAnswer": "The ability of an object to take on many forms"
+    }
+  ]
