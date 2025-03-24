@@ -6,8 +6,9 @@ import { setUser } from './redux/userSlice';
 import { useDispatch } from 'react-redux';
 import useSerializeUser from './hooks/useSerializeUser'; // Import useSerializeUser
 import Navbar from './Navbar';
+import TopNavbar from './components/TopNavbar';
 
-const RegisterPage = () => {
+const RegisterPage = ({ setEmailSent }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -55,6 +56,8 @@ const RegisterPage = () => {
       // Serialize the user object before dispatching
       const serializedUser = serializeUser(userCredential.user);
       dispatch(setUser(serializedUser)); // Dispatch the serialized user
+
+      setEmailSent(true); // Notify App.js that the email was sent
       navigate('/', { state: { isEmailSent: true } }); // Redirect to main page and pass isEmailSent
     } catch (err) {
         setError('Registration failed. Please try again.');
@@ -64,6 +67,7 @@ const RegisterPage = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-light-blue-matte dark:bg-dark-blue-matte text-light-text dark:text-white p-6">
+        <TopNavbar />
       <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full">
         <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
         {error && <div className="text-red-500 mb-4">{error}</div>}

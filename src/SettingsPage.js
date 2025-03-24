@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setQuizConfig } from './redux/quizSlice';
 import { resetUserHistory } from './redux/historySlice';
 import Navbar from './Navbar';
+import TopNavbar from './components/TopNavbar';
 import { useState, useEffect } from 'react';
 import {
   UserCircleIcon,
@@ -19,12 +20,17 @@ import { collection, query, where, getDocs, deleteDoc } from 'firebase/firestore
 import ConfirmPopup from './components/ConfirmPopup';
 import { useNavigate } from 'react-router-dom';
 import { setUser } from './redux/userSlice';
+import { resendVerificationEmail } from './firebase'; // Import the resend email function
 
-const SettingsPage = () => {
+const SettingsPage = ({ emailVerified, setEmailSent }) => {
   const dispatch = useDispatch();
   const { quizConfig } = useSelector((state) => state.quiz);
   const { user, isAuthenticated } = useSelector((state) => state.user);
   const navigate = useNavigate();
+
+  const [isEmailSent, setIsEmailSent] = useState(false);
+  const [error, setError] = useState(null);
+
 
   // Local state for draft settings
   const [draftSettings, setDraftSettings] = useState(quizConfig);
@@ -41,6 +47,28 @@ const SettingsPage = () => {
   const handleThemeChange = (e) => {
     setDraftSettings({ ...draftSettings, theme: e.target.value });
   };
+
+  const handleResendEmail = async () => {
+    setError(null);
+    try {
+      await resendVerificationEmail();
+      setEmailSent(true); // Notify App.js that the email was sent
+      setIsEmailSent(true);
+
+        // Automatically hide the success message after 3 seconds
+        setTimeout(() => {
+          setIsEmailSent(false);
+        }, 3000);
+      } catch (err) {
+        console.error('Error resending verification email:', err);
+        setError('Wait at least 1 minute before resending the email.');
+  
+        // Automatically hide the error message after 3 seconds
+        setTimeout(() => {
+          setError(null);
+        }, 3000);}
+  };
+
 
   const handleApply = () => {
     dispatch(setQuizConfig(draftSettings));
@@ -137,27 +165,7 @@ const SettingsPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-light-blue-matte dark:bg-dark-blue-matte text-light-text dark:text-white pt-20">
-      {showConfirmPopup && (
-        <ConfirmPopup
-          message="Do you want to clear all your quiz history?"
-          onConfirm={handleConfirmReset}
-          onCancel={handleCancelReset}
-        />
-      )}
-      {showDeleteConfirmPopup && (
-        <ConfirmPopup
-          message="Are you sure you want to delete your account? This action cannot be undone."
-          onConfirm={handleConfirmDelete}
-          onCancel={handleCancelDelete}
-        />
-      )}
-      {showReauthenticatePopup && (
-        <ConfirmPopup
-          message="For security reasons, you need to login again to delete your account."
-          onConfirm={handleConfirmReauthenticate}
-          onCancel={handleCancelReauthenticate}
-        />
-      )}
+      <TopNavbar />
       <Navbar />
       <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-sm w-full mt-20">
         <h2 className="text-3xl font-bold mb-8 flex items-center gap-2">
@@ -165,6 +173,32 @@ const SettingsPage = () => {
           Settings
         </h2>
 
+        {/* Warning Icon and Resend Button */}
+        {isAuthenticated && user && !emailVerified && (
+          <div className="mb-6">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="relative group">
+                <ExclamationTriangleIcon className="h-6 w-6 text-yellow-500 cursor-pointer" />
+                <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-yellow-500 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Your email is not verified. Please verify your email to access all features.
+                </span>
+              </div>
+              <button
+                onClick={handleResendEmail}
+                className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md text-sm flex items-center gap-2"
+              >
+                Resend Verification Email
+              </button>
+            </div>
+            {/* Display the messages under the button */}
+            {isEmailSent && (
+              <p className="text-green-500 text-sm mt-2">Verification email sent successfully!</p>
+            )}
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+          </div>
+        )}
+
+        {/* User Information Section */}
         {isAuthenticated && user && (
           <section className="mb-8">
             <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -203,9 +237,9 @@ const SettingsPage = () => {
           </section>
         )}
 
+        {/* Other Settings */}
         <section className="mb-8">
           <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            {' '}
             <PaintBrushIcon className="h-6 w-6" />
             Appearance
           </h3>
@@ -221,6 +255,8 @@ const SettingsPage = () => {
             </select>
           </div>
         </section>
+
+        {/* Reset History Button */}
         {isAuthenticated && user && (
           <section className="mb-8">
             <button
@@ -231,6 +267,8 @@ const SettingsPage = () => {
             </button>
           </section>
         )}
+
+        {/* Delete Account Button */}
         {isAuthenticated && user && (
           <section className="mb-8 flex flex-col gap-2">
             <button
@@ -241,13 +279,37 @@ const SettingsPage = () => {
             </button>
           </section>
         )}
-        <button
+         <button
           onClick={handleApply}
-          className={`w-full bg-blue-500 text-white py-3 px-6 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+          className="w-full bg-blue-500 text-white py-3 px-6 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           Apply Changes
         </button>
       </div>
+      {/* Confirm Popups */}
+      {showConfirmPopup && (
+        <ConfirmPopup
+          message="Are you sure you want to reset your history?"
+          onConfirm={handleConfirmReset}
+          onCancel={handleCancelReset}
+        />
+      )}
+
+      {showDeleteConfirmPopup && (
+        <ConfirmPopup
+          message="Are you sure you want to delete your account? This action cannot be undone."
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
+
+      {showReauthenticatePopup && (
+        <ConfirmPopup
+          message="You need to re-authenticate to delete your account. Do you want to go to login page?"
+          onConfirm={handleConfirmReauthenticate}
+          onCancel={handleCancelReauthenticate}
+        />
+      )}
     </div>
   );
 };

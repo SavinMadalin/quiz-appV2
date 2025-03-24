@@ -11,6 +11,7 @@ import {
   fetchSignInMethodsForEmail,
   sendEmailVerification as firebaseSendEmailVerification,
   updateProfile,
+  sendPasswordResetEmail, // Import sendPasswordResetEmail
   updateProfile as firebaseUpdateProfile, // Import updateProfile
   deleteUser as firebaseDeleteUser, // Import deleteUser
 } from 'firebase/auth';
@@ -21,12 +22,12 @@ import { logoutUser } from "./redux/userSlice";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCSYD_JqZTgvJQFqEcx1R_Ex_sm5wExwNw",
-  authDomain: "myproject-6969b.firebaseapp.com",
-  projectId: "myproject-6969b",
-  storageBucket: "myproject-6969b.firebasestorage.app",
-  messagingSenderId: "902764868157",
-  appId: "1:902764868157:web:0a907554951dedf4c5f054"
+    apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+    authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.REACT_APP_FIREBASE_APP_ID
 };
 
 // Initialize Firebase
@@ -89,10 +90,14 @@ export const onAuthStateChangedListener = (callback) => {
 };
 
 // New function to send the verification email again
-export const resendVerificationEmail = async (user) => {
+export const resendVerificationEmail = async () => {
   try {
-    await firebaseSendEmailVerification(user);
-    console.log('Verification email sent successfully!');
+    if (auth.currentUser) {
+      await firebaseSendEmailVerification(auth.currentUser);
+      console.log('Verification email sent successfully!');
+    } else {
+      console.error('No authenticated user found.');
+    }
   } catch (error) {
     console.error('Error sending verification email:', error);
     throw error;
@@ -122,6 +127,16 @@ export const updateDisplayName = async (displayName) => {
     } catch (error) {
       console.error('Error updating display name:', error);
       throw error;
+    }
+  };
+
+  export const sendPasswordReset = async (email) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      console.log('Password reset email sent successfully!');
+    } catch (error) {
+      console.error('Error sending password reset email:', error);
+      throw error; // Re-throw the error to be handled in LoginPage
     }
   };
 

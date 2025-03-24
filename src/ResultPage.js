@@ -1,13 +1,15 @@
 // src/ResultPage.js
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { resetQuiz } from './redux/quizSlice';
-import { CheckCircleIcon, XCircleIcon, ChartPieIcon } from '@heroicons/react/24/outline'; // Import icons
+import { CheckCircleIcon, XCircleIcon, ChartPieIcon, ArrowLeftIcon } from '@heroicons/react/24/outline'; // Import icons
+import InterviewResultPage from './components/InterviewResultPage';
 
 const ResultPage = () => {
   const { score, quizConfig } = useSelector(state => state.quiz);
   const dispatch = useDispatch();
-  const numQuestions = 10;
+  const numQuestions = quizConfig.isMockInterviewMode ? 15 : 10;
 
   const correctAnswers = score;
   const incorrectAnswers = numQuestions - correctAnswers;
@@ -17,6 +19,10 @@ const ResultPage = () => {
   const handleGoHome = () => {
     dispatch(resetQuiz());
   };
+
+  if (quizConfig.isMockInterviewMode) {
+    return <InterviewResultPage />;
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-light-blue-matte dark:bg-dark-blue-matte text-light-text dark:text-white">
@@ -74,6 +80,7 @@ const ResultPage = () => {
           </div>
         </div>
         <Link to="/" className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 block text-center" onClick={handleGoHome}>
+          <ArrowLeftIcon className="h-5 w-5 mr-2 inline-block" />
           Go Back to Home
         </Link>
       </div>
