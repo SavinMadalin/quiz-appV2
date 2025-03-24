@@ -19,6 +19,7 @@ const InterviewResultPage = () => {
   const [quizData, setQuizData] = useState([]);
   const [isFeedbackGenerated, setIsFeedbackGenerated] = useState(false); // New state variable
   const [resultId, setResultId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
   // Format timeTaken into minutes and seconds
   const formatTime = (seconds) => {
@@ -30,53 +31,55 @@ const InterviewResultPage = () => {
   useEffect(() => {
     const fetchDataAndGenerateFeedback = async () => {
       if (!quizConfig.isMockInterviewMode || isFeedbackGenerated) return; // Add isFeedbackGenerated check
+      setIsLoading(true); // Set loading to true at the start
 
       if (!user || !user.uid) {
         console.error('User not logged in or user ID missing.');
+        setIsLoading(false); // Set loading to false if there's an error
         return;
       }
 
-      const q = query(
-        collection(db, 'results'),
-        where('userId', '==', user.uid),
-        orderBy('timestamp', 'desc')
-      );
-      const querySnapshot = await getDocs(q);
-      const results = querySnapshot.docs.map(doc => ({
-        ...doc.data(),
-        id: doc.id
-      }));
-      const lastResult = results[0];
-      setQuizData(lastResult.quizData);
-      setResultId(lastResult.id);
-
-      const openai = new OpenAI({
-        apiKey: process.env.REACT_APP_OPENAI_API_KEY, // Access the API key from environment variables
-        dangerouslyAllowBrowser: true, // Add this line
-      });
-
-      // Create the prompt
-      const prompt = `
-        You are an expert interviewer.
-        The user has just completed a mock interview in the category ${quizConfig.category}.
-        The user answered ${score} out of ${numQuestions} questions correctly.
-        The user took ${formatTime(timeTaken)} to complete the quiz.
-        Here are the questions, correct answers, and the user's answers:
-        ${lastResult.quizData.map((item, index) => `
-          Question ${index + 1}: ${item.question}
-          Correct Answer: ${item.correctAnswer}
-          User's Answer: ${item.userAnswer || 'Not answered'}
-        `).join('\n')}
-        Provide a personalized feedback to the user.
-        If the user passed, congratulate him.
-        If the user failed, encourage him to keep practicing.
-        Provide specific feedback on the user's answers.
-        Suggest areas for improvement.
-        Keep the feedback short and concise.
-        Format the feedback with clear paragraphs and spacing.
-      `;
-
       try {
+        const q = query(
+          collection(db, 'results'),
+          where('userId', '==', user.uid),
+          orderBy('timestamp', 'desc')
+        );
+        const querySnapshot = await getDocs(q);
+        const results = querySnapshot.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id
+        }));
+        const lastResult = results[0];
+        setQuizData(lastResult.quizData);
+        setResultId(lastResult.id);
+
+        const openai = new OpenAI({
+          apiKey: process.env.REACT_APP_OPENAI_API_KEY, // Access the API key from environment variables
+          dangerouslyAllowBrowser: true, // Add this line
+        });
+
+        // Create the prompt
+        const prompt = `
+          You are an expert interviewer.
+          The user has just completed a mock interview in the category ${quizConfig.category}.
+          The user answered ${score} out of ${numQuestions} questions correctly.
+          The user took ${formatTime(timeTaken)} to complete the quiz.
+          Here are the questions, correct answers, and the user's answers:
+          ${lastResult.quizData.map((item, index) => `
+            Question ${index + 1}: ${item.question}
+            Correct Answer: ${item.correctAnswer}
+            User's Answer: ${item.userAnswer || 'Not answered'}
+          `).join('\n')}
+          Provide a personalized feedback to the user.
+          If the user passed, congratulate him.
+          If the user failed, encourage him to keep practicing.
+          Provide specific feedback on the user's answers.
+          Suggest areas for improvement.
+          Keep the feedback short and concise.
+          Format the feedback with clear paragraphs and spacing.
+        `;
+
         const response = await openai.chat.completions.create({ // Use openai.chat.completions.create
           model: "gpt-3.5-turbo",
           messages: [{ role: "user", content: prompt }],
@@ -85,13 +88,21 @@ const InterviewResultPage = () => {
         const aiFeedback = response.choices[0].message.content; // Access the feedback correctly
         setFeedback(aiFeedback);
         setIsFeedbackGenerated(true); // Set the flag to true
+
         // Update the feedback in the database
-        await updateDoc(doc(db, 'results', resultId), {
-          feedback: aiFeedback,
-        });
+        if (lastResult.id) {
+          await updateDoc(doc(db, 'results', lastResult.id), {
+            feedback: aiFeedback,
+          });
+        } else {
+          console.error('lastResult.id is undefined');
+          setFeedback("Error generating feedback. Please try again later.");
+        }
       } catch (error) {
         console.error("Error generating feedback:", error);
         setFeedback("Error generating feedback. Please try again later.");
+      } finally {
+        setIsLoading(false); // Set loading to false when done
       }
     };
 
@@ -128,7 +139,11 @@ const InterviewResultPage = () => {
           {/* Scrollable Feedback Container */}
           <div className="max-h-60 overflow-y-auto p-4 border rounded-lg dark:border-gray-600">
             {/* Formatted Feedback */}
-            <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">{feedback}</p>
+            {isLoading ? (
+              <p className="text-gray-700 dark:text-gray-300">Loading feedback...</p>
+            ) : (
+              <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">{feedback}</p>
+            )}
           </div>
         </div>
         {/* Display Time Taken */}

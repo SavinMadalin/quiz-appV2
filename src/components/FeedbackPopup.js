@@ -15,3 +15,5 @@ const FeedbackPopup = ({ feedback, onClose }) => {
     </div>
   );
 };
+
+export default FeedbackPopup;
