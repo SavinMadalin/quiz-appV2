@@ -1,10 +1,11 @@
 // src/MainPage.js
-import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useEffect, useState, useRef, useCallback } from 'react'; // Import useCallback
+import { Link, useLocation , useNavigate} from 'react-router-dom';
 import Navbar from './Navbar';
 import TopNavbar from './components/TopNavbar';
 import { CheckCircleIcon, LightBulbIcon } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
+import { useSelector } from 'react-redux';
 
 const EmailSentPopup = ({ onClose }) => {
   useEffect(() => {
@@ -13,7 +14,7 @@ const EmailSentPopup = ({ onClose }) => {
     }, 3000);
     return () => clearTimeout(timer);
   }, [onClose]);
-
+  console.log('EmailSentPopup rendered');
   return (
     <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white p-4 rounded-md shadow-lg z-50 flex items-center gap-2">
       <CheckCircleIcon className="h-6 w-6" />
@@ -24,18 +25,30 @@ const EmailSentPopup = ({ onClose }) => {
 
 const MainPage = () => {
   const location = useLocation();
+  const navigate = useNavigate(); // Import navigate to reset location state
   const [showPopup, setShowPopup] = useState(false);
   const [randomTip, setRandomTip] = useState(null);
+  const { isAuthenticated, isEmailVerified } = useSelector((state) => state.user);
+  const { dailyAttempts } = useSelector((state) => state.quiz.quizConfig);
 
   useEffect(() => {
+    console.log('Location state:', location.state); // Debug log
     if (location.state?.isEmailSent) {
       setShowPopup(true);
+      navigate(location.pathname, { replace: true, state: {} });
     }
-  }, [location.state]);
+  }, [location.state, navigate]);
 
-  const handleClosePopup = () => {
-    setShowPopup(false);
-  };
+  useEffect(() => {
+    console.log('Show Popup:', showPopup); // Debug log
+    if (showPopup) {
+      const timer = setTimeout(() => {
+        setShowPopup(false);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showPopup]);
 
   // Sample tips and tricks data (you can replace this with data from an API or a JSON file)
   const tipsAndTricks = [
@@ -74,8 +87,9 @@ const MainPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-light-blue-matte dark:bg-dark-blue-matte text-light-text dark:text-white pt-20">
-      {showPopup && <EmailSentPopup onClose={handleClosePopup} />}
       <TopNavbar />
+      {showPopup && <EmailSentPopup onClose={() => setShowPopup(false)} />}
+
       <Navbar />
 
       {/* Hero Section */}
@@ -88,12 +102,25 @@ const MainPage = () => {
           <p className="text-lg mb-8">
             Ace your tech interviews with our targeted quizzes and expert tips.
           </p>
-          <Link
-            to="/quiz-config"
-            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 inline-flex items-center"
-          >
-            Start a Quiz <ArrowRightIcon className="h-5 w-5 ml-2" />
-          </Link>
+          {/* Start a Quiz Button */}
+          <div className="relative group">
+            <Link
+              to="/quiz-config"
+              className={`bg-blue-500 ${
+                dailyAttempts >= 2 && (!isAuthenticated || !isEmailVerified)
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:bg-blue-600'
+              } text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 inline-flex items-center`}
+            >
+              Start a Quiz <ArrowRightIcon className="h-5 w-5 ml-2" />
+            </Link>
+            {/* Tooltip */}
+            {(dailyAttempts >= 2 && (!isAuthenticated || !isEmailVerified)) && (
+              <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                You have reached the limit of 2 quizzes per day.
+              </span>
+            )}
+          </div>
         </div>
       </section>
 

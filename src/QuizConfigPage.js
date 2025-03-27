@@ -1,7 +1,7 @@
 // src/QuizConfigPage.js
 import { useDispatch, useSelector } from 'react-redux';
-import { setQuizConfig } from './redux/quizSlice';
-import { Link } from 'react-router-dom';
+import { setQuizConfig, incrementDailyAttempts } from './redux/quizSlice';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import TopNavbar from './components/TopNavbar';
 import { ClockIcon, CpuChipIcon, PresentationChartLineIcon, Cog6ToothIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
@@ -10,7 +10,10 @@ import { PlusIcon } from '@heroicons/react/24/solid';
 
 const QuizConfigPage = () => {
   const dispatch = useDispatch();
-  const quizConfig = useSelector((state) => state.quiz.quizConfig);
+  const navigate = useNavigate();
+  const { quizConfig } = useSelector((state) => state.quiz);
+  const { isAuthenticated, isEmailVerified } = useSelector((state) => state.user);
+  const { dailyAttempts } = useSelector((state) => state.quiz.quizConfig);
   const [draftSettings, setDraftSettings] = useState(quizConfig);
   const [selectedSubcategories, setSelectedSubcategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
@@ -89,7 +92,8 @@ const QuizConfigPage = () => {
       timePerQuestion: activeTab === 'interview' ? 1 : draftSettings.timePerQuestion,
     };
     dispatch(setQuizConfig(config));
-    setError(null);
+    dispatch(incrementDailyAttempts());
+    navigate('/quiz');
   };
 
   const getCategoryIcon = () => {
@@ -115,12 +119,28 @@ const QuizConfigPage = () => {
             >
               <span className="block text-center">Custom Mode</span> {/* Centered Text */}
             </button>
-            <button
-              onClick={() => setActiveTab('interview')}
-              className={`w-1/2 py-3 focus:outline-none ${activeTab === 'interview' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-700 dark:text-gray-300'}`}
-            >
-              <span className="block text-center">Interview Mode</span> {/* Centered Text */}
-            </button>
+            {/* Interview Mode Button */}
+            <div className="w-1/2 relative group">
+              <button
+                onClick={() => {
+                  if (isAuthenticated && isEmailVerified) {
+                    setActiveTab('interview');
+                  }
+                }}
+                disabled={!isAuthenticated || !isEmailVerified}
+                className={`w-full py-3 focus:outline-none ${
+                  activeTab === 'interview' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-700 dark:text-gray-300'
+                } ${(!isAuthenticated || !isEmailVerified) ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                <span className="block text-center">Interview Mode</span>
+              </button>
+              {/* Tooltip */}
+              {(!isAuthenticated || !isEmailVerified) && (
+                <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  This mode is available only for the users with a verified account
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
@@ -273,16 +293,21 @@ const QuizConfigPage = () => {
 
         {/* Start Quiz Button */}
         <div className="relative group">
-          <Link
-            to={isStartButtonDisabled ? '#' : "/quiz"}
+          <button
             onClick={handleApply}
-            className={`w-full bg-green-500 ${isStartButtonDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-600'} text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 block text-center`}
+            disabled={isStartButtonDisabled || (dailyAttempts >= 2 && (!isAuthenticated || !isEmailVerified))}
+            className={`w-full bg-green-500 ${isStartButtonDisabled || (dailyAttempts >= 2 && (!isAuthenticated || !isEmailVerified)) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-600'} text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 block text-center`}
           >
             Start
-          </Link>
+          </button>
           {isStartButtonDisabled && (
             <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
               At least one subcategory has to be selected
+            </span>
+          )}
+          {(dailyAttempts >= 2 && (!isAuthenticated || !isEmailVerified)) && (
+            <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              You have reached the limit of 2 quizzes per day.
             </span>
           )}
         </div>

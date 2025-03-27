@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   user: null,
   isAuthenticated: false,
+  isEmailVerified: false, // Add this line
 };
 
 const userSlice = createSlice({
@@ -21,6 +22,7 @@ const userSlice = createSlice({
           emailVerified: action.payload.emailVerified, // Add the emailVerified
           // Add other relevant properties here if needed (e.g., photoURL)
         };
+        state.isEmailVerified = action.payload?.emailVerified || false; // Add this line
         state.isAuthenticated = true;
       } else {
         state.user = null;

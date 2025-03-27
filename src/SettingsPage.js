@@ -14,6 +14,8 @@ import {
   PencilIcon,
   CheckIcon,
   XMarkIcon,
+  MoonIcon,
+  SunIcon,
 } from '@heroicons/react/24/outline';
 import { db, deleteUser, logout, updateDisplayName } from './firebase';
 import { collection, query, where, getDocs, deleteDoc } from 'firebase/firestore';
@@ -21,8 +23,9 @@ import ConfirmPopup from './components/ConfirmPopup';
 import { useNavigate } from 'react-router-dom';
 import { setUser } from './redux/userSlice';
 import { resendVerificationEmail } from './firebase'; // Import the resend email function
+import { toggleTheme } from './redux/themeSlice';
 
-const SettingsPage = ({ emailVerified, setEmailSent }) => {
+const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => { // Receive setIsDeletingUser
   const dispatch = useDispatch();
   const { quizConfig } = useSelector((state) => state.quiz);
   const { user, isAuthenticated } = useSelector((state) => state.user);
@@ -30,7 +33,7 @@ const SettingsPage = ({ emailVerified, setEmailSent }) => {
 
   const [isEmailSent, setIsEmailSent] = useState(false);
   const [error, setError] = useState(null);
-
+  const { isDarkMode } = useSelector((state) => state.theme);
 
   // Local state for draft settings
   const [draftSettings, setDraftSettings] = useState(quizConfig);
@@ -44,10 +47,6 @@ const SettingsPage = ({ emailVerified, setEmailSent }) => {
     setDraftSettings(quizConfig);
   }, [quizConfig]);
 
-  const handleThemeChange = (e) => {
-    setDraftSettings({ ...draftSettings, theme: e.target.value });
-  };
-
   const handleResendEmail = async () => {
     setError(null);
     try {
@@ -55,24 +54,33 @@ const SettingsPage = ({ emailVerified, setEmailSent }) => {
       setEmailSent(true); // Notify App.js that the email was sent
       setIsEmailSent(true);
 
-        // Automatically hide the success message after 3 seconds
-        setTimeout(() => {
-          setIsEmailSent(false);
-        }, 3000);
-      } catch (err) {
-        console.error('Error resending verification email:', err);
-        setError('Wait at least 1 minute before resending the email.');
-  
-        // Automatically hide the error message after 3 seconds
-        setTimeout(() => {
-          setError(null);
-        }, 3000);}
+      // Automatically hide the success message after 3 seconds
+      setTimeout(() => {
+        setIsEmailSent(false);
+      }, 3000);
+    } catch (err) {
+      console.error('Error resending verification email:', err);
+      setError('Wait at least 1 minute before resending the email.');
+
+      // Automatically hide the error message after 3 seconds
+      setTimeout(() => {
+        setError(null);
+      }, 3000);
+    }
   };
 
-
-  const handleApply = () => {
-    dispatch(setQuizConfig(draftSettings));
+  const handleThemeToggle = () => {
+    dispatch(toggleTheme());
   };
+
+  // Update the body class when the theme changes
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   const handleResetHistory = () => {
     setShowConfirmPopup(true);
@@ -108,9 +116,11 @@ const SettingsPage = ({ emailVerified, setEmailSent }) => {
 
   const handleConfirmDelete = async () => {
     setShowDeleteConfirmPopup(false);
+    setIsDeletingUser(true); // Set isDeletingUser to true before deleting
     try {
       await deleteUser();
       await logout();
+      dispatch(setUser(null)); // Clear the user state in Redux
       navigate('/login');
     } catch (error) {
       if (error.code === 'auth/requires-recent-login') {
@@ -118,6 +128,8 @@ const SettingsPage = ({ emailVerified, setEmailSent }) => {
       } else {
         console.error('Error deleting user:', error);
       }
+    } finally {
+      setIsDeletingUser(false); // Set isDeletingUser to false after deleting (success or failure)
     }
   };
 
@@ -243,16 +255,33 @@ const SettingsPage = ({ emailVerified, setEmailSent }) => {
             <PaintBrushIcon className="h-6 w-6" />
             Appearance
           </h3>
-          <div className="mb-4">
-            <label className="block font-medium mb-2">Theme:</label>
-            <select
-              value={draftSettings.theme}
-              onChange={handleThemeChange}
-              className="mt-1 p-3 border rounded-md bg-light-grey dark:bg-gray-800 dark:text-white w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-            </select>
+          {/* Theme Toggle Section */}
+          <div className="mb-6">
+            <div className="flex items-center justify-center space-x-4">
+              {/* Sun Icon (Light Mode) */}
+              <button
+                onClick={handleThemeToggle}
+                className={`p-2 rounded-full focus:outline-none transition-colors duration-300 ${
+                  !isDarkMode
+                    ? 'bg-yellow-400 text-white shadow-md' // Highlight if light mode is active
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                }`}
+              >
+                <SunIcon className="h-6 w-6" />
+              </button>
+
+              {/* Moon Icon (Dark Mode) */}
+              <button
+                onClick={handleThemeToggle}
+                className={`p-2 rounded-full focus:outline-none transition-colors duration-300 ${
+                  isDarkMode
+                    ? 'bg-gray-800 text-white shadow-md' // Highlight if dark mode is active
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                }`}
+              >
+                <MoonIcon className="h-6 w-6" />
+              </button>
+            </div>
           </div>
         </section>
 
@@ -279,12 +308,6 @@ const SettingsPage = ({ emailVerified, setEmailSent }) => {
             </button>
           </section>
         )}
-         <button
-          onClick={handleApply}
-          className="w-full bg-blue-500 text-white py-3 px-6 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          Apply Changes
-        </button>
       </div>
       {/* Confirm Popups */}
       {showConfirmPopup && (

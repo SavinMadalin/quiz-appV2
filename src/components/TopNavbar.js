@@ -1,6 +1,6 @@
 // src/components/TopNavbar.js
 import React, { useState, useEffect, useRef } from 'react';
-import { loginWithGoogle, logout as firebaseLogout, resendVerificationEmail, auth } from '../firebase';
+import { loginWithGoogle, logout as firebaseLogout } from '../firebase';
 import { useSelector } from 'react-redux';
 import {
   UserCircleIcon,
@@ -12,7 +12,6 @@ import {
 } from '@heroicons/react/24/outline';
 import { GoogleLogo } from '../components/Logos';
 import { Link } from 'react-router-dom'; // Import Link
-import { FirebaseError } from 'firebase/app';
 
 const TopNavbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -78,7 +77,7 @@ const TopNavbar = () => {
         {/* Login/User Button */}
         <button
           type="button"
-          className="inline-flex justify-center items-center w-48 h-12 rounded-md border border-gray-500 dark:border-gray-700 px-6 py-3 bg-white text-base font-semibold text-gray-800 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500 transition-shadow duration-200"
+          className="inline-flex justify-center items-center w-48 h-12 rounded-md border border-gray-500 dark:border-gray-700 px-6 py-3 bg-white text-base font-semibold text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500 transition-shadow duration-200"
           onClick={toggleDropdown}
           id="options-menu"
         >
@@ -92,17 +91,17 @@ const TopNavbar = () => {
                     Verify your email for accessing all the features. See settings.
                   </span>
                 </div>                )}
-               <UserCircleIcon className="h-6 w-6 mr-2 text-gray-800 dark:text-gray-900" />
-                <span className="hidden sm:inline text-gray-800 dark:text-gray-900">{user.displayName}</span>
-                 <span className="inline sm:hidden text-gray-800 dark:text-gray-900">User</span>
+               <UserCircleIcon className="h-6 w-6 mr-2 text-gray-800 dark:text-white" />
+                <span className="hidden sm:inline text-gray-800 dark:text-white">{user.displayName}</span>
+                 <span className="inline sm:hidden text-gray-800 dark:text-white">User</span>
             </div>
           ) : (
-            <span className="text-gray-800 dark:text-gray-900">Login</span>
+            <span className="text-gray-800 dark:text-white">Login</span>
           )}
           {isDropdownOpen ? (
-            <ChevronUpIcon className="-mr-1 ml-2 h-5 w-5 text-gray-800 dark:text-gray-900" aria-hidden="true" />
+            <ChevronUpIcon className="-mr-1 ml-2 h-5 w-5 text-gray-800 dark:text-white" aria-hidden="true" />
           ) : (
-            <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5 text-gray-800 dark:text-gray-900" aria-hidden="true" />
+            <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5 text-gray-800 dark:text-white" aria-hidden="true" />
           )}
         </button>
 

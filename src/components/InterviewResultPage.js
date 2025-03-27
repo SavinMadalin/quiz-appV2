@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { db } from '../firebase';
 import { resetQuiz } from '../redux/quizSlice';
-import { collection, query, where, getDocs, orderBy, updateDoc, doc } from 'firebase/firestore';
+import { collection, query, where, getDocs, orderBy, updateDoc, doc, getDoc } from 'firebase/firestore'; // Import getDoc
 import { ArrowLeftIcon, CheckCircleIcon, XCircleIcon, ClockIcon } from '@heroicons/react/24/outline';
 import OpenAI from 'openai'; // Import OpenAI
 
@@ -17,9 +17,8 @@ const InterviewResultPage = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const [quizData, setQuizData] = useState([]);
-  const [isFeedbackGenerated, setIsFeedbackGenerated] = useState(false); // New state variable
-  const [resultId, setResultId] = useState(null);
   const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [isGeneratingFeedback, setIsGeneratingFeedback] = useState(false); // New state variable
 
   // Format timeTaken into minutes and seconds
   const formatTime = (seconds) => {
@@ -30,12 +29,14 @@ const InterviewResultPage = () => {
 
   useEffect(() => {
     const fetchDataAndGenerateFeedback = async () => {
-      if (!quizConfig.isMockInterviewMode || isFeedbackGenerated) return; // Add isFeedbackGenerated check
+      if (!quizConfig.isMockInterviewMode || isGeneratingFeedback) return; // Only run for interview mode and if not already generating
       setIsLoading(true); // Set loading to true at the start
+      setIsGeneratingFeedback(true); // Set the flag to true to indicate that feedback generation has started
 
       if (!user || !user.uid) {
         console.error('User not logged in or user ID missing.');
         setIsLoading(false); // Set loading to false if there's an error
+        setIsGeneratingFeedback(false);
         return;
       }
 
@@ -51,8 +52,20 @@ const InterviewResultPage = () => {
           id: doc.id
         }));
         const lastResult = results[0];
+
+        // Check if feedback already exists in the database
+        const docRef = doc(db, 'results', lastResult.id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists() && docSnap.data().feedback) {
+          // Feedback exists, set it and return
+          setFeedback(docSnap.data().feedback);
+          setIsLoading(false);
+          setIsGeneratingFeedback(false);
+          return;
+        }
+
+        // Feedback doesn't exist, proceed with generating it
         setQuizData(lastResult.quizData);
-        setResultId(lastResult.id);
 
         const openai = new OpenAI({
           apiKey: process.env.REACT_APP_OPENAI_API_KEY, // Access the API key from environment variables
@@ -87,7 +100,6 @@ const InterviewResultPage = () => {
 
         const aiFeedback = response.choices[0].message.content; // Access the feedback correctly
         setFeedback(aiFeedback);
-        setIsFeedbackGenerated(true); // Set the flag to true
 
         // Update the feedback in the database
         if (lastResult.id) {
@@ -103,11 +115,12 @@ const InterviewResultPage = () => {
         setFeedback("Error generating feedback. Please try again later.");
       } finally {
         setIsLoading(false); // Set loading to false when done
+        setIsGeneratingFeedback(false); // Reset the flag when done
       }
     };
 
     fetchDataAndGenerateFeedback();
-  }, [score, numQuestions, passed, quizConfig, timeTaken, user, isFeedbackGenerated]); // Add isFeedbackGenerated to the dependency array
+  }, [score, numQuestions, passed, quizConfig, timeTaken, user]);
 
   const handleGoHome = () => {
     dispatch(resetQuiz());

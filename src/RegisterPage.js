@@ -8,7 +8,7 @@ import useSerializeUser from './hooks/useSerializeUser'; // Import useSerializeU
 import Navbar from './Navbar';
 import TopNavbar from './components/TopNavbar';
 
-const RegisterPage = ({ setEmailSent }) => {
+const RegisterPage = ({ setEmailSent, setIsRegistering }) => { // Receive setIsRegistering
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -27,19 +27,23 @@ const RegisterPage = ({ setEmailSent }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setIsRegistering(true); // Set isRegistering to true before registration
 
     if (!isValidEmail(email)) {
       setError('Please enter a valid email address.');
+      setIsRegistering(false);
       return;
     }
 
     if (password.length < 8) {
       setError('Password must be at least 8 characters long.');
+      setIsRegistering(false);
       return;
     }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
+      setIsRegistering(false);
       return;
     }
 
@@ -47,6 +51,7 @@ const RegisterPage = ({ setEmailSent }) => {
     const emailExists = await checkIfEmailExists(email);
     if (emailExists) {
       setError('This email is already registered. Please use a different email.');
+      setIsRegistering(false);
       return;
     }
 
@@ -62,6 +67,8 @@ const RegisterPage = ({ setEmailSent }) => {
     } catch (err) {
         setError('Registration failed. Please try again.');
         console.error('Registration failed:', err);
+    } finally {
+        setIsRegistering(false); // Set isRegistering to false after registration (success or failure)
     }
   };
 

@@ -17,7 +17,7 @@ import FeedbackPopup from './components/FeedbackPopup';
 const HistoryPage = () => {
   const [history, setHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { user, isAuthenticated } = useSelector(state => state.user);
+  const { user, isAuthenticated, isEmailVerified } = useSelector(state => state.user);
   const [selectedCategory, setSelectedCategory] = useState('backend-engineer'); // Default category
   const [categories, setCategories] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
@@ -55,7 +55,7 @@ const HistoryPage = () => {
     };
 
     fetchHistory();
-  }, [user]);
+  }, [user?.uid]); // <-- Changed dependency array to [user?.uid]
 
   const handleSeeFeedback = async (result) => {
     if (result.feedback) {
@@ -85,10 +85,16 @@ const HistoryPage = () => {
 
   // Filter data for the chart and the table
   const filteredHistory = useMemo(() => {
-    return activeTab === 'interview'
+    let filtered = activeTab === 'interview'
       ? history.filter(result => result.quizType === 'interview')
       : history.filter(result => result.quizType === 'custom');
-  }, [history, activeTab]);
+    
+    // If not authenticated or not verified, filter out interview mode results
+    if (!isAuthenticated || !isEmailVerified) {
+      filtered = filtered.filter(result => result.quizType === 'custom');
+    }
+    return filtered;
+  }, [history, activeTab, isAuthenticated, isEmailVerified]);
 
   // Filter data for the chart
   const chartData = filteredHistory

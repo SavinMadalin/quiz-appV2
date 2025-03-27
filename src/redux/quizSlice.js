@@ -10,6 +10,7 @@ const initialState = {
     subcategories: [],
     timePerQuestion: 1,
     isMockInterviewMode: false,
+    dailyAttempts: 0, // New state for daily attempts
   },
   isQuizFinished: false,
   timeTaken: 0, // Add timeTaken to the initial state
@@ -51,9 +52,15 @@ export const quizSlice = createSlice({
     setTimeTaken: (state, action) => { // Add a new reducer to set timeTaken
       state.timeTaken = action.payload;
     },
+    incrementDailyAttempts: (state) => {
+      state.quizConfig.dailyAttempts += 1;
+    },
+    resetDailyAttempts: (state) => {
+      state.quizConfig.dailyAttempts = 0;
+    },
   },
 });
 
-export const { setQuestions, answerQuestion, setQuizConfig, resetQuiz, setTimeTaken } = quizSlice.actions;
+export const { setQuestions, answerQuestion, setQuizConfig, resetQuiz, setTimeTaken, incrementDailyAttempts, resetDailyAttempts } = quizSlice.actions;
 
 export default quizSlice.reducer;

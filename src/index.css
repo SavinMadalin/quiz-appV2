@@ -52,6 +52,31 @@
   border-radius: 4px; /* Rounded corners */
 }
 
+body.dark {
+  background-color: #1e293b; /* Example dark background color */
+  color: #f8fafc; /* Example dark text color */
+}
+
+/* Example dark mode styles for other elements */
+.dark .bg-white {
+  background-color: #1e293b;
+}
+.fixed {
+  z-index: 50; /* Ensure it's above other elements */
+}
+
+.dark .text-gray-700 {
+  color: #f8fafc;
+}
+
+.dark .bg-dark-grey {
+  background-color: #1e293b;
+}
+
+.dark .text-light-text {
+  color: #f8fafc;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
