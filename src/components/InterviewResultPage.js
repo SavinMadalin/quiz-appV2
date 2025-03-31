@@ -2,11 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { db } from '../firebase';
+import { db, model } from '../firebase';
 import { resetQuiz } from '../redux/quizSlice';
 import { collection, query, where, getDocs, orderBy, updateDoc, doc, getDoc } from 'firebase/firestore'; // Import getDoc
 import { ArrowLeftIcon, CheckCircleIcon, XCircleIcon, ClockIcon } from '@heroicons/react/24/outline';
-import OpenAI from 'openai'; // Import OpenAI
 
 const InterviewResultPage = () => {
   const { score, quizConfig, timeTaken } = useSelector((state) => state.quiz);
@@ -67,11 +66,6 @@ const InterviewResultPage = () => {
         // Feedback doesn't exist, proceed with generating it
         setQuizData(lastResult.quizData);
 
-        const openai = new OpenAI({
-          apiKey: process.env.REACT_APP_OPENAI_API_KEY, // Access the API key from environment variables
-          dangerouslyAllowBrowser: true, // Add this line
-        });
-
         // Create the prompt
         const prompt = `
           You are an expert interviewer.
@@ -93,12 +87,8 @@ const InterviewResultPage = () => {
           Format the feedback with clear paragraphs and spacing.
         `;
 
-        const response = await openai.chat.completions.create({ // Use openai.chat.completions.create
-          model: "gpt-3.5-turbo",
-          messages: [{ role: "user", content: prompt }],
-        });
-
-        const aiFeedback = response.choices[0].message.content; // Access the feedback correctly
+         const result = await model.generateContent(prompt);
+         const aiFeedback = result.response.text();
         setFeedback(aiFeedback);
 
         // Update the feedback in the database

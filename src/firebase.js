@@ -18,6 +18,7 @@ import {
 import { getFirestore } from "firebase/firestore";
 import { store } from "./redux/store";
 import { logoutUser } from "./redux/userSlice";
+import { getVertexAI, getGenerativeModel } from "firebase/vertexai";
 
 
 // Your web app's Firebase configuration
@@ -139,5 +140,10 @@ export const updateDisplayName = async (displayName) => {
       throw error; // Re-throw the error to be handled in LoginPage
     }
   };
+
+  const vertexAI = getVertexAI(app); // Example: us-east1
+
+// Create a `GenerativeModel` instance with a model that supports your use case
+export const model = getGenerativeModel(vertexAI, { model: "gemini-2.0-flash-lite-001" });
 
 export { auth, googleProvider, db };
