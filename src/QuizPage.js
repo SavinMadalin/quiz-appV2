@@ -9,7 +9,7 @@ import ConfirmPopup from './components/ConfirmPopup';
 import { CheckCircleIcon, XCircleIcon, ClockIcon, ArrowRightIcon, XMarkIcon } from '@heroicons/react/24/outline'; // Import icons
 import ProgressBar from './components/ProgressBar'; // Import ProgressBar
 import CodeSnippet from './components/CodeSnippet'; // Import CodeSnippet
-
+  
 const QuizPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();

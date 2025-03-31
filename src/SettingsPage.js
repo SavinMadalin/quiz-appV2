@@ -173,7 +173,7 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => { /
 
   const handleCancelEditName = () => {
     setIsEditingName(false);
-  };
+  };  
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-light-blue-matte dark:bg-dark-blue-matte text-light-text dark:text-white pt-20">

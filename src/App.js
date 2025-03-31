@@ -48,7 +48,7 @@ function App() {
             if (pollingTimeoutRef.current) {
               clearTimeout(pollingTimeoutRef.current);
             }
-
+  
             pollingIntervalRef.current = setInterval(async () => {
               await firebaseUser.reload();
               console.log('Polling emailVerified:', firebaseUser.emailVerified);

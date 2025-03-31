@@ -18,38 +18,12 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Mobile Menu (hidden by default) */}
-      <div className={`md:hidden fixed bottom-0 left-0 w-full bg-white dark:bg-dark-grey shadow-md z-20 ${isMenuOpen ? 'block' : 'hidden'}`}>
-        <div className="flex flex-col space-y-2 py-2">
-          {<NavLinkBottom to="/" label="Home" Icon={HomeIcon} />}
-          {<NavLinkBottom to="/history" label="History" Icon={ClockIcon} />}
-          {<NavLinkBottom to="/settings" label="Settings" Icon={CogIcon} />}
-        </div>
-      </div>
       {/* Navigation Links (box-like structure at the bottom) */}
       <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-11/12 sm:w-10/12 md:w-3/4 lg:w-1/2 bg-white dark:bg-dark-grey shadow-lg z-10 rounded-full">
         <div className="mx-auto px-4 sm:px-6 lg:px-8 flex justify-around items-center h-16">
           <NavLinkBottom to="/" label="Home" Icon={HomeIcon} />
           <NavLinkBottom to="/history" label="History" Icon={ClockIcon} />
           <NavLinkBottom to="/settings" label="Settings" Icon={CogIcon} />
-
-          {/* Responsive menu button for smaller screens (hamburger icon) */}
-          <div className="md:hidden">
-            <button className="text-gray-500 dark:text-white hover:text-gray-700 dark:hover:text-gray-400 focus:outline-none" onClick={toggleMenu}>
-              {/* Add onClick */}
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path d="M4 6h16M4 12h16m-7 6h7"></path>
-              </svg>
-            </button>
-          </div>
         </div>
       </nav>
     </>

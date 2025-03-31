@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { resetQuiz } from './redux/quizSlice';
 import { CheckCircleIcon, XCircleIcon, ChartPieIcon, ArrowLeftIcon } from '@heroicons/react/24/outline'; // Import icons
 import InterviewResultPage from './components/InterviewResultPage';
-
+  
 const ResultPage = () => {
   const { score, quizConfig } = useSelector(state => state.quiz);
   const dispatch = useDispatch();

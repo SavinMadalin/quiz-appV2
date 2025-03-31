@@ -38,7 +38,7 @@ const MainPage = () => {
       navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location.state, navigate]);
-
+  
   useEffect(() => {
     console.log('Show Popup:', showPopup); // Debug log
     if (showPopup) {
