@@ -1,14 +1,15 @@
 # Settings for Cloud Run
-cloud_run:
-  container_concurrency: 80
+runConfig:
+  minInstances: 0
+  maxInstances: 10
+  concurrency: 80
   cpu: 1
-  max_instances: 10
-  memory: 1024Mi
+  memoryMiB: 1024 # Corrected field name and increased memory
+  # Add the NODE_OPTIONS here
+  environmentVariables:
+    NODE_OPTIONS: "--max-old-space-size=2048"
 runtime: nodejs20
-gen:
-  envVars:
-    - name: NODE_OPTIONS # Add this lines to apphosting.yaml
-      value: "--max-old-space-size=2048"
+
 # Environment variables and secrets
 env:
   - variable: REACT_APP_FIREBASE_STORAGE_BUCKET
@@ -31,11 +32,18 @@ env:
 
   - variable: REACT_APP_FIREBASE_API_KEY
     secret: api-key
+    availability:
+      - BUILD
+      - RUNTIME
 
-    # Same as API_KEY above but with a pinned version.
   - variable: REACT_APP_FIREBASE_AUTH_DOMAIN
     secret: auth-domain
+    availability:
+      - BUILD
+      - RUNTIME
 
-    # Same as API_KEY above but with the long form secret reference as defined by Cloud Secret Manager.
   - variable: REACT_APP_FIREBASE_APP_ID
     secret: app-id
+    availability:
+      - BUILD
+      - RUNTIME
