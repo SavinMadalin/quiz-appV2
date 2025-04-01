@@ -1,30 +1,41 @@
-# Settings for Backend (on Cloud Run).
-# See https://firebase.google.com/docs/app-hosting/configure#cloud-run
-runConfig:
-  minInstances: 0
-  # maxInstances: 100
-  # concurrency: 80
-  # cpu: 1
-  # memoryMiB: 512
-
-  # Environment variables and secrets.
-  # env:
-  # Configure environment variables.
-  # See https://firebase.google.com/docs/app-hosting/configure#user-defined-environment
-  # - variable: MESSAGE
-  #   value: Hello world!
-  #   availability:
-  #     - BUILD
-  #     - RUNTIME
-
-  # Grant access to secrets in Cloud Secret Manager.
-  # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
-  # - variable: MY_SECRET
-  #   secret: mySecretRef
+# Settings for Cloud Run
+cloud_run:
+  container_concurrency: 80
+  cpu: 1
+  max_instances: 10
+  memory: 1024Mi
+runtime: nodejs20
+gen:
+  envVars:
+    - name: NODE_OPTIONS # Add this lines to apphosting.yaml
+      value: "--max-old-space-size=2048"
+# Environment variables and secrets
 env:
+  - variable: REACT_APP_FIREBASE_STORAGE_BUCKET
+    value: myproject-6969b.firebasestorage.app
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: REACT_APP_FIREBASE_MESSAGING_SENDER_ID
+    value: 902764868157
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: REACT_APP_FIREBASE_PROJECT_ID
+    value: myproject-6969b
+    availability:
+      - BUILD
+      - RUNTIME
+
   - variable: REACT_APP_FIREBASE_API_KEY
     secret: api-key
+
+    # Same as API_KEY above but with a pinned version.
   - variable: REACT_APP_FIREBASE_AUTH_DOMAIN
     secret: auth-domain
+
+    # Same as API_KEY above but with the long form secret reference as defined by Cloud Secret Manager.
   - variable: REACT_APP_FIREBASE_APP_ID
     secret: app-id
