@@ -1,8 +1,8 @@
 // src/ConfirmationPage.js
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { resendVerificationEmail } from './firebase'; // Import resendVerificationEmail from firebase/auth
-import { FirebaseError } from 'firebase/app';
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { resendVerificationEmail } from "./firebase"; // Import resendVerificationEmail from firebase/auth
+import { FirebaseError } from "firebase/app";
 
 const ConfirmationPage = () => {
   const location = useLocation();
@@ -44,21 +44,23 @@ const ConfirmationPage = () => {
       setIsEmailSent(true);
     } catch (err) {
       if (err instanceof FirebaseError) {
-        if (err.code === 'auth/too-many-requests') {
-          setError('Too many requests. Please wait a few minutes before trying again.');
+        if (err.code === "auth/too-many-requests") {
+          setError(
+            "Too many requests. Please wait a few minutes before trying again."
+          );
           setTimeToWait(60); // Set the time to wait to 60 seconds
           setHasToWait(true);
-        } else if (err.code === 'auth/user-not-found') {
-          setError('This email is not registered.');
-        } else if (err.code === 'auth/operation-not-allowed') {
-          setError('This email is not registered with email/password.');
+        } else if (err.code === "auth/user-not-found") {
+          setError("This email is not registered.");
+        } else if (err.code === "auth/operation-not-allowed") {
+          setError("This email is not registered with email/password.");
         } else {
-          setError('Error sending verification email. Please try again.');
-          console.error('Error sending verification email:', err);
+          setError("Error sending verification email. Please try again.");
+          console.error("Error sending verification email:", err);
         }
       } else {
-        setError('Error sending verification email. Please try again.');
-        console.error('Error sending verification email:', err);
+        setError("Error sending verification email. Please try again.");
+        console.error("Error sending verification email:", err);
       }
     } finally {
       setIsLoading(false);
@@ -66,20 +68,29 @@ const ConfirmationPage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-light-blue-matte dark:bg-dark-blue-matte text-light-text dark:text-white p-6">
+    <div className="flex justify-center items-center min-h-screen bg-blue-500 dark:bg-dark-blue-matte text-light-text dark:text-white p-6">
       <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full">
-        <h2 className="text-2xl font-bold mb-6 text-center">Confirm Your Email</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          Confirm Your Email
+        </h2>
         <p className="mb-4">
-          Registration successful! Please check your email (<b>{email}</b>) to verify your account.
+          Registration successful! Please check your email (<b>{email}</b>) to
+          verify your account.
         </p>
         {error && <div className="text-red-500 mb-4">{error}</div>}
-        {isEmailSent && <div className="text-green-500 mb-4">Verification email sent!</div>}
-        {hasToWait && <div className="text-yellow-500 mb-4">Please wait {timeToWait} seconds before trying again.</div>}
+        {isEmailSent && (
+          <div className="text-green-500 mb-4">Verification email sent!</div>
+        )}
+        {hasToWait && (
+          <div className="text-yellow-500 mb-4">
+            Please wait {timeToWait} seconds before trying again.
+          </div>
+        )}
         <div className="flex flex-col gap-4">
           <button
             onClick={handleResendEmail}
             className={`bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out ${
-              isLoading || hasToWait ? 'opacity-50 cursor-not-allowed' : ''
+              isLoading || hasToWait ? "opacity-50 cursor-not-allowed" : ""
             }`}
             disabled={isLoading || hasToWait}
           >

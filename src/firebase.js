@@ -14,21 +14,21 @@ import {
   sendPasswordResetEmail, // Import sendPasswordResetEmail
   updateProfile as firebaseUpdateProfile, // Import updateProfile
   deleteUser as firebaseDeleteUser, // Import deleteUser
-} from 'firebase/auth';
+} from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { store } from "./redux/store";
+import { getStorage } from "firebase/storage"; // Import getStorage
 import { logoutUser } from "./redux/userSlice";
 import { getVertexAI, getGenerativeModel } from "firebase/vertexai";
 
-
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-    authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-    storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.REACT_APP_FIREBASE_APP_ID
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
@@ -44,14 +44,19 @@ const db = getFirestore(app);
 export const loginWithGoogle = () => signInWithPopup(auth, googleProvider);
 
 // New functions for email/password registration and login
-export const registerWithEmailAndPassword = async (email, password, name) => { // Accept name
-  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+export const registerWithEmailAndPassword = async (email, password, name) => {
+  // Accept name
+  const userCredential = await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
   // Send verification email
   try {
     await firebaseSendEmailVerification(userCredential.user);
-    console.log('Verification email sent successfully!');
+    console.log("Verification email sent successfully!");
   } catch (error) {
-    console.error('Error sending verification email:', error);
+    console.error("Error sending verification email:", error);
     throw error;
   }
   // Update user profile with name
@@ -66,7 +71,11 @@ export const registerWithEmailAndPassword = async (email, password, name) => { /
 };
 
 export const loginWithEmailAndPassword = async (email, password) => {
-  const userCredential = await signInWithEmailAndPassword(auth, email, password);
+  const userCredential = await signInWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
   return userCredential.user; // Return the user
 };
 
@@ -95,12 +104,12 @@ export const resendVerificationEmail = async () => {
   try {
     if (auth.currentUser) {
       await firebaseSendEmailVerification(auth.currentUser);
-      console.log('Verification email sent successfully!');
+      console.log("Verification email sent successfully!");
     } else {
-      console.error('No authenticated user found.');
+      console.error("No authenticated user found.");
     }
   } catch (error) {
-    console.error('Error sending verification email:', error);
+    console.error("Error sending verification email:", error);
     throw error;
   }
 };
@@ -109,41 +118,44 @@ export const resendVerificationEmail = async () => {
 export const deleteUser = async () => {
   try {
     await auth.currentUser.delete();
-    console.log('User deleted successfully!');
+    console.log("User deleted successfully!");
   } catch (error) {
-    if (error.code === 'auth/requires-recent-login') {
-            console.error('User needs to re-authenticate to delete account.');
-            throw error; // Re-throw the error to be handled in SettingsPage
-          } else {
-            console.error('Error deleting user:', error);
-            throw error; // Re-throw the error to be handled in SettingsPage
-          }
+    if (error.code === "auth/requires-recent-login") {
+      console.error("User needs to re-authenticate to delete account.");
+      throw error; // Re-throw the error to be handled in SettingsPage
+    } else {
+      console.error("Error deleting user:", error);
+      throw error; // Re-throw the error to be handled in SettingsPage
+    }
   }
 };
 
 export const updateDisplayName = async (displayName) => {
-    try {
-      await firebaseUpdateProfile(auth.currentUser, { displayName });
-      console.log('Display name updated successfully!');
-    } catch (error) {
-      console.error('Error updating display name:', error);
-      throw error;
-    }
-  };
+  try {
+    await firebaseUpdateProfile(auth.currentUser, { displayName });
+    console.log("Display name updated successfully!");
+  } catch (error) {
+    console.error("Error updating display name:", error);
+    throw error;
+  }
+};
 
-  export const sendPasswordReset = async (email) => {
-    try {
-      await sendPasswordResetEmail(auth, email);
-      console.log('Password reset email sent successfully!');
-    } catch (error) {
-      console.error('Error sending password reset email:', error);
-      throw error; // Re-throw the error to be handled in LoginPage
-    }
-  };
+export const sendPasswordReset = async (email) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+    console.log("Password reset email sent successfully!");
+  } catch (error) {
+    console.error("Error sending password reset email:", error);
+    throw error; // Re-throw the error to be handled in LoginPage
+  }
+};
 
-  const vertexAI = getVertexAI(app); // Example: us-east1
+const vertexAI = getVertexAI(app); // Example: us-east1
+const storage = getStorage(app); // Initialize storage
 
 // Create a `GenerativeModel` instance with a model that supports your use case
-export const model = getGenerativeModel(vertexAI, { model: "gemini-2.0-flash-lite-001" });
+export const model = getGenerativeModel(vertexAI, {
+  model: "gemini-2.0-flash-lite-001",
+});
 
-export { auth, googleProvider, db };
+export { auth, googleProvider, db, storage };

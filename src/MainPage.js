@@ -1,11 +1,11 @@
 // src/MainPage.js
-import React, { useEffect, useState, useRef, useCallback } from 'react'; // Import useCallback
-import { Link, useLocation , useNavigate} from 'react-router-dom';
-import Navbar from './Navbar';
-import TopNavbar from './components/TopNavbar';
-import { CheckCircleIcon, LightBulbIcon } from '@heroicons/react/24/outline';
-import { ArrowRightIcon } from '@heroicons/react/24/solid';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from "react"; // Import useCallback
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import Navbar from "./Navbar";
+import TopNavbar from "./components/TopNavbar";
+import { CheckCircleIcon, LightBulbIcon } from "@heroicons/react/24/outline";
+import { ArrowRightIcon } from "@heroicons/react/24/solid";
+import { useSelector } from "react-redux";
 
 const EmailSentPopup = ({ onClose }) => {
   useEffect(() => {
@@ -14,7 +14,7 @@ const EmailSentPopup = ({ onClose }) => {
     }, 3000);
     return () => clearTimeout(timer);
   }, [onClose]);
-  console.log('EmailSentPopup rendered');
+  console.log("EmailSentPopup rendered");
   return (
     <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white p-4 rounded-md shadow-lg z-50 flex items-center gap-2">
       <CheckCircleIcon className="h-6 w-6" />
@@ -28,19 +28,19 @@ const MainPage = () => {
   const navigate = useNavigate(); // Import navigate to reset location state
   const [showPopup, setShowPopup] = useState(false);
   const [randomTip, setRandomTip] = useState(null);
-  const { isAuthenticated, isEmailVerified } = useSelector((state) => state.user);
+  const { isAuthenticated, isEmailVerified } = useSelector(
+    (state) => state.user
+  );
   const { dailyAttempts } = useSelector((state) => state.quiz.quizConfig);
 
   useEffect(() => {
-    console.log('Location state:', location.state); // Debug log
     if (location.state?.isEmailSent) {
       setShowPopup(true);
       navigate(location.pathname, { replace: true, state: {} });
     }
-  }, [location.state, navigate]);
-  
+  }, [location.pathname, location.state, navigate]);
+
   useEffect(() => {
-    console.log('Show Popup:', showPopup); // Debug log
     if (showPopup) {
       const timer = setTimeout(() => {
         setShowPopup(false);
@@ -53,29 +53,34 @@ const MainPage = () => {
   // Sample tips and tricks data (you can replace this with data from an API or a JSON file)
   const tipsAndTricks = [
     {
-      title: 'Master the STAR Method',
-      description: 'When answering behavioral questions, use the STAR method (Situation, Task, Action, Result) to structure your responses.',
-      link: 'https://www.indeed.com/career-advice/interviewing/how-to-use-the-star-interview-response-technique',
+      title: "Master the STAR Method",
+      description:
+        "When answering behavioral questions, use the STAR method (Situation, Task, Action, Result) to structure your responses.",
+      link: "https://www.indeed.com/career-advice/interviewing/how-to-use-the-star-interview-response-technique",
     },
     {
-      title: 'Practice Coding Challenges',
-      description: 'Regularly practice coding challenges on platforms like LeetCode or HackerRank to improve your problem-solving skills.',
-      link: 'https://leetcode.com/',
+      title: "Practice Coding Challenges",
+      description:
+        "Regularly practice coding challenges on platforms like LeetCode or HackerRank to improve your problem-solving skills.",
+      link: "https://leetcode.com/",
     },
     {
-      title: 'Research the Company',
-      description: 'Before your interview, thoroughly research the company, its products, and its culture.',
-      link: 'https://www.glassdoor.com/index.htm',
+      title: "Research the Company",
+      description:
+        "Before your interview, thoroughly research the company, its products, and its culture.",
+      link: "https://www.glassdoor.com/index.htm",
     },
     {
-      title: 'Prepare Questions to Ask',
-      description: 'Prepare thoughtful questions to ask the interviewer. This shows your interest and engagement.',
-      link: 'https://www.themuse.com/advice/51-interview-questions-you-should-be-asking',
+      title: "Prepare Questions to Ask",
+      description:
+        "Prepare thoughtful questions to ask the interviewer. This shows your interest and engagement.",
+      link: "https://www.themuse.com/advice/51-interview-questions-you-should-be-asking",
     },
     {
-      title: 'Review Data Structures and Algorithms',
-      description: 'Brush up on common data structures and algorithms, as they are frequently tested in technical interviews.',
-      link: 'https://www.geeksforgeeks.org/data-structures/',
+      title: "Review Data Structures and Algorithms",
+      description:
+        "Brush up on common data structures and algorithms, as they are frequently tested in technical interviews.",
+      link: "https://www.geeksforgeeks.org/data-structures/",
     },
   ];
 
@@ -86,7 +91,7 @@ const MainPage = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-light-blue-matte dark:bg-dark-blue-matte text-light-text dark:text-white pt-20">
+    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-blue-500 dark:bg-dark-blue-matte text-light-text dark:text-white pt-20">
       <TopNavbar />
       {showPopup && <EmailSentPopup onClose={() => setShowPopup(false)} />}
 
@@ -108,14 +113,14 @@ const MainPage = () => {
               to="/quiz-config"
               className={`bg-blue-500 ${
                 dailyAttempts >= 2 && (!isAuthenticated || !isEmailVerified)
-                  ? 'opacity-50 cursor-not-allowed'
-                  : 'hover:bg-blue-600'
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-blue-600"
               } text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 inline-flex items-center`}
             >
               Start a Quiz <ArrowRightIcon className="h-5 w-5 ml-2" />
             </Link>
             {/* Tooltip */}
-            {(dailyAttempts >= 2 && (!isAuthenticated || !isEmailVerified)) && (
+            {dailyAttempts >= 2 && (!isAuthenticated || !isEmailVerified) && (
               <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 You have reached the limit of 2 quizzes per day.
               </span>

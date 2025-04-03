@@ -65,7 +65,7 @@ const TopNavbar = () => {
   }, [error, isEmailSent]);
 
   return (
-    <nav className="bg-gradient-to-r from-blue-700 to-blue-900 dark:from-gray-800 dark:to-gray-900 border-b border-gray-300 dark:border-gray-700 p-6 fixed top-0 left-0 right-0 z-50 flex flex-row justify-between items-center backdrop-blur-sm bg-opacity-50 dark:bg-opacity-30 h-24 md:h-24 pt-16"> {/* Increased height and padding-top */}
+    <div className="bg-blue-500 dark:from-gray-800 dark:to-gray-900 p-6 fixed top-0 left-0 right-0 z-50 flex flex-row justify-between items-center backdrop-blur-sm bg-opacity-50 dark:bg-opacity-30 h-24 md:h-24 pt-16"> {/* Increased height and padding-top */}
       {/* App Name */}
       <div className="text-4xl font-extrabold text-white tracking-tight">
         <span className="text-yellow-400">Dev</span>
@@ -108,7 +108,7 @@ const TopNavbar = () => {
                {/* Dropdown Panel */}
                {isDropdownOpen && (
           <div
-          className="origin-top-right absolute right-0 mt-2 w-full sm:w-48 rounded-md shadow-lg bg-light-blue-matte dark:bg-gray-900 ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 dark:divide-gray-700 focus:outline-none" // light blue background
+          className="origin-top-right absolute right-0 mt-2 w-full sm:w-48 rounded-md bg-blue-300 shadow-lg dark:bg-gray-900 ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 dark:divide-gray-700 focus:outline-none" // light blue background
           role="menu"
             aria-orientation="vertical"
             aria-labelledby="options-menu"
@@ -127,14 +127,14 @@ const TopNavbar = () => {
                 <div className="py-1 flex flex-col"> {/* flex flex-col */}
                     <button
                         onClick={() => handleLogin(loginWithGoogle, 'Google')}
-                        className="block w-full sm:w-48 h-12 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200" // Increased width and justify-start
+                        className="block w-full sm:w-48 h-12 px-4 py-2 bg-blue-300 text-sm text-gray-600 dark:text-gray-300 hover:bg-blue-300 dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200" // Increased width and justify-start
                         >
                         <GoogleLogo className="h-5 w-5 text-gray-700 dark:text-gray-300" /> {/* Increased icon size */}
                         <span className='sm:hidden'></span>
                         <span className='hidden sm:inline'>Login with Google</span>
                     </button>
                     <Link to="/login"
-                     className="block w-full sm:w-48 h-12 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200" // Increased width and justify-start
+                        className="block w-full sm:w-48 h-12 px-4 py-2 bg-blue-300 text-sm text-gray-600 dark:text-gray-300 hover:bg-blue-300 dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200" // Increased width and justify-start
                         >  
                     <EnvelopeIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" /> {/* Increased icon size */}
                     <span className='sm:hidden'></span>
@@ -145,7 +145,7 @@ const TopNavbar = () => {
           </div>
         )}
       </div>
-    </nav>
+    </div>
   );
 };
 

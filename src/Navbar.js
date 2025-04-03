@@ -1,21 +1,9 @@
 // src/Navbar.js
-import { Link, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { HomeIcon, ClockIcon, CogIcon } from '@heroicons/react/24/outline'; // Import icons
-import classNames from 'classnames'; // Import classnames
+import { Link, useLocation } from "react-router-dom";
+import { HomeIcon, ClockIcon, CogIcon } from "@heroicons/react/24/outline"; // Import icons
+import classNames from "classnames"; // Import classnames
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const location = useLocation(); // Get the current route location
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  useEffect(() => {
-    setIsMenuOpen(false); // Close the menu when route changes
-  }, [location]);
-
   return (
     <>
       {/* Navigation Links (box-like structure at the bottom) */}
@@ -32,21 +20,23 @@ const Navbar = () => {
 
 // Reusable NavLink component for the bottom navigation
 const NavLinkBottom = ({ to, label, Icon }) => {
-    const location = useLocation();
-    const isActive = location.pathname === to;
+  const location = useLocation();
+  const isActive = location.pathname === to;
 
-    return (
-        <Link
-            to={to}
-            className={classNames(
-                "group flex flex-col items-center justify-center text-center py-2 w-20",
-                isActive ? "text-blue-600 dark:text-white" : "text-primary-color dark:text-white hover:text-blue-600 dark:hover:text-white"
-            )}
-        >
-            <Icon className="h-6 w-6 mb-1 group-hover:text-blue-600 dark:group-hover:text-white" />
-            <span className="text-xs">{label}</span>
-        </Link>
-    );
+  return (
+    <Link
+      to={to}
+      className={classNames(
+        "group flex flex-col items-center justify-center text-center py-2 w-20",
+        isActive
+          ? "text-blue-600 dark:text-white"
+          : "text-primary-color dark:text-white hover:text-blue-600 dark:hover:text-white"
+      )}
+    >
+      <Icon className="h-6 w-6 mb-1 group-hover:text-blue-600 dark:group-hover:text-white" />
+      <span className="text-xs">{label}</span>
+    </Link>
+  );
 };
 
 export default Navbar;

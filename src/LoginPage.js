@@ -1,13 +1,17 @@
 // src/LoginPage.js
-import React, { useState } from 'react';
-import { loginWithEmailAndPassword, sendPasswordReset, checkIfEmailExists } from './firebase'; // Import sendPasswordReset
-import { useNavigate, Link } from 'react-router-dom';
-import Navbar from './Navbar';
-import TopNavbar from './components/TopNavbar';
+import React, { useState } from "react";
+import {
+  loginWithEmailAndPassword,
+  sendPasswordReset,
+  checkIfEmailExists,
+} from "./firebase"; // Import sendPasswordReset
+import { useNavigate, Link } from "react-router-dom";
+import Navbar from "./Navbar";
+import TopNavbar from "./components/TopNavbar";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [resetEmailSent, setResetEmailSent] = useState(false); // New state for reset email status
   const navigate = useNavigate();
@@ -19,16 +23,19 @@ const LoginPage = () => {
 
     try {
       await loginWithEmailAndPassword(email, password);
-      console.log('User logged in successfully!');
-      navigate('/'); // Redirect to home page after successful login
+      console.log("User logged in successfully!");
+      navigate("/"); // Redirect to home page after successful login
     } catch (err) {
-      if (err.code === 'auth/email-not-verified') {
-        setError('Please verify your email before logging in.'); // Custom error message
-      } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found'){
-        setError('Invalid email or password.'); // Generic error message
+      if (err.code === "auth/email-not-verified") {
+        setError("Please verify your email before logging in."); // Custom error message
+      } else if (
+        err.code === "auth/invalid-credential" ||
+        err.code === "auth/user-not-found"
+      ) {
+        setError("Invalid email or password."); // Generic error message
       } else {
-        setError('An unexpected error occurred.');
-        console.error('Login failed:', err);
+        setError("An unexpected error occurred.");
+        console.error("Login failed:", err);
       }
     }
   };
@@ -38,26 +45,28 @@ const LoginPage = () => {
     setResetEmailSent(false);
 
     if (!email) {
-      setError('Please enter your email address.');
+      setError("Please enter your email address.");
       return;
     }
 
     const emailExists = await checkIfEmailExists(email);
     if (!emailExists) {
-      setError('This email is not registered.');
+      setError("This email is not registered.");
       return;
     }
     try {
       await sendPasswordReset(email);
       setResetEmailSent(true);
     } catch (err) {
-      setError('Error sending password reset email. Please check the email address.');
-      console.error('Password reset failed:', err);
+      setError(
+        "Error sending password reset email. Please check the email address."
+      );
+      console.error("Password reset failed:", err);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-light-blue-matte dark:bg-dark-blue-matte text-light-text dark:text-white p-6">
+    <div className="flex justify-center items-center min-h-screen bg-blue-500 dark:bg-dark-blue-matte text-light-text dark:text-white p-6">
       <TopNavbar />
       <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
@@ -100,8 +109,11 @@ const LoginPage = () => {
           </button>
         </div>
         <p className="mt-4 text-center">
-          Don't have an account?{' '}
-          <Link to="/register" className="text-blue-500 hover:text-blue-600 underline">
+          Don't have an account?{" "}
+          <Link
+            to="/register"
+            className="text-blue-500 hover:text-blue-600 underline"
+          >
             Register
           </Link>
         </p>

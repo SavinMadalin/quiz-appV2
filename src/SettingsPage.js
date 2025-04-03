@@ -1,10 +1,9 @@
 // src/SettingsPage.js
-import { useDispatch, useSelector } from 'react-redux';
-import { setQuizConfig } from './redux/quizSlice';
-import { resetUserHistory } from './redux/historySlice';
-import Navbar from './Navbar';
-import TopNavbar from './components/TopNavbar';
-import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { resetUserHistory } from "./redux/historySlice";
+import Navbar from "./Navbar";
+import TopNavbar from "./components/TopNavbar";
+import { useState, useEffect } from "react";
 import {
   UserCircleIcon,
   PaintBrushIcon,
@@ -16,18 +15,24 @@ import {
   XMarkIcon,
   MoonIcon,
   SunIcon,
-} from '@heroicons/react/24/outline';
-import { db, deleteUser, logout, updateDisplayName } from './firebase';
-import { collection, query, where, getDocs, deleteDoc } from 'firebase/firestore';
-import ConfirmPopup from './components/ConfirmPopup';
-import { useNavigate } from 'react-router-dom';
-import { setUser } from './redux/userSlice';
-import { resendVerificationEmail } from './firebase'; // Import the resend email function
-import { toggleTheme } from './redux/themeSlice';
+} from "@heroicons/react/24/outline";
+import { db, deleteUser, logout, updateDisplayName } from "./firebase";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  deleteDoc,
+} from "firebase/firestore";
+import ConfirmPopup from "./components/ConfirmPopup";
+import { useNavigate } from "react-router-dom";
+import { setUser } from "./redux/userSlice";
+import { resendVerificationEmail } from "./firebase"; // Import the resend email function
+import { toggleTheme } from "./redux/themeSlice";
 
-const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => { // Receive setIsDeletingUser
+const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
+  // Receive setIsDeletingUser
   const dispatch = useDispatch();
-  const { quizConfig } = useSelector((state) => state.quiz);
   const { user, isAuthenticated } = useSelector((state) => state.user);
   const navigate = useNavigate();
 
@@ -36,16 +41,11 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => { /
   const { isDarkMode } = useSelector((state) => state.theme);
 
   // Local state for draft settings
-  const [draftSettings, setDraftSettings] = useState(quizConfig);
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [showDeleteConfirmPopup, setShowDeleteConfirmPopup] = useState(false);
   const [showReauthenticatePopup, setShowReauthenticatePopup] = useState(false);
-  const [newDisplayName, setNewDisplayName] = useState('');
+  const [newDisplayName, setNewDisplayName] = useState("");
   const [isEditingName, setIsEditingName] = useState(false);
-
-  useEffect(() => {
-    setDraftSettings(quizConfig);
-  }, [quizConfig]);
 
   const handleResendEmail = async () => {
     setError(null);
@@ -59,8 +59,8 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => { /
         setIsEmailSent(false);
       }, 3000);
     } catch (err) {
-      console.error('Error resending verification email:', err);
-      setError('Wait at least 1 minute before resending the email.');
+      console.error("Error resending verification email:", err);
+      setError("Wait at least 1 minute before resending the email.");
 
       // Automatically hide the error message after 3 seconds
       setTimeout(() => {
@@ -76,9 +76,9 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => { /
   // Update the body class when the theme changes
   useEffect(() => {
     if (isDarkMode) {
-      document.body.classList.add('dark');
+      document.body.classList.add("dark");
     } else {
-      document.body.classList.remove('dark');
+      document.body.classList.remove("dark");
     }
   }, [isDarkMode]);
 
@@ -90,19 +90,22 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => { /
     setShowConfirmPopup(false);
     try {
       if (!user || !user.uid) {
-        console.error('User not logged in or user ID missing.');
+        console.error("User not logged in or user ID missing.");
         return;
       }
-      const q = query(collection(db, 'results'), where('userId', '==', user.uid));
+      const q = query(
+        collection(db, "results"),
+        where("userId", "==", user.uid)
+      );
       const querySnapshot = await getDocs(q);
 
       querySnapshot.forEach(async (doc) => {
         await deleteDoc(doc.ref);
       });
       dispatch(resetUserHistory());
-      console.log('User history reset successfully!');
+      console.log("User history reset successfully!");
     } catch (error) {
-      console.error('Error resetting user history:', error);
+      console.error("Error resetting user history:", error);
     }
   };
 
@@ -121,12 +124,12 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => { /
       await deleteUser();
       await logout();
       dispatch(setUser(null)); // Clear the user state in Redux
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
-      if (error.code === 'auth/requires-recent-login') {
+      if (error.code === "auth/requires-recent-login") {
         setShowReauthenticatePopup(true);
       } else {
-        console.error('Error deleting user:', error);
+        console.error("Error deleting user:", error);
       }
     } finally {
       setIsDeletingUser(false); // Set isDeletingUser to false after deleting (success or failure)
@@ -137,9 +140,9 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => { /
     setShowReauthenticatePopup(false);
     try {
       await logout();
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error("Error deleting user:", error);
     }
   };
 
@@ -167,16 +170,16 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => { /
       );
       setIsEditingName(false);
     } catch (error) {
-      console.error('Error updating display name:', error);
+      console.error("Error updating display name:", error);
     }
   };
 
   const handleCancelEditName = () => {
     setIsEditingName(false);
-  };  
+  };
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-light-blue-matte dark:bg-dark-blue-matte text-light-text dark:text-white pt-20">
+    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-blue-500 dark:bg-dark-blue-matte text-light-text dark:text-white pt-20">
       <TopNavbar />
       <Navbar />
       <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-sm w-full mt-20">
@@ -192,7 +195,8 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => { /
               <div className="relative group">
                 <ExclamationTriangleIcon className="h-6 w-6 text-yellow-500 cursor-pointer" />
                 <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-yellow-500 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  Your email is not verified. Please verify your email to access all features.
+                  Your email is not verified. Please verify your email to access
+                  all features.
                 </span>
               </div>
               <button
@@ -204,7 +208,9 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => { /
             </div>
             {/* Display the messages under the button */}
             {isEmailSent && (
-              <p className="text-green-500 text-sm mt-2">Verification email sent successfully!</p>
+              <p className="text-green-500 text-sm mt-2">
+                Verification email sent successfully!
+              </p>
             )}
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           </div>
@@ -227,17 +233,26 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => { /
                     onChange={(e) => setNewDisplayName(e.target.value)}
                     className="p-1 border rounded-md bg-light-grey dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                  <button onClick={handleSaveName} className="text-green-500 hover:text-green-600">
+                  <button
+                    onClick={handleSaveName}
+                    className="text-green-500 hover:text-green-600"
+                  >
                     <CheckIcon className="h-5 w-5" />
                   </button>
-                  <button onClick={handleCancelEditName} className="text-red-500 hover:text-red-600">
+                  <button
+                    onClick={handleCancelEditName}
+                    className="text-red-500 hover:text-red-600"
+                  >
                     <XMarkIcon className="h-5 w-5" />
                   </button>
                 </>
               ) : (
                 <>
                   <span>{user.displayName}</span>
-                  <button onClick={handleEditName} className="text-blue-500 hover:text-blue-600">
+                  <button
+                    onClick={handleEditName}
+                    className="text-blue-500 hover:text-blue-600"
+                  >
                     <PencilIcon className="h-5 w-5" />
                   </button>
                 </>
@@ -263,8 +278,8 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => { /
                 onClick={handleThemeToggle}
                 className={`p-2 rounded-full focus:outline-none transition-colors duration-300 ${
                   !isDarkMode
-                    ? 'bg-yellow-400 text-white shadow-md' // Highlight if light mode is active
-                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                    ? "bg-yellow-400 text-white shadow-md" // Highlight if light mode is active
+                    : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
                 }`}
               >
                 <SunIcon className="h-6 w-6" />
@@ -275,8 +290,8 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => { /
                 onClick={handleThemeToggle}
                 className={`p-2 rounded-full focus:outline-none transition-colors duration-300 ${
                   isDarkMode
-                    ? 'bg-gray-800 text-white shadow-md' // Highlight if dark mode is active
-                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                    ? "bg-gray-800 text-white shadow-md" // Highlight if dark mode is active
+                    : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
                 }`}
               >
                 <MoonIcon className="h-6 w-6" />
