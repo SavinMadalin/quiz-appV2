@@ -260,7 +260,16 @@ const QuizConfigPage = () => {
                         <button
                           key={cat.value}
                           onClick={() => handleChange("category", cat.value)}
-                          className="block w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 border-b border-gray-300 dark:border-gray-600 last:border-b-0"
+                          disabled={
+                            (!isAuthenticated || !isEmailVerified) &&
+                            cat.value !== "backend-engineer"
+                          }
+                          className={`block w-full px-4 py-2 text-left text-sm ${
+                            (!isAuthenticated || !isEmailVerified) &&
+                            cat.value !== "backend-engineer"
+                              ? "text-gray-400 cursor-not-allowed"
+                              : "text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                          } border-b border-gray-300 dark:border-gray-600 last:border-b-0`}
                         >
                           {cat.label}
                         </button>
@@ -269,6 +278,13 @@ const QuizConfigPage = () => {
                   </div>
                 )}
               </div>
+              {/* Tooltip */}
+              {(!isAuthenticated || !isEmailVerified) && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Only the Backend Engineer category is available for
+                  unauthenticated or unverified users.
+                </p>
+              )}
             </div>
 
             {draftSettings.category !== "ai" && (
@@ -438,13 +454,9 @@ const QuizConfigPage = () => {
         <div className="relative group">
           <button
             onClick={handleApply}
-            disabled={
-              isStartButtonDisabled ||
-              (dailyAttempts >= 2 && (!isAuthenticated || !isEmailVerified))
-            }
+            disabled={isStartButtonDisabled}
             className={`w-full bg-green-500 ${
-              isStartButtonDisabled ||
-              (dailyAttempts >= 2 && (!isAuthenticated || !isEmailVerified))
+              isStartButtonDisabled
                 ? "opacity-50 cursor-not-allowed"
                 : "hover:bg-green-600"
             } text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 block text-center text-base`}
@@ -454,11 +466,6 @@ const QuizConfigPage = () => {
           {isStartButtonDisabled && (
             <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
               At least one subcategory has to be selected
-            </span>
-          )}
-          {dailyAttempts >= 2 && (!isAuthenticated || !isEmailVerified) && (
-            <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              You have reached the limit of 2 quizzes per day.
             </span>
           )}
         </div>

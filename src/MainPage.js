@@ -1,11 +1,12 @@
 // src/MainPage.js
-import React, { useEffect, useState } from "react"; // Import useCallback
+import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import TopNavbar from "./components/TopNavbar";
 import { CheckCircleIcon, LightBulbIcon } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
-import { useSelector } from "react-redux";
+import { storage } from "./firebase"; // Import storage from firebase.js
+import { ref, getDownloadURL } from "firebase/storage"; // Import storage functions
 
 const EmailSentPopup = ({ onClose }) => {
   useEffect(() => {
@@ -25,13 +26,11 @@ const EmailSentPopup = ({ onClose }) => {
 
 const MainPage = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // Import navigate to reset location state
+  const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
   const [randomTip, setRandomTip] = useState(null);
-  const { isAuthenticated, isEmailVerified } = useSelector(
-    (state) => state.user
-  );
-  const { dailyAttempts } = useSelector((state) => state.quiz.quizConfig);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [tipsAndTricks, setTipsAndTricks] = useState([]); // Add tipsAndTricks state
 
   useEffect(() => {
     if (location.state?.isEmailSent) {
@@ -50,45 +49,33 @@ const MainPage = () => {
     }
   }, [showPopup]);
 
-  // Sample tips and tricks data (you can replace this with data from an API or a JSON file)
-  const tipsAndTricks = [
-    {
-      title: "Master the STAR Method",
-      description:
-        "When answering behavioral questions, use the STAR method (Situation, Task, Action, Result) to structure your responses.",
-      link: "https://www.indeed.com/career-advice/interviewing/how-to-use-the-star-interview-response-technique",
-    },
-    {
-      title: "Practice Coding Challenges",
-      description:
-        "Regularly practice coding challenges on platforms like LeetCode or HackerRank to improve your problem-solving skills.",
-      link: "https://leetcode.com/",
-    },
-    {
-      title: "Research the Company",
-      description:
-        "Before your interview, thoroughly research the company, its products, and its culture.",
-      link: "https://www.glassdoor.com/index.htm",
-    },
-    {
-      title: "Prepare Questions to Ask",
-      description:
-        "Prepare thoughtful questions to ask the interviewer. This shows your interest and engagement.",
-      link: "https://www.themuse.com/advice/51-interview-questions-you-should-be-asking",
-    },
-    {
-      title: "Review Data Structures and Algorithms",
-      description:
-        "Brush up on common data structures and algorithms, as they are frequently tested in technical interviews.",
-      link: "https://www.geeksforgeeks.org/data-structures/",
-    },
-  ];
+  useEffect(() => {
+    const fetchTipsAndTricks = async () => {
+      setIsLoading(true); // Start loading
+      try {
+        const storageRef = ref(storage, "tips/tips.json"); // Reference to the JSON file in Firebase Storage
+        const url = await getDownloadURL(storageRef); // Get the download URL
+        const response = await fetch(url); // Fetch the JSON data
+        const data = await response.json(); // Parse the JSON data
+        setTipsAndTricks(data); // Set the tips and tricks data
+      } catch (error) {
+        console.error("Error fetching tips and tricks:", error);
+        // Handle error (e.g., display an error message to the user)
+      } finally {
+        setIsLoading(false); // Stop loading
+      }
+    };
+
+    fetchTipsAndTricks();
+  }, []);
 
   useEffect(() => {
     // Select a random tip when the component mounts
-    const randomIndex = Math.floor(Math.random() * tipsAndTricks.length);
-    setRandomTip(tipsAndTricks[randomIndex]);
-  }, []);
+    if (tipsAndTricks.length > 0) {
+      const randomIndex = Math.floor(Math.random() * tipsAndTricks.length);
+      setRandomTip(tipsAndTricks[randomIndex]);
+    }
+  }, [tipsAndTricks]);
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-blue-500 dark:bg-dark-blue-matte text-light-text dark:text-white pt-20">
@@ -107,30 +94,21 @@ const MainPage = () => {
           <p className="text-lg mb-8">
             Ace your tech interviews with our targeted quizzes and expert tips.
           </p>
-          {/* Start a Quiz Button */}
-          <div className="relative group">
+          {/* Start Button */}
+          <div className="flex justify-center">
             <Link
               to="/quiz-config"
-              className={`bg-blue-500 ${
-                dailyAttempts >= 2 && (!isAuthenticated || !isEmailVerified)
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-blue-600"
-              } text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 inline-flex items-center`}
+              className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center w-fit"
             >
-              Start a Quiz <ArrowRightIcon className="h-5 w-5 ml-2" />
+              Start
+              <ArrowRightIcon className="h-5 w-5 ml-2" />
             </Link>
-            {/* Tooltip */}
-            {dailyAttempts >= 2 && (!isAuthenticated || !isEmailVerified) && (
-              <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                You have reached the limit of 2 quizzes per day.
-              </span>
-            )}
           </div>
         </div>
       </section>
 
       {/* Random Tip Section */}
-      {randomTip && (
+      {randomTip && !isLoading && (
         <section className="max-w-4xl w-full mb-12">
           <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg">
             <div className="flex items-center mb-6">
@@ -151,6 +129,11 @@ const MainPage = () => {
             </div>
           </div>
         </section>
+      )}
+      {isLoading && (
+        <div className="flex justify-center items-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-light-blue-matte dark:border-blue-400"></div>
+        </div>
       )}
     </div>
   );

@@ -39,7 +39,9 @@ const QuizPage = () => {
 
   const { questions, currentQuestion, score, quizConfig, isQuizFinished } =
     useSelector((state) => state.quiz);
-  const { user, isAuthenticated } = useSelector((state) => state.user);
+  const { user, isAuthenticated, isEmailVerified } = useSelector(
+    (state) => state.user
+  );
 
   // Determine the number of questions based on the mode
   const numQuestions = quizConfig.isMockInterviewMode ? 15 : 10;
@@ -52,7 +54,6 @@ const QuizPage = () => {
 
       try {
         if (quizConfig.category === "ai") {
-          // Fetch from Firebase Storage for AI category
           const storageRef = ref(storage, `questions/ai/ai.json`);
           const url = await getDownloadURL(storageRef);
           const response = await fetch(url);
@@ -64,10 +65,16 @@ const QuizPage = () => {
             Array.isArray(quizConfig.subcategories)
           ) {
             for (const subcategory of quizConfig.subcategories) {
-              // Fetch from Firebase Storage for other categories
+              let fileName = `${subcategory}.json`;
+              if (
+                quizConfig.category === "backend-engineer" &&
+                (!isAuthenticated || !isEmailVerified)
+              ) {
+                fileName = `${subcategory}-preview.json`;
+              }
               const storageRef = ref(
                 storage,
-                `questions/${quizConfig.category}/${subcategory}.json`
+                `questions/${quizConfig.category}/${fileName}`
               );
               const url = await getDownloadURL(storageRef);
               const response = await fetch(url);
