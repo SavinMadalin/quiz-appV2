@@ -1,6 +1,15 @@
 // src/components/HistoryChart.js
-import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import React from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 const HistoryChart = ({ chartData, selectedCategory }) => {
   return (
@@ -9,15 +18,27 @@ const HistoryChart = ({ chartData, selectedCategory }) => {
         <p>No data for this category</p>
       ) : (
         <>
-          <h3 className="text-sm font-semibold mb-1">{`Evolution of Results in ${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}`}</h3>
-          <LineChart width={window.innerWidth < 768 ? 300 : 600} height={250} data={chartData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="score" stroke="#8884d8" activeDot={{ r: 8 }} />
-          </LineChart>
+          <div className="w-full flex justify-center">
+            <ResponsiveContainer width="95%" height={250}>
+              {/* Changed width to 100% and added ResponsiveContainer */}
+              <LineChart
+                data={chartData}
+                margin={{ top: 10, right: 10, left: -35, bottom: -5 }} // Adjusted left margin
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="score"
+                  stroke="#8884d8"
+                  activeDot={{ r: 8 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </>
       )}
     </div>

@@ -1,5 +1,5 @@
 // src/components/InterviewResultPage.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { db, model } from "../firebase";
@@ -29,8 +29,10 @@ const InterviewResultPage = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const [isLoading, setIsLoading] = useState(true);
-  const [isGeneratingFeedback, setIsGeneratingFeedback] = useState(false);
   const [lastResult, setLastResult] = useState(null);
+  const [hasFeedbackBeenGenerated, setHasFeedbackBeenGenerated] =
+    useState(false); // New state
+  const isMounted = useRef(false);
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
@@ -40,14 +42,12 @@ const InterviewResultPage = () => {
 
   useEffect(() => {
     const fetchDataAndGenerateFeedback = async () => {
-      if (!quizConfig.isMockInterviewMode || isGeneratingFeedback) return;
+      if (!quizConfig.isMockInterviewMode) return; // Check if feedback has already been generated
       setIsLoading(true);
-      setIsGeneratingFeedback(true);
 
       if (!user || !user.uid) {
         console.error("User not logged in or user ID missing.");
         setIsLoading(false);
-        setIsGeneratingFeedback(false);
         return;
       }
 
@@ -71,11 +71,9 @@ const InterviewResultPage = () => {
         if (fetchedLastResult.feedback) {
           setFeedback(fetchedLastResult.feedback);
           setIsLoading(false);
-          setIsGeneratingFeedback(false);
           return;
         }
 
-        // Use lastResult here instead of fetchedLastResult
         const prompt = `
           You are an expert interviewer.
           The user has just completed a mock interview in the category ${
@@ -84,7 +82,7 @@ const InterviewResultPage = () => {
           The user answered ${score} out of ${numQuestions} questions correctly.
           The user took ${formatTime(timeTaken)} to complete the quiz.
           Here are the questions, correct answers, and the user's answers:
-          ${lastResult?.quizData // Use optional chaining here
+          ${fetchedLastResult?.quizData
             .map(
               (item, index) => `
             Question ${index + 1}: ${item.question}
@@ -114,26 +112,22 @@ const InterviewResultPage = () => {
           console.error("lastResult.id is undefined");
           setFeedback("Error generating feedback. Please try again later.");
         }
+        setHasFeedbackBeenGenerated(true); // Set the flag to true after generating feedback
       } catch (error) {
         console.error("Error generating feedback:", error);
         setFeedback("Error generating feedback. Please try again later.");
       } finally {
         setIsLoading(false);
-        setIsGeneratingFeedback(false);
       }
     };
-
-    fetchDataAndGenerateFeedback();
-  }, [
-    score,
-    numQuestions,
-    passed,
-    quizConfig,
-    timeTaken,
-    user,
-    isGeneratingFeedback,
-    lastResult?.quizData, // Add lastResult?.quizData to the dependency array
-  ]);
+    if (isMounted.current) {
+      if (!hasFeedbackBeenGenerated) {
+        fetchDataAndGenerateFeedback();
+      }
+    } else {
+      isMounted.current = true;
+    }
+  }, [score, numQuestions, quizConfig, timeTaken, user]);
 
   const handleGoHome = () => {
     dispatch(resetQuiz());

@@ -280,7 +280,7 @@ const QuizConfigPage = () => {
               </div>
               {/* Tooltip */}
               {(!isAuthenticated || !isEmailVerified) && (
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-red-500 dark:text-red-300 mt-1">
                   Only the Backend Engineer category is available for
                   unauthenticated or unverified users.
                 </p>

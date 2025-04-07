@@ -82,10 +82,12 @@ const HistoryTable = ({
     }
   };
 
+  // ...existing code...
+
   return (
     <>
       {/* Sorting Buttons */}
-      <div className="grid grid-cols-12 w-full items-center mb-2 text-sm">
+      <div className="grid grid-cols-12 w-full items-center mb-2 text-sm hidden:sm:flex">
         <button
           className="col-span-3 font-semibold flex items-center justify-left pr-5"
           onClick={() => requestSort("date")}
@@ -119,80 +121,83 @@ const HistoryTable = ({
       </div>
       {/* History List Box */}
       <div className="mb-4 p-2 rounded-lg shadow-md border border-gray-300 dark:border-gray-700 max-h-[250px] overflow-y-auto">
-        {/* Changed max-h to 250px */}
         <div className="flex flex-col gap-2 mt-2">
           {sortedHistory.map((result, index) => {
-            // Determine the number of questions based on quiz type
             const numQuestions = result.quizType === "interview" ? 15 : 10;
             const percentage = ((result.score / numQuestions) * 100).toFixed(0);
-            // Determine if the quiz is passed based on the type
             const isPassed =
               result.quizType === "interview"
                 ? percentage >= 66
-                : percentage >= 80; // Changed the percentage for interview
+                : percentage >= 80;
             const isEven = index % 2 === 0;
-            const sortConfig = { key: "date" };
 
             return (
               <div
                 key={result.id}
-                className={`bg-white dark:bg-gray-700 p-0 rounded-lg shadow-md grid grid-cols-12 w-full items-center ${
+                className={`bg-white dark:bg-gray-700 p-0 rounded-lg shadow-md ${
                   isEven
                     ? "bg-gray-50 dark:bg-gray-700"
                     : "bg-gray-100 dark:bg-gray-800"
                 } min-h-[50px]`}
               >
-                {/* Date */}
-                <div className="col-span-3 flex items-center">
-                  {getIcon(sortConfig.key, result)}
-                  <span className="font-medium text-xs">
-                    {getText(sortConfig.key, result)}
-                  </span>
-                </div>
+                {/* Horizontal Scrollable Container */}
+                <div className="overflow-x-auto">
+                  <div className="grid grid-cols-12 w-full items-center flex-nowrap min-w-[600px]">
+                    {/* Date */}
+                    <div className="col-span-3 flex items-center whitespace-nowrap">
+                      {getIcon("date", result)}
+                      <span className="font-medium text-xs">
+                        {getText("date", result)}
+                      </span>
+                    </div>
 
-                {/* Category */}
-                <div className="col-span-3 flex items-center">
-                  {getIcon("category", result)}
-                  <span className="font-medium text-xs">
-                    {getText("category", result)}
-                  </span>
-                </div>
+                    {/* Category */}
+                    <div className="col-span-3 flex items-center whitespace-nowrap">
+                      {getIcon("category", result)}
+                      <span className="font-medium text-xs">
+                        {getText("category", result)}
+                      </span>
+                    </div>
 
-                {/* Time Per Question */}
-                <div className="col-span-2 flex items-center ">
-                  {getIcon("time", result)}
-                  <span className="font-medium text-xs">
-                    {getText("time", result)}
-                  </span>
-                </div>
+                    {/* Time Per Question */}
+                    <div className="col-span-2 flex items-center whitespace-nowrap">
+                      {getIcon("time", result)}
+                      <span className="font-medium text-xs">
+                        {getText("time", result)}
+                      </span>
+                    </div>
 
-                {/* Result and status*/}
-                <div className="col-span-2 flex items-center justify-center pr-2">
-                  <div className="flex items-center">
-                    <ChartPieIcon className="h-5 w-5 text-blue-500 dark:text-blue-400 mr-1" />
-                    <span className="font-medium text-xs">{percentage}%</span>
+                    {/* Result and status */}
+                    <div className="col-span-2 flex items-center justify-center pr-2 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <ChartPieIcon className="h-5 w-5 text-blue-500 dark:text-blue-400 mr-1" />
+                        <span className="font-medium text-xs">
+                          {percentage}%
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Status and See Feedback Button */}
+                    <div className="col-span-2 flex items-center justify-end pl-1 gap-2 whitespace-nowrap">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs ${
+                          isPassed
+                            ? "bg-green-500 text-white"
+                            : "bg-red-500 text-white"
+                        }`}
+                      >
+                        {isPassed ? "Passed" : "Failed"}
+                      </span>
+                      {result.quizType === "interview" && (
+                        <button
+                          onClick={() => handleSeeFeedback(result)}
+                          className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded-md text-xs flex items-center gap-1"
+                        >
+                          <ChatBubbleLeftRightIcon className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-                {/* Status and See Feedback Button */}
-                <div className="col-span-2 flex items-center justify-end pl-1 gap-2">
-                  {/* See Feedback Button */}
-                  {result.quizType === "interview" && (
-                    <button
-                      onClick={() => handleSeeFeedback(result)}
-                      className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded-md text-xs flex items-center gap-1"
-                    >
-                      <ChatBubbleLeftRightIcon className="h-4 w-4" />
-                    </button>
-                  )}
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      isPassed
-                        ? "bg-green-500 text-white"
-                        : "bg-red-500 text-white"
-                    }`}
-                  >
-                    {isPassed ? "Passed" : "Failed"}
-                  </span>
                 </div>
               </div>
             );
@@ -202,5 +207,6 @@ const HistoryTable = ({
     </>
   );
 };
+// ...existing code...
 
 export default HistoryTable;
