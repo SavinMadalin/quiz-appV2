@@ -95,10 +95,10 @@ const TopNavbar = () => {
                 </div>
               )}
               <UserCircleIcon className="h-6 w-6 text-white" />
-              <span className="hidden sm:inline text-white">
+              <span className="text-white truncate">
                 {user.displayName}
-              </span>
-              <span className="inline sm:hidden text-white">User</span>
+              </span>{" "}
+              {/* <span className="inline sm:hidden text-white">User</span> */}
             </div>
           ) : (
             <span className="text-white">Login</span>

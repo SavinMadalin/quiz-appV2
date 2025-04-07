@@ -82,67 +82,68 @@ const HistoryTable = ({
     }
   };
 
-  // ...existing code...
-
   return (
     <>
-      {/* Sorting Buttons */}
-      <div className="grid grid-cols-12 w-full items-center mb-2 text-sm hidden:sm:flex">
-        <button
-          className="col-span-3 font-semibold flex items-center justify-left pr-5"
-          onClick={() => requestSort("date")}
-        >
-          <span className="">Date</span> {getSortIcon("date")}
-        </button>
-        <button
-          className="col-span-3 font-semibold flex items-center"
-          onClick={() => requestSort("category")}
-        >
-          <span className="">Category</span> {getSortIcon("category")}
-        </button>
-        <button
-          className="col-span-1 font-semibold flex items-center justify-center"
-          onClick={() => requestSort("time")}
-        >
-          <span className="">Time</span> {getSortIcon("time")}
-        </button>
-        <button
-          className="col-span-4 font-semibold flex items-center justify-center pr-2"
-          onClick={() => requestSort("percentage")}
-        >
-          <span className="">Percentage</span> {getSortIcon("percentage")}
-        </button>
-        <button
-          className="col-span-0 font-semibold flex items-center justify-end pr-2"
-          onClick={() => requestSort("status")}
-        >
-          <span className="">Status</span> {getSortIcon("status")}
-        </button>
-      </div>
       {/* History List Box */}
       <div className="mb-4 p-2 rounded-lg shadow-md border border-gray-300 dark:border-gray-700 max-h-[250px] overflow-y-auto">
-        <div className="flex flex-col gap-2 mt-2">
-          {sortedHistory.map((result, index) => {
-            const numQuestions = result.quizType === "interview" ? 15 : 10;
-            const percentage = ((result.score / numQuestions) * 100).toFixed(0);
-            const isPassed =
-              result.quizType === "interview"
-                ? percentage >= 66
-                : percentage >= 80;
-            const isEven = index % 2 === 0;
-
-            return (
-              <div
-                key={result.id}
-                className={`bg-white dark:bg-gray-700 p-0 rounded-lg shadow-md ${
-                  isEven
-                    ? "bg-gray-50 dark:bg-gray-700"
-                    : "bg-gray-100 dark:bg-gray-800"
-                } min-h-[50px]`}
+        {/* Horizontal Scrollable Container */}
+        <div className="overflow-x-auto">
+          {/* Inner Container for Card Content */}
+          <div className="flex flex-col gap-2 mt-2 min-w-[900px]">
+            {/* Sorting Buttons */}
+            <div className="grid grid-cols-12 w-full items-center mb-2 text-sm flex-nowrap gap-2">
+              <button
+                className="col-span-3 font-semibold flex items-center justify-left pr-5"
+                onClick={() => requestSort("date")}
               >
-                {/* Horizontal Scrollable Container */}
-                <div className="overflow-x-auto">
-                  <div className="grid grid-cols-12 w-full items-center flex-nowrap min-w-[600px]">
+                <span className="">Date</span> {getSortIcon("date")}
+              </button>
+              <button
+                className="col-span-3 font-semibold flex items-center"
+                onClick={() => requestSort("category")}
+              >
+                <span className="">Category</span> {getSortIcon("category")}
+              </button>
+              <button
+                className="col-span-1 font-semibold flex items-center justify-center"
+                onClick={() => requestSort("time")}
+              >
+                <span className="">Time</span> {getSortIcon("time")}
+              </button>
+              <button
+                className="col-span-4 font-semibold flex items-center justify-center pr-2"
+                onClick={() => requestSort("percentage")}
+              >
+                <span className="">Percentage</span> {getSortIcon("percentage")}
+              </button>
+              <button
+                className="col-span-0 font-semibold flex items-center justify-end pr-2"
+                onClick={() => requestSort("status")}
+              >
+                <span className="">Status</span> {getSortIcon("status")}
+              </button>
+            </div>
+            {sortedHistory.map((result, index) => {
+              const numQuestions = result.quizType === "interview" ? 15 : 10;
+              const percentage = ((result.score / numQuestions) * 100).toFixed(
+                0
+              );
+              const isPassed =
+                result.quizType === "interview"
+                  ? percentage >= 66
+                  : percentage >= 80;
+              const isEven = index % 2 === 0;
+
+              return (
+                <div
+                  key={result.id}
+                  className={`bg-white dark:bg-gray-700 p-0 rounded-lg shadow-md ${
+                    isEven
+                      ? "bg-gray-50 dark:bg-gray-700"
+                      : "bg-gray-100 dark:bg-gray-800"
+                  } min-h-[50px]`}
+                >
+                  <div className="grid grid-cols-12 w-full items-center flex-nowrap mt-3">
                     {/* Date */}
                     <div className="col-span-3 flex items-center whitespace-nowrap">
                       {getIcon("date", result)}
@@ -199,14 +200,13 @@ const HistoryTable = ({
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </>
   );
 };
-// ...existing code...
 
 export default HistoryTable;
