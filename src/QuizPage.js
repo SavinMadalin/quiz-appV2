@@ -5,11 +5,11 @@ import {
   answerQuestion,
   resetQuiz,
   setTimeTaken,
-} from "./redux/quizSlice"; // Import setTimeTaken
+} from "./redux/quizSlice";
 import { useNavigate } from "react-router-dom";
 import { db, storage } from "./firebase";
 import { collection, addDoc } from "firebase/firestore";
-import { ref, getDownloadURL } from "firebase/storage"; // Import storage functions
+import { ref, getDownloadURL } from "firebase/storage";
 import Spinner from "./Spinner";
 import ConfirmPopup from "./components/ConfirmPopup";
 import {
@@ -18,9 +18,9 @@ import {
   ClockIcon,
   ArrowRightIcon,
   XMarkIcon,
-} from "@heroicons/react/24/outline"; // Import icons
-import ProgressBar from "./components/ProgressBar"; // Import ProgressBar
-import CodeSnippet from "./components/CodeSnippet"; // Import CodeSnippet
+} from "@heroicons/react/24/outline";
+import ProgressBar from "./components/ProgressBar";
+import CodeSnippet from "./components/CodeSnippet";
 
 const QuizPage = () => {
   const dispatch = useDispatch();
@@ -342,7 +342,8 @@ const QuizPage = () => {
           onCancel={handleCancelFinish}
         />
       )}
-      <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full relative">
+      <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full relative max-h-[90vh] overflow-y-auto overflow-x-hidden">
+        {/* Added max-h and overflow-y */}
         <div className="absolute -top-1 -right-1">
           {/* Reduced negative margins */}
           <button
@@ -361,7 +362,7 @@ const QuizPage = () => {
         />
         {/* Add the progress bar */}
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold">Question {currentQuestion + 1}</h2>
+          <h2 className="text-xl font-bold">Question {currentQuestion + 1}</h2>
           {/* Timer per question */}
           {!quizConfig.isMockInterviewMode &&
             quizConfig.timePerQuestion > 0 && (
@@ -370,8 +371,8 @@ const QuizPage = () => {
                   isTimerRed ? "text-red-500" : ""
                 }`}
               >
-                <ClockIcon className="h-6 w-6 mr-2" />
-                <span className="text-lg font-bold">
+                <ClockIcon className="h-4 w-4 mr-2" />
+                <span className="text-mg font-bold">
                   {Math.floor(timer / 60)}:
                   {(timer % 60).toString().padStart(2, "0")}
                 </span>
@@ -384,8 +385,8 @@ const QuizPage = () => {
                 quizTimer <= 60 ? "text-red-500" : ""
               }`}
             >
-              <ClockIcon className="h-6 w-6 mr-2" />
-              <span className="text-lg font-bold">
+              <ClockIcon className="h-4 w-4 mr-2" />
+              <span className="text-mg font-bold">
                 {Math.floor(quizTimer / 60)}:
                 {(quizTimer % 60).toString().padStart(2, "0")}
               </span>
@@ -396,14 +397,14 @@ const QuizPage = () => {
         {questions.length > 0 && !isQuizFinished && (
           <>
             <div
-              className="mb-8 text-lg font-medium relative"
+              className="mb-8 text-lg font-medium relative max-h-[15vh] overflow-y-auto overflow-x-hidden" // Added max-h and overflow-y and overflow-x-hidden
               ref={questionRef}
             >
-              <div className="question-text">
+              <div className="question-text break-words">
                 {questionParts.map((part, index) => (
                   <React.Fragment key={index}>
                     {part.type === "text" && (
-                      <p className="mb-2">{part.content}</p>
+                      <p className="mb-2 break-words">{part.content}</p>
                     )}
                     {part.type === "code" && (
                       <CodeSnippet
@@ -412,7 +413,7 @@ const QuizPage = () => {
                       />
                     )}
                     {part.type === "inlineCode" && (
-                      <code className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-md text-sm">
+                      <code className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-md text-sm break-words">
                         {part.content}
                       </code>
                     )}
@@ -426,18 +427,18 @@ const QuizPage = () => {
                   key={index}
                   onClick={() => handleAnswer(answer)}
                   disabled={isAnswered}
-                  className={`w-full p-4 rounded-lg text-left border transition-all flex items-center justify-between ${
+                  className={`w-full p-4 rounded-lg text-left transition-all flex items-center justify-between border border-gray-300 dark:border-gray-600 ${
                     isAnswered
                       ? answer === currentQuestionData.correctAnswer
-                        ? "border-green-500 bg-green-100 dark:bg-green-700"
+                        ? "bg-green-100 dark:bg-green-700"
                         : currentAnswer === answer &&
                           answer !== currentQuestionData.correctAnswer
-                        ? "border-red-500 bg-red-100 dark:bg-red-700"
+                        ? "bg-red-100 dark:bg-red-700"
                         : currentAnswer === null &&
                           answer === currentQuestionData.correctAnswer
-                        ? "border-green-500 bg-green-100 dark:bg-green-700"
-                        : "border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-500 opacity-50"
-                      : "border-blue-500 hover:bg-blue-600 hover:text-white"
+                        ? "bg-green-100 dark:bg-green-700"
+                        : "dark:bg-gray-700 text-gray-500 opacity-50"
+                      : "hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-105" // Removed hover:bg-blue-600 hover:text-white and added active:scale-105
                   }`}
                 >
                   {answer}

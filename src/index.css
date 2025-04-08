@@ -107,6 +107,44 @@ button {
   animation: spin 1s linear infinite;
 }
 
+/* src/index.css */
+
+/* Light mode scrollbar */
+::-webkit-scrollbar {
+  width: 4px; /* Adjust the width as needed */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Light gray track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888; /* Dark gray thumb */
+  border-radius: 4px; /* Rounded corners */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker gray on hover */
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar {
+  width: 4px; /* Adjust the width as needed */
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #333; /* Dark gray track */
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #666; /* Lighter gray thumb */
+  border-radius: 4px; /* Rounded corners */
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #999; /* Even lighter gray on hover */
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);

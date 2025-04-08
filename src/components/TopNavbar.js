@@ -64,6 +64,18 @@ const TopNavbar = () => {
     }
   }, [error, isEmailSent]);
 
+  const formatUserName = (name) => {
+    if (!name) return "";
+    const firstSpaceIndex = name.indexOf(" ");
+    if (name.length <= 10) {
+      return name;
+    } else if (firstSpaceIndex > 0 && firstSpaceIndex <= 10) {
+      return name.substring(0, firstSpaceIndex);
+    } else {
+      return name.substring(0, 10) + "...";
+    }
+  };
+
   return (
     <div className="bg-blue-500 dark:bg-dark-blue-matte p-6 fixed top-0 left-0 right-0 z-50 flex flex-row justify-between items-center backdrop-blur-sm bg-opacity-50 dark:bg-opacity-30 h-24 md:h-24 pt-16">
       {" "}
@@ -96,9 +108,8 @@ const TopNavbar = () => {
               )}
               <UserCircleIcon className="h-6 w-6 text-white" />
               <span className="text-white truncate">
-                {user.displayName}
+                {formatUserName(user.displayName)}
               </span>{" "}
-              {/* <span className="inline sm:hidden text-white">User</span> */}
             </div>
           ) : (
             <span className="text-white">Login</span>
@@ -119,7 +130,7 @@ const TopNavbar = () => {
         {/* Dropdown Panel */}
         {isDropdownOpen && (
           <div
-            className="origin-top-right absolute right-0 mt-2 w-full sm:w-48 rounded-md bg-blue-300 shadow-lg dark:bg-dark-grey ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 dark:divide-gray-700 focus:outline-none" // light blue background
+            className="origin-top-right absolute right-0 mt-2 w-full sm:w-48 rounded-md bg-light-grey shadow-lg dark:bg-dark-grey ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 dark:divide-gray-700 focus:outline-none" // light blue background
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="options-menu"
@@ -128,9 +139,10 @@ const TopNavbar = () => {
               <div className="py-1">
                 <button
                   onClick={handleLogout}
-                  className="block w-full h-12 px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 rounded-md flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200"
+                  className="block w-full h-12 px-4 py-2 text-sm text-red-400 bg-light-grey dark:bg-dark-grey hover:bg-light-grey rounded-md flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200"
+                  style={{ width: "100%", maxWidth: "100%" }}
                 >
-                  <ArrowRightOnRectangleIcon className="h-5 w-5 text-white" />
+                  <ArrowRightOnRectangleIcon className="h-5 w-5 text-red-400" />
                   Logout
                 </button>
               </div>
@@ -140,7 +152,7 @@ const TopNavbar = () => {
                 {/* flex flex-col */}
                 <button
                   onClick={() => handleLogin(loginWithGoogle, "Google")}
-                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-blue-300 text-sm text-gray-600 dark:bg-dark-grey dark:text-gray-300 hover:bg-blue-300 dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200" // Increased width and justify-start
+                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-light-grey text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 hover:bg-light-grey dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200" // Increased width and justify-start
                 >
                   <GoogleLogo className="h-5 w-5 text-gray-700 dark:text-gray-300" />{" "}
                   {/* Increased icon size */}
@@ -149,7 +161,7 @@ const TopNavbar = () => {
                 </button>
                 <Link
                   to="/login"
-                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-blue-300 text-sm text-gray-600 dark:bg-dark-grey dark:text-gray-300 hover:bg-blue-300 dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200" // Increased width and justify-start
+                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-light-grey text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 hover:bg-light-grey dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200" // Increased width and justify-start
                 >
                   <EnvelopeIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />{" "}
                   {/* Increased icon size */}

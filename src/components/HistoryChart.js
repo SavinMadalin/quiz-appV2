@@ -12,6 +12,20 @@ import {
 } from "recharts";
 
 const HistoryChart = ({ chartData, selectedCategory }) => {
+  // Custom tooltip component
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="custom-tooltip bg-gray-800 dark:bg-gray-700 p-2 rounded-md shadow-md text-white">
+          {/* Changed background color and text color */}
+          <p className="label">{`${label}`}</p>
+          <p className="intro">{`Score: ${payload[0].value}`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="mt-2 p-1 rounded-lg shadow-md border border-gray-300 dark:border-gray-700">
       {chartData.length === 0 ? (
@@ -28,7 +42,8 @@ const HistoryChart = ({ chartData, selectedCategory }) => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" tick={{ fontSize: 10 }} />
                 <YAxis />
-                <Tooltip />
+                {/* Use the custom tooltip */}
+                <Tooltip content={<CustomTooltip />} />
                 <Legend />
                 <Line
                   type="monotone"
