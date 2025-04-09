@@ -183,10 +183,10 @@ const HistoryPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-blue-500 dark:bg-dark-blue-matte text-light-text dark:text-white pt-20">
+    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-blue-500 dark:bg-dark-blue-matte text-light-text dark:text-white pt-20 pb-20 lg:pl-28">
       <TopNavbar />
       <Navbar />
-      <div className="bg-white dark:bg-dark-grey p-6 rounded-lg shadow-lg max-w-4xl w-11/12 md:w-10/12 mt-9 mb-12">
+      <div className="bg-white dark:bg-dark-grey p-6 rounded-lg shadow-lg max-w-4xl w-11/12 md:w-10/12 mt-8 mb-12">
         {/* Changed w-10/12 to w-11/12 md:w-10/12 */}
         {fetchError && <p className="text-red-500 text-center">{fetchError}</p>}
         {isLoading ? (

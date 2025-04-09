@@ -14,6 +14,7 @@ import { setQuestions } from "./redux/quizSlice";
 import LoginPage from "./LoginPage";
 import RegisterPage from "./RegisterPage";
 import ConfirmationPage from "./ConfirmationPage";
+import SubscriptionPage from "./SubscriptionPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -108,6 +109,8 @@ function App() {
         <div className="">
           <Routes>
             <Route path="/" element={<MainPage />} />
+            <Route path="/subscription" element={<SubscriptionPage />} />{" "}
+            {/* Add subscription route */}
             <Route path="/history" element={<HistoryPage />} />
             <Route
               path="/settings"

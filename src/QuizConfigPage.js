@@ -171,7 +171,7 @@ const QuizConfigPage = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-4 bg-blue-500 dark:bg-dark-blue-matte text-light-text dark:text-white pt-24 overflow-hidden">
+    <div className="flex flex-col items-center justify-start min-h-screen p-4 bg-blue-500 dark:bg-dark-blue-matte text-light-text dark:text-white pt-24 overflow-hidden pb-28 lg:pl-52">
       <TopNavbar />
       <div className="fixed bottom-4 w-full z-40">
         <Navbar />

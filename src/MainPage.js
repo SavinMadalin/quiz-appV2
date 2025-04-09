@@ -78,14 +78,12 @@ const MainPage = () => {
   }, [tipsAndTricks]);
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-blue-500 dark:bg-dark-blue-matte text-light-text dark:text-white pt-20">
+    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-blue-500 dark:bg-dark-blue-matte text-light-text dark:text-white pt-20 pb-20 lg:pl-52">
       <TopNavbar />
       {showPopup && <EmailSentPopup onClose={() => setShowPopup(false)} />}
 
-      <Navbar />
-
       {/* Hero Section */}
-      <section className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-4xl w-full mt-20 mb-12">
+      <section className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-4xl w-full mt-8 mb-12">
         <div className="text-center">
           <h1 className="text-6xl font-extrabold mb-4">
             <span className="text-yellow-400">Dev</span>
@@ -135,6 +133,7 @@ const MainPage = () => {
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-light-blue-matte dark:border-blue-400"></div>
         </div>
       )}
+      <Navbar />
     </div>
   );
 };

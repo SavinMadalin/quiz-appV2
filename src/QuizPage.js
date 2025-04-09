@@ -342,7 +342,7 @@ const QuizPage = () => {
           onCancel={handleCancelFinish}
         />
       )}
-      <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full relative max-h-[90vh] overflow-y-auto overflow-x-hidden">
+      <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full relative max-h-[100vh] overflow-y-hidden overflow-x-hidden">
         {/* Added max-h and overflow-y */}
         <div className="absolute -top-1 -right-1">
           {/* Reduced negative margins */}
@@ -361,18 +361,18 @@ const QuizPage = () => {
           isCompleted={isProgressBarGreen}
         />
         {/* Add the progress bar */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold">Question {currentQuestion + 1}</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-bold">Question {currentQuestion + 1}</h2>
           {/* Timer per question */}
           {!quizConfig.isMockInterviewMode &&
             quizConfig.timePerQuestion > 0 && (
               <div
-                className={`flex items-center justify-center bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 ${
+                className={`flex items-center justify-center bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-md ${
                   isTimerRed ? "text-red-500" : ""
                 }`}
               >
                 <ClockIcon className="h-4 w-4 mr-2" />
-                <span className="text-mg font-bold">
+                <span className="text-base font-bold">
                   {Math.floor(timer / 60)}:
                   {(timer % 60).toString().padStart(2, "0")}
                 </span>
@@ -381,12 +381,12 @@ const QuizPage = () => {
           {/* Quiz Timer */}
           {quizConfig.isMockInterviewMode && (
             <div
-              className={`flex items-center justify-center bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 ${
+              className={`flex items-center justify-center bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-md ${
                 quizTimer <= 60 ? "text-red-500" : ""
               }`}
             >
-              <ClockIcon className="h-4 w-4 mr-2" />
-              <span className="text-mg font-bold">
+              <ClockIcon className="h-3 w-3 mr-2" />
+              <span className="text-base font-bold">
                 {Math.floor(quizTimer / 60)}:
                 {(quizTimer % 60).toString().padStart(2, "0")}
               </span>
@@ -397,7 +397,7 @@ const QuizPage = () => {
         {questions.length > 0 && !isQuizFinished && (
           <>
             <div
-              className="mb-8 text-lg font-medium relative max-h-[15vh] overflow-y-auto overflow-x-hidden" // Added max-h and overflow-y and overflow-x-hidden
+              className="mb-5 text-base font-medium relative max-h-[20vh] overflow-y-auto overflow-x-hidden " // Added max-h and overflow-y and overflow-x-hidden
               ref={questionRef}
             >
               <div className="question-text break-words">
@@ -421,13 +421,13 @@ const QuizPage = () => {
                 ))}
               </div>
             </div>
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-1">
               {currentQuestionData.answers.map((answer, index) => (
                 <button
                   key={index}
                   onClick={() => handleAnswer(answer)}
                   disabled={isAnswered}
-                  className={`w-full p-4 rounded-lg text-left transition-all flex items-center justify-between border border-gray-300 dark:border-gray-600 ${
+                  className={`w-full p-3 rounded-lg text-base text-left transition-all flex items-center justify-between border border-gray-300 dark:border-gray-400 ${
                     isAnswered
                       ? answer === currentQuestionData.correctAnswer
                         ? "bg-green-100 dark:bg-green-700"
