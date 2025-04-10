@@ -130,7 +130,7 @@ const TopNavbar = () => {
         {/* Dropdown Panel */}
         {isDropdownOpen && (
           <div
-            className="origin-top-right absolute right-0 mt-2 w-full sm:w-48 rounded-md bg-light-grey shadow-lg dark:bg-dark-grey ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 dark:divide-gray-700 focus:outline-none" // light blue background
+            className="origin-top-right absolute right-0 mt-2 w-full sm:w-48 rounded-md bg-white shadow-lg dark:bg-dark-grey ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 dark:divide-gray-700 focus:outline-none" // light blue background
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="options-menu"
@@ -139,7 +139,7 @@ const TopNavbar = () => {
               <div className="py-1">
                 <button
                   onClick={handleLogout}
-                  className="block w-full h-12 px-4 py-2 text-sm text-red-400 bg-light-grey dark:bg-dark-grey hover:bg-light-grey rounded-md flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200"
+                  className="block w-full h-12 px-4 py-2 text-sm text-red-400 bg-white dark:bg-dark-grey hover:bg-light-grey rounded-md flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200"
                   style={{ width: "100%", maxWidth: "100%" }}
                 >
                   <ArrowRightOnRectangleIcon className="h-5 w-5 text-red-400" />
@@ -152,7 +152,7 @@ const TopNavbar = () => {
                 {/* flex flex-col */}
                 <button
                   onClick={() => handleLogin(loginWithGoogle, "Google")}
-                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-light-grey text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 hover:bg-light-grey dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200" // Increased width and justify-start
+                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 hover:bg-light-grey dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200" // Increased width and justify-start
                 >
                   <GoogleLogo className="h-5 w-5 text-gray-700 dark:text-gray-300" />{" "}
                   {/* Increased icon size */}
@@ -161,7 +161,7 @@ const TopNavbar = () => {
                 </button>
                 <Link
                   to="/login"
-                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-light-grey text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 hover:bg-light-grey dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200" // Increased width and justify-start
+                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 hover:bg-light-grey dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200" // Increased width and justify-start
                 >
                   <EnvelopeIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />{" "}
                   {/* Increased icon size */}

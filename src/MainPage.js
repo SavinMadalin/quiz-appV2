@@ -7,6 +7,7 @@ import { CheckCircleIcon, LightBulbIcon } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import { storage } from "./firebase"; // Import storage from firebase.js
 import { ref, getDownloadURL } from "firebase/storage"; // Import storage functions
+import QuestionGenerator from "./QuestionGenerator";
 
 const EmailSentPopup = ({ onClose }) => {
   useEffect(() => {
@@ -81,7 +82,6 @@ const MainPage = () => {
     <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-blue-500 dark:bg-dark-blue-matte text-light-text dark:text-white pt-20 pb-20 lg:pl-52">
       <TopNavbar />
       {showPopup && <EmailSentPopup onClose={() => setShowPopup(false)} />}
-
       {/* Hero Section */}
       <section className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-4xl w-full mt-8 mb-12">
         <div className="text-center">
@@ -104,7 +104,6 @@ const MainPage = () => {
           </div>
         </div>
       </section>
-
       {/* Random Tip Section */}
       {randomTip && !isLoading && (
         <section className="max-w-4xl w-full mb-12">

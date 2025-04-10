@@ -18,24 +18,87 @@ import {
   ClockIcon,
   ArrowRightIcon,
   XMarkIcon,
+  CodeBracketIcon, // Import necessary icons if defining categories locally
+  ComputerDesktopIcon,
+  ServerStackIcon,
+  CloudIcon,
+  CircleStackIcon,
+  AcademicCapIcon,
 } from "@heroicons/react/24/outline";
 import ProgressBar from "./components/ProgressBar";
 import CodeSnippet from "./components/CodeSnippet";
+
+// --- Define Categories Structure (or import from a shared file) ---
+// Note: It's better practice to define this in a shared location (e.g., constants.js)
+// and import it here and in QuizConfigPage.js
+const mainCategories = [
+  {
+    value: "core-languages",
+    label: "Core Languages",
+    icon: CodeBracketIcon,
+    subcategories: [
+      "java",
+      "python",
+      "javascript",
+      "typescript",
+      "sql",
+      "go",
+      "csharp",
+    ],
+  },
+  {
+    value: "frontend",
+    label: "Frontend",
+    icon: ComputerDesktopIcon,
+    subcategories: ["react", "angular", "vue", "html-css"],
+  },
+  {
+    value: "backend",
+    label: "Backend",
+    icon: ServerStackIcon,
+    subcategories: ["nodejs", "spring", "django-flask", "api-rest"],
+  },
+  {
+    value: "devops",
+    label: "DevOps",
+    icon: CloudIcon,
+    subcategories: [], // No subcategories
+  },
+  {
+    value: "cloud-engineer",
+    label: "Cloud Engineer",
+    icon: CloudIcon,
+    subcategories: [], // No subcategories
+  },
+  {
+    value: "databases",
+    label: "Databases",
+    icon: CircleStackIcon,
+    subcategories: [], // No subcategories
+  },
+  {
+    value: "ai-ml",
+    label: "AI/Machine Learning",
+    icon: AcademicCapIcon,
+    subcategories: ["ml-concepts", "python-ml", "deep-learning"],
+  },
+];
+// --- End Categories Structure ---
 
 const QuizPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [currentAnswer, setCurrentAnswer] = useState(null);
   const [timer, setTimer] = useState(null);
-  const [quizTimer, setQuizTimer] = useState(null); // New state for the overall quiz timer
+  const [quizTimer, setQuizTimer] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isLastQuestion, setIsLastQuestion] = useState(false);
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [showNextButton, setShowNextButton] = useState(false);
-  const questionRef = useRef(null); // Ref for the question container
-  const [quizData, setQuizData] = useState([]); // New state to store quiz data
-  const [quizStartTime, setQuizStartTime] = useState(null); // New state for quiz start time
+  const questionRef = useRef(null);
+  const [quizData, setQuizData] = useState([]);
+  const [quizStartTime, setQuizStartTime] = useState(null);
 
   const { questions, currentQuestion, score, quizConfig, isQuizFinished } =
     useSelector((state) => state.quiz);
@@ -43,50 +106,104 @@ const QuizPage = () => {
     (state) => state.user
   );
 
-  // Determine the number of questions based on the mode
   const numQuestions = quizConfig.isMockInterviewMode ? 15 : 10;
 
-  // Load the questions from a JSON file or Firestore
+  // Helper to get the current category object
+  const getCurrentCategory = (categoryValue) => {
+    return mainCategories.find((cat) => cat.value === categoryValue);
+  };
+
+  // Load the questions from Firebase Storage
   useEffect(() => {
     const loadQuestions = async () => {
       setIsLoading(true);
       let allQuestions = [];
+      const selectedCategoryValue = quizConfig.category;
+      const selectedCategoryData = getCurrentCategory(selectedCategoryValue);
+
+      if (!selectedCategoryData) {
+        console.error("Selected category data not found!");
+        setIsLoading(false);
+        // Handle error appropriately
+        return;
+      }
+
+      const hasSubcategories = selectedCategoryData.subcategories.length > 0;
 
       try {
-        if (quizConfig.category === "ai") {
-          const storageRef = ref(storage, `questions/ai/ai.json`);
-          const url = await getDownloadURL(storageRef);
-          const response = await fetch(url);
-          const data = await response.json();
-          allQuestions = [...allQuestions, ...data];
-        } else {
-          if (
-            quizConfig.subcategories &&
-            Array.isArray(quizConfig.subcategories)
-          ) {
-            for (const subcategory of quizConfig.subcategories) {
-              let fileName = `${subcategory}.json`;
-              if (
-                quizConfig.category === "backend-engineer" &&
-                (!isAuthenticated || !isEmailVerified)
-              ) {
-                fileName = `${subcategory}-preview.json`;
-              }
-              const storageRef = ref(
-                storage,
-                `questions/${quizConfig.category}/${fileName}`
-              );
+        if (hasSubcategories) {
+          // --- Load questions from selected subcategories ---
+          const selectedSubcategories = quizConfig.subcategories || [];
+          if (selectedSubcategories.length === 0) {
+            console.warn("Category has subcategories, but none were selected.");
+            // Optionally handle this case, e.g., show an error or load from a default subcategory
+          }
+
+          for (const subcategory of selectedSubcategories) {
+            // --- Preview Logic (Example - Adjust if needed) ---
+            // Apply preview logic only if applicable (e.g., for specific categories/subcategories)
+            let usePreview = false;
+            if (
+              selectedCategoryValue === "core-languages" &&
+              (!isAuthenticated || !isEmailVerified)
+            ) {
+              usePreview = true; // Example: only backend previews for guests
+            }
+            const fileName = usePreview
+              ? `${subcategory}-preview.json`
+              : `${subcategory}.json`;
+            // --- End Preview Logic ---
+
+            const filePath = `questions/${selectedCategoryValue}/${fileName}`;
+
+            try {
+              const storageRef = ref(storage, filePath);
               const url = await getDownloadURL(storageRef);
               const response = await fetch(url);
+              if (!response.ok) throw new Error(`Failed to fetch ${filePath}`);
               const data = await response.json();
-              if (data) {
+              if (data && Array.isArray(data)) {
                 allQuestions = [...allQuestions, ...data];
               }
+            } catch (subError) {
+              console.warn(
+                `Could not load questions for ${filePath}: ${subError.message}`
+              );
+              // Continue loading other subcategories even if one fails
             }
+          }
+        } else {
+          // --- Load questions directly from the category file ---
+          const fileName = `${selectedCategoryValue}.json`;
+          const filePath = `questions/${fileName}`; // Path structure for categories without subfolders
+
+          try {
+            const storageRef = ref(storage, filePath);
+            const url = await getDownloadURL(storageRef);
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Failed to fetch ${filePath}`);
+            const data = await response.json();
+            if (data && Array.isArray(data)) {
+              allQuestions = data;
+            }
+          } catch (catError) {
+            console.error(
+              `Error loading questions for ${filePath}: ${catError.message}`
+            );
+            // Handle error (e.g., display an error message to the user)
           }
         }
 
-        // Shuffle the questions
+        if (allQuestions.length === 0) {
+          console.error(
+            "No questions loaded. Check file paths and selections."
+          );
+          // Handle the case where no questions were loaded (show error, navigate back, etc.)
+          setIsLoading(false);
+          return;
+        }
+
+        // Shuffle the loaded questions
         for (let i = allQuestions.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [allQuestions[i], allQuestions[j]] = [
@@ -96,38 +213,40 @@ const QuizPage = () => {
         }
 
         // Slice the array to get the correct number of questions.
-        const firstQuestions = allQuestions.slice(0, numQuestions);
-        dispatch(setQuestions(firstQuestions));
-        const initialQuizData = firstQuestions.map((question) => ({
+        const selectedQuestions = allQuestions.slice(0, numQuestions);
+        dispatch(setQuestions(selectedQuestions));
+
+        // Initialize quizData for tracking answers
+        const initialQuizData = selectedQuestions.map((question) => ({
           question: question.question,
           correctAnswer: question.correctAnswer,
           userAnswer: null,
         }));
         setQuizData(initialQuizData);
-        setIsLoading(false);
       } catch (error) {
-        console.error("Error loading questions:", error);
+        console.error("General error loading questions:", error);
+        // Handle general error
+      } finally {
         setIsLoading(false);
-        // Handle error (e.g., display an error message to the user)
       }
     };
 
     loadQuestions();
-  }, [dispatch, quizConfig.category, quizConfig.subcategories, numQuestions]);
+  }, [
+    dispatch,
+    quizConfig.category,
+    quizConfig.subcategories,
+    numQuestions,
+    isAuthenticated,
+    isEmailVerified,
+  ]); // Added dependencies
+
+  // ... (rest of the component remains the same: timer logic, handleAnswer, handleNext, saveScore, UI rendering, etc.) ...
 
   useEffect(() => {
     setIsLastQuestion(currentQuestion === numQuestions - 1);
-    console.log(
-      "useEffect isLastQuestion - currentQuestion:",
-      currentQuestion,
-      "numQuestions:",
-      numQuestions,
-      "isLastQuestion:",
-      isLastQuestion
-    );
   }, [currentQuestion, numQuestions]);
 
-  // Timer logic
   useEffect(() => {
     if (quizConfig.isMockInterviewMode) {
       // Initialize the overall quiz timer to 15 minutes (900 seconds) only once
@@ -197,14 +316,6 @@ const QuizPage = () => {
   };
 
   const handleNext = () => {
-    console.log(
-      "handleNext - currentQuestion:",
-      currentQuestion,
-      "numQuestions:",
-      numQuestions,
-      "isLastQuestion:",
-      isLastQuestion
-    );
     // If the user has not answered, set the current answer to null
     if (!isAnswered) {
       setCurrentAnswer(null);

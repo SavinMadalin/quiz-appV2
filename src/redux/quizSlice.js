@@ -1,23 +1,22 @@
 // src/redux/quizSlice.js
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   questions: [],
   currentQuestion: 0,
   score: 0,
   quizConfig: {
-    category: 'backend-engineer',
+    category: "core-languages",
     subcategories: [],
     timePerQuestion: 1,
     isMockInterviewMode: false,
-    dailyAttempts: 0, // New state for daily attempts
   },
   isQuizFinished: false,
   timeTaken: 0, // Add timeTaken to the initial state
 };
 
 export const quizSlice = createSlice({
-  name: 'quiz',
+  name: "quiz",
   initialState,
   reducers: {
     setQuestions: (state, action) => {
@@ -29,7 +28,10 @@ export const quizSlice = createSlice({
     },
     answerQuestion: (state, action) => {
       const currentQuestionData = state.questions[state.currentQuestion];
-      if (currentQuestionData && action.payload === currentQuestionData.correctAnswer) {
+      if (
+        currentQuestionData &&
+        action.payload === currentQuestionData.correctAnswer
+      ) {
         state.score += 1;
       }
       // Increment currentQuestion only if it's not the last question
@@ -49,18 +51,19 @@ export const quizSlice = createSlice({
       state.isQuizFinished = false;
       state.timeTaken = 0;
     },
-    setTimeTaken: (state, action) => { // Add a new reducer to set timeTaken
+    setTimeTaken: (state, action) => {
+      // Add a new reducer to set timeTaken
       state.timeTaken = action.payload;
-    },
-    incrementDailyAttempts: (state) => {
-      state.quizConfig.dailyAttempts += 1;
-    },
-    resetDailyAttempts: (state) => {
-      state.quizConfig.dailyAttempts = 0;
     },
   },
 });
 
-export const { setQuestions, answerQuestion, setQuizConfig, resetQuiz, setTimeTaken, incrementDailyAttempts, resetDailyAttempts } = quizSlice.actions;
+export const {
+  setQuestions,
+  answerQuestion,
+  setQuizConfig,
+  resetQuiz,
+  setTimeTaken,
+} = quizSlice.actions;
 
 export default quizSlice.reducer;
