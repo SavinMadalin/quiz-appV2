@@ -71,6 +71,19 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
 
   const handleThemeToggle = () => {
     dispatch(toggleTheme());
+
+    const newIsDarkMode = !isDarkMode;
+    const themeMessage = newIsDarkMode ? "dark" : "light";
+
+    console.log("Attempting to send theme message:", themeMessage); // <-- Add this
+    console.log("Does ThemeChannel exist?", window.ThemeChannel); // <-- Add this
+
+    if (window.ThemeChannel && window.ThemeChannel.postMessage) {
+      window.ThemeChannel.postMessage(themeMessage);
+      console.log("Theme message sent successfully!"); // <-- Add this
+    } else {
+      console.error("ThemeChannel is not available or postMessage is missing."); // <-- Add this
+    }
   };
 
   // Update the body class when the theme changes
@@ -179,7 +192,7 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-blue-500 dark:bg-dark-blue-matte text-light-text dark:text-white pt-20 pb-28 lg:pl-28">
+    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-20 pb-28 lg:pl-28">
       <TopNavbar />
       <Navbar />
       <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-sm w-full mt-8">

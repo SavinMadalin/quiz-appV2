@@ -18,72 +18,15 @@ import {
   ClockIcon,
   ArrowRightIcon,
   XMarkIcon,
-  CodeBracketIcon, // Import necessary icons if defining categories locally
-  ComputerDesktopIcon,
-  ServerStackIcon,
-  CloudIcon,
-  CircleStackIcon,
-  AcademicCapIcon,
 } from "@heroicons/react/24/outline";
 import ProgressBar from "./components/ProgressBar";
 import CodeSnippet from "./components/CodeSnippet";
-
-// --- Define Categories Structure (or import from a shared file) ---
-// Note: It's better practice to define this in a shared location (e.g., constants.js)
-// and import it here and in QuizConfigPage.js
-const mainCategories = [
-  {
-    value: "core-languages",
-    label: "Core Languages",
-    icon: CodeBracketIcon,
-    subcategories: [
-      "java",
-      "python",
-      "javascript",
-      "typescript",
-      "sql",
-      "go",
-      "csharp",
-    ],
-  },
-  {
-    value: "frontend",
-    label: "Frontend",
-    icon: ComputerDesktopIcon,
-    subcategories: ["react", "angular", "vue", "html-css"],
-  },
-  {
-    value: "backend",
-    label: "Backend",
-    icon: ServerStackIcon,
-    subcategories: ["nodejs", "spring", "django-flask", "api-rest"],
-  },
-  {
-    value: "devops",
-    label: "DevOps",
-    icon: CloudIcon,
-    subcategories: [], // No subcategories
-  },
-  {
-    value: "cloud-engineer",
-    label: "Cloud Engineer",
-    icon: CloudIcon,
-    subcategories: [], // No subcategories
-  },
-  {
-    value: "databases",
-    label: "Databases",
-    icon: CircleStackIcon,
-    subcategories: [], // No subcategories
-  },
-  {
-    value: "ai-ml",
-    label: "AI/Machine Learning",
-    icon: AcademicCapIcon,
-    subcategories: ["ml-concepts", "python-ml", "deep-learning"],
-  },
-];
-// --- End Categories Structure ---
+import {
+  mainCategories,
+  MOCK_INTERVIEW_QUESTIONS,
+  CUSTOM_QUIZ_QUESTIONS,
+} from "./constants"; // Import from constants.js
+import TopNavbar from "./components/TopNavbar"; // Import TopNavbar component
 
 const QuizPage = () => {
   const dispatch = useDispatch();
@@ -106,7 +49,9 @@ const QuizPage = () => {
     (state) => state.user
   );
 
-  const numQuestions = quizConfig.isMockInterviewMode ? 15 : 10;
+  const numQuestions = quizConfig.isMockInterviewMode
+    ? MOCK_INTERVIEW_QUESTIONS
+    : CUSTOM_QUIZ_QUESTIONS;
 
   // Helper to get the current category object
   const getCurrentCategory = (categoryValue) => {
@@ -433,7 +378,7 @@ const QuizPage = () => {
 
   if (isLoading || questions.length === 0) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-blue-500 dark:bg-dark-blue-matte">
+      <div className="min-h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-900">
         <Spinner />
       </div>
     );
@@ -445,7 +390,9 @@ const QuizPage = () => {
   const questionParts = extractCodeSnippets(currentQuestionData.question);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-blue-500 dark:bg-dark-blue-matte text-light-text dark:text-white p-6">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white p-6 pt-12">
+      <TopNavbar />
+
       {showConfirmPopup && (
         <ConfirmPopup
           message="Do you want to quit the quiz? Your score will not be registered"
@@ -453,7 +400,7 @@ const QuizPage = () => {
           onCancel={handleCancelFinish}
         />
       )}
-      <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full relative max-h-[100vh] overflow-y-hidden overflow-x-hidden">
+      <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full relative max-h-[90vh] overflow-y-hidden overflow-x-hidden">
         {/* Added max-h and overflow-y */}
         <div className="absolute -top-1 -right-1">
           {/* Reduced negative margins */}
@@ -552,14 +499,14 @@ const QuizPage = () => {
                       : "hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-105" // Removed hover:bg-blue-600 hover:text-white and added active:scale-105
                   }`}
                 >
-                  {answer}
+                  <span className="flex-grow mr-2 break-words">{answer}</span>
                   {isAnswered &&
                     (answer === currentQuestionData.correctAnswer ? (
-                      <CheckCircleIcon className="h-6 w-6 text-green-500 dark:text-green-400" />
+                      <CheckCircleIcon className="h-6 w-6 text-green-500 dark:text-green-400 flex-shrink-0" />
                     ) : (
                       currentAnswer === answer &&
                       answer !== currentQuestionData.correctAnswer && (
-                        <XCircleIcon className="h-6 w-6 text-red-500 dark:text-red-400" />
+                        <XCircleIcon className="h-6 w-6 text-red-500 dark:text-red-400 flex-shrink-0" />
                       )
                     ))}
                 </button>

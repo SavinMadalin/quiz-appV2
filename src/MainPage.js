@@ -79,7 +79,7 @@ const MainPage = () => {
   }, [tipsAndTricks]);
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-blue-500 dark:bg-dark-blue-matte text-light-text dark:text-white pt-20 pb-20 lg:pl-52">
+    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-12 pb-20 lg:pl-52">
       <TopNavbar />
       {showPopup && <EmailSentPopup onClose={() => setShowPopup(false)} />}
       {/* Hero Section */}
@@ -87,7 +87,7 @@ const MainPage = () => {
         <div className="text-center">
           <h1 className="text-6xl font-extrabold mb-4">
             <span className="text-yellow-400">Dev</span>
-            <span className="text-blue-500">Prep</span>
+            <span className="text-black dark:text-white">Prep</span>
           </h1>
           <p className="text-lg mb-8">
             Ace your tech interviews with our targeted quizzes and expert tips.

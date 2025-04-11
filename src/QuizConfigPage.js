@@ -8,15 +8,10 @@ import {
   Cog6ToothIcon,
   ChevronDownIcon,
   ChevronUpIcon,
-  CodeBracketIcon, // New icon for Core Languages
-  ComputerDesktopIcon, // New icon for Frontend
-  ServerStackIcon, // New icon for Backend
-  CloudIcon, // New icon for Cloud/DevOps
-  CircleStackIcon, // New icon for Databases
-  AcademicCapIcon, // New icon for AI/ML
 } from "@heroicons/react/24/outline";
 import { useState, useEffect, useRef } from "react";
 import classNames from "classnames"; // Import classNames
+import { mainCategories } from "./constants"; // Import from constants.js
 
 const QuizConfigPage = () => {
   const dispatch = useDispatch();
@@ -39,64 +34,6 @@ const QuizConfigPage = () => {
   const [isTimeDropdownOpen, setIsTimeDropdownOpen] = useState(false);
   const categoryDropdownRef = useRef(null);
   const timeDropdownRef = useRef(null);
-
-  // --- Updated Categories Structure ---
-  const mainCategories = [
-    {
-      value: "core-languages",
-      label: "Core Languages",
-      icon: CodeBracketIcon,
-      subcategories: [
-        "java",
-        "python",
-        "javascript",
-        "typescript",
-        "sql",
-        "go",
-        "csharp",
-      ],
-    },
-    {
-      value: "frontend",
-      label: "Frontend",
-      icon: ComputerDesktopIcon,
-      subcategories: ["react", "angular", "vue", "html-css"],
-    },
-    {
-      value: "backend",
-      label: "Backend",
-      icon: ServerStackIcon,
-      subcategories: ["nodejs", "spring", "django-flask", "api-rest"],
-    },
-    {
-      value: "devops",
-      label: "DevOps",
-      icon: CloudIcon, // Using CloudIcon for DevOps
-      subcategories: [], // No subcategories
-      description: "(Docker, K8s, CI/CD, etc.)", // <-- Add description
-    },
-    {
-      value: "cloud-engineer",
-      label: "Cloud Engineer",
-      icon: CloudIcon, // Using CloudIcon for Cloud
-      subcategories: [], // No subcategories
-      description: "(AWS, Azure, GCP, etc.)", // <-- Add description
-    },
-    {
-      value: "databases",
-      label: "Databases",
-      icon: CircleStackIcon,
-      subcategories: [], // No subcategories
-      description: "(Relational DB, NoSQL, Design, etc.)", // <-- Add description
-    },
-    {
-      value: "ai-ml",
-      label: "AI/Machine Learning",
-      icon: AcademicCapIcon,
-      subcategories: ["ml-concepts", "python-ml", "deep-learning"],
-    },
-  ];
-  // --- End Updated Categories ---
 
   const timeOptions = [
     { value: "1", label: "1 minute" },
@@ -132,6 +69,32 @@ const QuizConfigPage = () => {
     }
     setError(null);
   }, [isAuthenticated, isEmailVerified]); // Rerun if auth status changes
+
+  const getDisplaySubcategoryName = (subcategoryValue) => {
+    switch (subcategoryValue) {
+      case "api-rest":
+        return "Rest API";
+      case "csharp":
+        return "C#";
+      case "django-flask":
+        return "Django/Flask";
+      case "html-css":
+        return "HTML/CSS";
+      case "ml-concepts":
+        return "ML Concepts";
+      case "python-ml":
+        return "Python (ML)";
+      case "deep-learning":
+        return "Deep Learning";
+      // Add more custom mappings here if needed
+      default:
+        // Default formatting: Capitalize first letter of each word, join with space
+        return subcategoryValue
+          .split("-")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+    }
+  };
 
   // Update start button disabled state
   useEffect(() => {
@@ -273,7 +236,7 @@ const QuizConfigPage = () => {
   const currentCategoryHasSubcategories = subcategories.length > 0;
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-4 bg-blue-500 dark:bg-dark-blue-matte text-light-text dark:text-white pt-24 pb-24 lg:pl-52">
+    <div className="flex flex-col items-center justify-start min-h-screen p-4 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-12 pb-24 lg:pl-52">
       <TopNavbar />
       <Navbar />
       <div className="bg-white dark:bg-dark-grey p-7 rounded-lg shadow-lg max-w-md w-full mt-8 mb-8">
@@ -432,12 +395,7 @@ const QuizConfigPage = () => {
                         : "hover:opacity-80" // Hover effect for enabled
                     )}
                   >
-                    {sub
-                      .split("-")
-                      .map(
-                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
-                      )
-                      .join(" ")}
+                    {getDisplaySubcategoryName(sub)}
                   </button>
                 );
               })}

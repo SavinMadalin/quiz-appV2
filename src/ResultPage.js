@@ -1,19 +1,22 @@
 // src/ResultPage.js
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { resetQuiz } from "./redux/quizSlice";
 import {
   CheckCircleIcon,
   XCircleIcon,
   ChartPieIcon,
   ArrowLeftIcon,
+  ArrowPathIcon, // Import the refresh icon
 } from "@heroicons/react/24/outline"; // Import icons
 import InterviewResultPage from "./components/InterviewResultPage";
+import TopNavbar from "./components/TopNavbar";
 
 const ResultPage = () => {
   const { score, quizConfig } = useSelector((state) => state.quiz);
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Initialize useNavigate
   const numQuestions = quizConfig.isMockInterviewMode ? 15 : 10;
 
   const correctAnswers = score;
@@ -25,12 +28,18 @@ const ResultPage = () => {
     dispatch(resetQuiz());
   };
 
+  const handleRetakeQuiz = () => {
+    dispatch(resetQuiz()); // Reset score, current question, etc., but keep config
+    navigate("/quiz"); // Navigate back to the quiz page to start again
+  };
+
   if (quizConfig.isMockInterviewMode) {
     return <InterviewResultPage />;
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-blue-500 dark:bg-dark-blue-matte text-light-text dark:text-white">
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-12">
+      <TopNavbar />
       <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full">
         <h1 className="text-3xl font-bold mb-6 text-center">Quiz Completed!</h1>
 
@@ -91,14 +100,27 @@ const ResultPage = () => {
             </div>
           </div>
         </div>
-        <Link
-          to="/"
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 block text-center"
-          onClick={handleGoHome}
-        >
-          <ArrowLeftIcon className="h-5 w-5 mr-2 inline-block" />
-          Go Back to Home
-        </Link>
+        <div className="flex flex-col sm:flex-row gap-4">
+          {" "}
+          {/* Use flex layout for buttons */}
+          {/* Retake Quiz Button */}
+          <button
+            onClick={handleRetakeQuiz}
+            className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
+          >
+            <ArrowPathIcon className="h-5 w-5 mr-2 inline-block" />
+            Retake Quiz
+          </button>
+          {/* Go Home Button */}
+          <Link
+            to="/"
+            className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center" // Use flex-1 for equal width
+            onClick={handleGoHome}
+          >
+            <ArrowLeftIcon className="h-5 w-5 mr-2 inline-block" />
+            Go Back to Home
+          </Link>
+        </div>
       </div>
     </div>
   );
