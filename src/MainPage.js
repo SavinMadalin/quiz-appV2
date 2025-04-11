@@ -104,6 +104,33 @@ const MainPage = () => {
           </div>
         </div>
       </section>
+
+      <section className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-4xl w-full mt-8 mb-12">
+        {/* ... existing content ... */}
+
+        {/* Add Download Button Section */}
+        <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 text-center">
+          <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">
+            Get the Android App
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            Install the dedicated app for the best mobile experience.
+          </p>
+          <a
+            href="https://firebasestorage.googleapis.com/v0/b/myproject-6969b.firebasestorage.app/o/app-release.apk?alt=media&token=07a1ffb2-8361-4760-8102-67816c0ec766" // <-- PASTE THE URL HERE
+            target="_blank" // Opens the link in a new tab/external browser
+            rel="noopener noreferrer" // Security best practice for target="_blank"
+            download // Suggests the browser should download the file
+            className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-5 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+          >
+            Download APK
+          </a>
+          <p className="text-xs text-gray-500 dark:text-gray-500 mt-3">
+            (You may need to enable 'Install from unknown sources' in Android
+            settings)
+          </p>
+        </div>
+      </section>
       {/* Random Tip Section */}
       {randomTip && !isLoading && (
         <section className="max-w-4xl w-full mb-12">
