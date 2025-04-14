@@ -1,10 +1,6 @@
 // src/LoginPage.js
 import React, { useState } from "react";
-import {
-  loginWithEmailAndPassword,
-  sendPasswordReset,
-  checkIfEmailExists,
-} from "./firebase"; // Import sendPasswordReset
+import { loginWithEmailAndPassword, sendPasswordReset } from "./firebase"; // Import sendPasswordReset
 import { useNavigate, Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import TopNavbar from "./components/TopNavbar";
@@ -44,27 +40,29 @@ const LoginPage = () => {
     setError(null);
     setResetEmailSent(false);
 
-    if (!email) {
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail) {
+      // Check the trimmed email
       setError("Please enter your email address.");
       return;
     }
-
-    const emailExists = await checkIfEmailExists(email);
-    if (!emailExists) {
-      setError("This email is not registered.");
-      return;
-    }
     try {
-      await sendPasswordReset(email);
+      await sendPasswordReset(trimmedEmail);
       setResetEmailSent(true);
     } catch (err) {
-      setError(
-        "Error sending password reset email. Please check the email address."
-      );
-      console.error("Password reset failed:", err);
+      // Catch specific Firebase errors
+      if (err.code === "auth/user-not-found") {
+        setError("This email is not registered."); // Set the error based on Firebase's response
+      } else if (err.code === "auth/invalid-email") {
+        setError("Please enter a valid email address.");
+      } else {
+        // Generic error for other issues
+        setError("Error sending password reset email. Please try again later.");
+        console.error("Password reset failed:", err);
+      }
     }
   };
-
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white p-6 pt-12 pb-20 lg:pl-28">
       <TopNavbar />

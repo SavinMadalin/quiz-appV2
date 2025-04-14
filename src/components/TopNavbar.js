@@ -115,9 +115,11 @@ const TopNavbar = () => {
               {!user.emailVerified && (
                 <div className="relative group">
                   <ExclamationTriangleIcon className="h-5 w-5 text-red-500 mr-1 cursor-pointer" />
-                  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-red-500 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    Verify your email for accessing all the features. See
-                    settings.
+                  <span className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-max bg-red-500 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                    {" "}
+                    {/* Added z-10 */}
+                    Verify your email for accessing all the features.
+                    <br /> See settings.
                   </span>
                 </div>
               )}
@@ -167,7 +169,7 @@ const TopNavbar = () => {
         {/* Dropdown Panel */}
         {isDropdownOpen && (
           <div
-            className="origin-top-right absolute right-0 mt-2 w-full sm:w-48 rounded-md bg-white shadow-lg dark:bg-dark-grey ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 dark:divide-gray-700 focus:outline-none"
+            className="origin-top-right absolute right-0 mt-2 w-full sm:w-48 rounded-md bg-white shadow-lg dark:bg-dark-grey ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 dark:divide-gray-700 focus:outline-none z-20"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="options-menu"

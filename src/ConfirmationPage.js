@@ -1,108 +1,140 @@
 // src/ConfirmationPage.js
-import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { resendVerificationEmail } from "./firebase"; // Import resendVerificationEmail from firebase/auth
-import { FirebaseError } from "firebase/app";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { applyActionCode, onAuthStateChanged } from "firebase/auth"; // Import necessary functions
+import { auth } from "./firebase"; // Import your Firebase auth instance
+import TopNavbar from "./components/TopNavbar";
+import Spinner from "./Spinner"; // Import Spinner for loading state
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+} from "@heroicons/react/24/solid";
+
+// Helper function to parse query parameters
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 
 const ConfirmationPage = () => {
-  const location = useLocation();
-  const email = location.state?.email; // Get the email from the location state
-  const [isEmailSent, setIsEmailSent] = useState(false);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [timeToWait, setTimeToWait] = useState(0); // New state for time to wait
-  const [hasToWait, setHasToWait] = useState(false); // New state for has to wait
+  const query = useQuery();
+  const navigate = useNavigate();
+  const [status, setStatus] = useState("verifying"); // 'verifying', 'success', 'error'
+  const [errorMessage, setErrorMessage] = useState("");
+  const [currentUser, setCurrentUser] = useState(auth.currentUser); // Track current user
 
+  // Listen for auth state changes to get the latest user status
   useEffect(() => {
-    if (error || isEmailSent) {
-      const timer = setTimeout(() => {
-        setError(null);
-        setIsEmailSent(false);
-      }, 5000); // Clear the error and the success message after 5 seconds
-      return () => clearTimeout(timer);
-    }
-  }, [error, isEmailSent]);
-
-  useEffect(() => {
-    if (hasToWait && timeToWait > 0) {
-      const timer = setInterval(() => {
-        setTimeToWait((prevTime) => prevTime - 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    } else if (hasToWait && timeToWait === 0) {
-      setHasToWait(false);
-    }
-  }, [hasToWait, timeToWait]);
-
-  const handleResendEmail = async () => {
-    setError(null);
-    setIsEmailSent(false);
-    setIsLoading(true);
-    try {
-      // Send the verification email again
-      await resendVerificationEmail(email);
-      setIsEmailSent(true);
-    } catch (err) {
-      if (err instanceof FirebaseError) {
-        if (err.code === "auth/too-many-requests") {
-          setError(
-            "Too many requests. Please wait a few minutes before trying again."
-          );
-          setTimeToWait(60); // Set the time to wait to 60 seconds
-          setHasToWait(true);
-        } else if (err.code === "auth/user-not-found") {
-          setError("This email is not registered.");
-        } else if (err.code === "auth/operation-not-allowed") {
-          setError("This email is not registered with email/password.");
-        } else {
-          setError("Error sending verification email. Please try again.");
-          console.error("Error sending verification email:", err);
-        }
-      } else {
-        setError("Error sending verification email. Please try again.");
-        console.error("Error sending verification email:", err);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      // If user becomes available and is verified, update status if still verifying
+      if (user?.emailVerified && status === "verifying") {
+        setStatus("success");
       }
-    } finally {
-      setIsLoading(false);
+    });
+    return unsubscribe; // Cleanup subscription
+  }, [status]); // Re-run if status changes
+
+  useEffect(() => {
+    const actionCode = query.get("oobCode");
+
+    if (!actionCode) {
+      setStatus("error");
+      setErrorMessage("Invalid verification link. Code missing.");
+      return;
+    }
+
+    const handleVerifyEmail = async () => {
+      // Check if the email is already verified (might happen due to Firebase redirect or race condition)
+      // Use a potentially updated currentUser from the auth listener
+      const userToCheck = auth.currentUser || currentUser;
+      if (userToCheck?.emailVerified) {
+        console.log("Email already verified, showing success.");
+        setStatus("success");
+        return;
+      }
+
+      // If not verified, attempt to apply the code
+      setStatus("verifying");
+      try {
+        await applyActionCode(auth, actionCode);
+        setStatus("success");
+        // Force a reload of the user state to get the latest emailVerified status
+        await auth.currentUser?.reload();
+        setCurrentUser(auth.currentUser); // Update local state too
+      } catch (error) {
+        console.error("Error applying action code:", error);
+        // Check again if it got verified despite the error (race condition)
+        await auth.currentUser?.reload();
+        if (auth.currentUser?.emailVerified) {
+          console.log(
+            "Email verified despite applyActionCode error (likely race condition)."
+          );
+          setStatus("success");
+        } else if (error.code === "auth/invalid-action-code") {
+          // If the code is invalid, it might have been used by Firebase redirect OR it's truly invalid/expired
+          // We optimistically assume success if the user *is* verified now.
+          setStatus("error");
+          setErrorMessage(
+            "Verification link is invalid or has expired. Please request a new one or try logging in."
+          );
+        } else {
+          setStatus("error");
+          setErrorMessage(
+            "An error occurred during email verification. Please try again later."
+          );
+        }
+      }
+    };
+
+    handleVerifyEmail();
+    // Only run this effect once on mount based on the initial query params
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]); // Depend only on query
+
+  const renderContent = () => {
+    switch (status) {
+      case "verifying":
+        return (
+          <div className="text-center">
+            <Spinner />
+            <p className="mt-4 text-lg">Verifying your email...</p>
+          </div>
+        );
+      case "success":
+        return (
+          <div className="text-center">
+            <div className="flex justify-center mb-4">
+              <CheckCircleIcon className="h-16 w-16 text-green-500" />
+            </div>
+            <h2 className="text-2xl font-bold mb-4">
+              Email Verified Successfully!
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
+              Your account is now verified. You can now access all features.
+            </p>
+          </div>
+        );
+      case "error":
+        return (
+          <div className="text-center">
+            <div className="flex justify-center mb-4">
+              <ExclamationCircleIcon className="h-16 w-16 text-red-500" />
+            </div>
+            <h2 className="text-2xl font-bold mb-4">Verification Failed</h2>
+            <p className="text-red-500 dark:text-red-400 mb-6">
+              {errorMessage || "Could not verify your email."}
+            </p>
+          </div>
+        );
+      default:
+        return null;
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-blue-500 dark:bg-dark-blue-matte text-light-text dark:text-white p-6">
+    <div className="flex justify-center items-center min-h-screen bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white p-6 pt-12 pb-20 lg:pl-28">
       <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full">
-        <h2 className="text-2xl font-bold mb-6 text-center">
-          Confirm Your Email
-        </h2>
-        <p className="mb-4">
-          Registration successful! Please check your email (<b>{email}</b>) to
-          verify your account.
-        </p>
-        {error && <div className="text-red-500 mb-4">{error}</div>}
-        {isEmailSent && (
-          <div className="text-green-500 mb-4">Verification email sent!</div>
-        )}
-        {hasToWait && (
-          <div className="text-yellow-500 mb-4">
-            Please wait {timeToWait} seconds before trying again.
-          </div>
-        )}
-        <div className="flex flex-col gap-4">
-          <button
-            onClick={handleResendEmail}
-            className={`bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out ${
-              isLoading || hasToWait ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            disabled={isLoading || hasToWait}
-          >
-            Resend Verification Email
-          </button>
-          <Link
-            to="/login"
-            className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out text-center"
-          >
-            Go to Login
-          </Link>
-        </div>
+        {renderContent()}
       </div>
     </div>
   );

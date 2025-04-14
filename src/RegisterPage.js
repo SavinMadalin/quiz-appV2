@@ -117,6 +117,10 @@ const RegisterPage = ({ setEmailSent, setIsRegistering }) => {
             className="p-3 border rounded-md bg-light-grey dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
+
+          <p className="text-sm text-gray-600 dark:text-gray-400 text-center mt-2 mb-2">
+            After registration, a verification link will be sent to your email.
+          </p>
           <button
             type="submit"
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out"

@@ -15,6 +15,8 @@ import LoginPage from "./LoginPage";
 import RegisterPage from "./RegisterPage";
 import ConfirmationPage from "./ConfirmationPage";
 import SubscriptionPage from "./SubscriptionPage";
+import ResetPasswordPage from "./ResetPasswordPage";
+import AuthActionHandlerPage from "./AuthActionHandlerPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -136,7 +138,10 @@ function App() {
                 />
               }
             />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />{" "}
+            {/* Add this route */}
             <Route path="/confirmation" element={<ConfirmationPage />} />
+            <Route path="/auth/action" element={<AuthActionHandlerPage />} />
           </Routes>
         </div>
       </Router>
