@@ -1,8 +1,18 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom"; // Import useNavigate
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState, useRef } from "react"; // Import useRef
+import { useEffect, useState, useRef } from "react";
 import { setUser } from "./redux/userSlice";
-import { onAuthStateChangedListener } from "./firebase";
+// Import necessary Firebase functions
+import {
+  onAuthStateChangedListener,
+  auth, // Assuming 'auth' is exported from your firebase.js
+} from "./firebase";
+import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
 import MainPage from "./MainPage";
 import QuizConfigPage from "./QuizConfigPage";
 import HistoryPage from "./HistoryPage";
@@ -20,15 +30,18 @@ import AuthActionHandlerPage from "./AuthActionHandlerPage";
 
 function App() {
   const dispatch = useDispatch();
+  // Note: useNavigate needs to be called within a component rendered by Router
+  // We'll call it inside AppContent below
   const { quizConfig } = useSelector((state) => state.quiz);
   const { serializeUser } = useSerializeUser();
   const [emailVerified, setEmailVerified] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
-  const pollingIntervalRef = useRef(null); // Create a ref to hold the interval ID
-  const pollingTimeoutRef = useRef(null); // Create a ref to hold the timeout ID
-  const [isDeletingUser, setIsDeletingUser] = useState(false); // New state variable
+  const pollingIntervalRef = useRef(null);
+  const pollingTimeoutRef = useRef(null);
+  const [isDeletingUser, setIsDeletingUser] = useState(false);
 
+  // --- onAuthStateChanged Listener ---
   useEffect(() => {
     const unsubscribe = onAuthStateChangedListener(async (firebaseUser) => {
       if (firebaseUser) {
@@ -40,14 +53,12 @@ function App() {
 
           setEmailVerified(firebaseUser.emailVerified);
 
-          // Start polling only if the email is not verified, the email was sent, and we are not registering
           if (
             !firebaseUser.emailVerified &&
             emailSent &&
             !isRegistering &&
             !isDeletingUser
           ) {
-            // Clear any existing interval
             if (pollingIntervalRef.current) {
               clearInterval(pollingIntervalRef.current);
             }
@@ -77,7 +88,6 @@ function App() {
       } else {
         dispatch(setUser(null));
         setEmailVerified(false);
-        // Clear any existing interval when the user logs out
         if (pollingIntervalRef.current) {
           clearInterval(pollingIntervalRef.current);
         }
@@ -89,7 +99,6 @@ function App() {
 
     return () => {
       unsubscribe();
-      // Clear any existing interval when the component unmounts
       if (pollingIntervalRef.current) {
         clearInterval(pollingIntervalRef.current);
       }
@@ -97,8 +106,9 @@ function App() {
         clearTimeout(pollingTimeoutRef.current);
       }
     };
-  }, [dispatch, serializeUser, emailSent, isRegistering, isDeletingUser]); // Add isDeletingUser to the dependency array
+  }, [dispatch, serializeUser, emailSent, isRegistering, isDeletingUser]);
 
+  // --- Other useEffect hooks ---
   useEffect(() => {
     return () => dispatch(setQuestions([]));
   }, [dispatch]);
@@ -107,44 +117,118 @@ function App() {
     <div
       className={`${quizConfig.theme === "dark" ? "dark" : ""} min-h-screen`}
     >
+      {/* Router needs to be inside App for useNavigate to work in child components */}
       <Router>
-        <div className="">
-          <Routes>
-            <Route path="/" element={<MainPage />} />
-            <Route path="/subscription" element={<SubscriptionPage />} />{" "}
-            {/* Add subscription route */}
-            <Route path="/history" element={<HistoryPage />} />
-            <Route
-              path="/settings"
-              element={
-                <SettingsPage
-                  emailVerified={emailVerified}
-                  setEmailSent={setEmailSent}
-                  setIsDeletingUser={setIsDeletingUser}
-                />
-              }
-            />{" "}
-            {/* Pass setIsDeletingUser */}
-            <Route path="/quiz-config" element={<QuizConfigPage />} />
-            <Route path="/quiz" element={<QuizPage />} />
-            <Route path="/result" element={<ResultPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route
-              path="/register"
-              element={
-                <RegisterPage
-                  setEmailSent={setEmailSent}
-                  setIsRegistering={setIsRegistering}
-                />
-              }
-            />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />{" "}
-            {/* Add this route */}
-            <Route path="/confirmation" element={<ConfirmationPage />} />
-            <Route path="/auth/action" element={<AuthActionHandlerPage />} />
-          </Routes>
-        </div>
+        <AppContent
+          quizConfig={quizConfig}
+          emailVerified={emailVerified}
+          setEmailSent={setEmailSent}
+          setIsDeletingUser={setIsDeletingUser}
+          setIsRegistering={setIsRegistering}
+          serializeUser={serializeUser} // Pass serializeUser down
+        />
       </Router>
+    </div>
+  );
+}
+
+// Separate component to use hooks like useNavigate inside the Router context
+function AppContent({
+  quizConfig,
+  emailVerified,
+  setEmailSent,
+  setIsDeletingUser,
+  setIsRegistering,
+  serializeUser, // Receive serializeUser
+}) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate(); // Now useNavigate can be called here
+
+  // --- Updated function to handle token from Flutter ---
+  useEffect(() => {
+    window.handleFlutterSignInToken = async (idToken) => {
+      // Make the function async
+      console.log("Received idToken from Flutter:", idToken);
+
+      if (!idToken) {
+        console.error("Received null or empty idToken from Flutter.");
+        if (window.Toaster) {
+          window.Toaster.postMessage("Google Sign-In failed (empty token).");
+        }
+        return;
+      }
+
+      try {
+        // 1. Create a Google Auth credential using the idToken
+        const credential = GoogleAuthProvider.credential(idToken);
+
+        // 2. Sign in with the credential using Firebase client SDK
+        // 'auth' needs to be your initialized Firebase Auth instance
+        const userCredential = await signInWithCredential(auth, credential);
+
+        console.log(
+          "Firebase Sign-In with credential successful:",
+          userCredential.user
+        );
+
+        // No need to manually dispatch setUser here.
+        // The onAuthStateChanged listener will automatically detect the
+        // signed-in user and update the Redux state.
+
+        // Optional: Navigate the user after successful sign-in
+        // navigate('/'); // Navigate to home or dashboard
+      } catch (error) {
+        console.error(
+          "Error signing in with credential from Flutter token:",
+          error
+        );
+        if (window.Toaster) {
+          window.Toaster.postMessage(`Google Sign-In failed: ${error.message}`);
+        }
+        // Handle specific errors if needed (e.g., invalid token)
+      }
+    };
+
+    // Cleanup function
+    return () => {
+      delete window.handleFlutterSignInToken;
+    };
+    // Add 'auth' to dependencies if it's not stable, though usually it is.
+  }, [dispatch, navigate, serializeUser]); // Added dependencies
+
+  return (
+    <div className="">
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/subscription" element={<SubscriptionPage />} />
+        <Route path="/history" element={<HistoryPage />} />
+        <Route
+          path="/settings"
+          element={
+            <SettingsPage
+              emailVerified={emailVerified}
+              setEmailSent={setEmailSent}
+              setIsDeletingUser={setIsDeletingUser}
+            />
+          }
+        />
+        <Route path="/quiz-config" element={<QuizConfigPage />} />
+        <Route path="/quiz" element={<QuizPage />} />
+        <Route path="/result" element={<ResultPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/register"
+          element={
+            <RegisterPage
+              setEmailSent={setEmailSent}
+              setIsRegistering={setIsRegistering}
+            />
+          }
+        />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/confirmation" element={<ConfirmationPage />} />
+        <Route path="/auth/action" element={<AuthActionHandlerPage />} />
+      </Routes>
     </div>
   );
 }
