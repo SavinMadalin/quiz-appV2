@@ -400,7 +400,7 @@ const QuizPage = () => {
           onCancel={handleCancelFinish}
         />
       )}
-      <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full relative max-h-[90vh] overflow-y-hidden overflow-x-hidden">
+      <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full relative overflow-x-hidden mt-8">
         {/* Added max-h and overflow-y */}
         <div className="absolute -top-1 -right-1">
           {/* Reduced negative margins */}

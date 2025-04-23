@@ -55,28 +55,37 @@ const SubscriptionPage = () => {
 
   return (
     // Apply the standard page layout padding
-    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-12 pb-24 lg:pl-52">
+    <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-12 pb-24 lg:pl-52">
+      {" "}
+      {/* Reduced padding */}
       <TopNavbar />
       <Navbar />
-
-      {/* Main Content Area */}
-      <div className="bg-white dark:bg-dark-grey p-6 md:p-8 rounded-lg shadow-lg max-w-2xl w-full mt-8">
-        {/* Adjusted title size: text-2xl default, text-3xl on sm */}
-        <h2 className="text-2xl sm:text-2xl font-bold mb-4 text-center flex items-center justify-center gap-2">
-          <StarIcon className="h-7 w-7 sm:h-8 sm:w-8 text-yellow-400" />{" "}
+      {/* Main Content Area - Reduced padding, max-w-lg */}
+      <div className="bg-white dark:bg-dark-grey p-5 md:p-6 rounded-lg shadow-lg max-w-lg w-full mt-8">
+        {" "}
+        {/* Reduced padding, max-w-lg */}
+        {/* Adjusted title size: text-xl default, text-2xl on sm, mb-3 */}
+        <h2 className="text-xl sm:text-2xl font-bold mb-3 text-center flex items-center justify-center gap-1.5">
+          {" "}
+          {/* Reduced mb, gap */}
+          <StarIcon className="h-6 w-6 sm:h-7 sm:w-7 text-yellow-400" />{" "}
           {/* Adjusted icon size */}
           Unlock Premium Access
         </h2>
-
-        {/* Adjusted paragraph size: text-base default, text-lg on sm */}
-        <p className="text-base sm:text-lg text-center mb-6 text-gray-700 dark:text-gray-300">
+        {/* Adjusted paragraph size: text-sm default, text-base on sm, mb-5 */}
+        <p className="text-sm sm:text-base text-center mb-5 text-gray-700 dark:text-gray-300">
+          {" "}
+          {/* Reduced mb */}
           Supercharge your interview preparation with DevPrep Premium!
         </p>
-
-        {/* Feature Comparison Table */}
-        <div className="mb-8 border rounded-lg overflow-hidden border-gray-300 dark:border-gray-600">
-          {/* Header Row */}
-          <div className="grid grid-cols-3 gap-4 bg-gray-100 dark:bg-gray-700 p-3 font-semibold text-center">
+        {/* Feature Comparison Table - Reduced mb-6 */}
+        <div className="mb-6 border rounded-lg overflow-hidden border-gray-300 dark:border-gray-600">
+          {" "}
+          {/* Reduced mb */}
+          {/* Header Row - Reduced padding p-2, gap-2 */}
+          <div className="grid grid-cols-3 gap-2 bg-gray-100 dark:bg-gray-700 p-2 font-semibold text-center text-sm">
+            {" "}
+            {/* Reduced padding, gap, text-sm */}
             <div className="text-left">Feature</div>
             <div>Basic</div>
             <div className="flex items-center justify-center gap-1 text-yellow-500">
@@ -88,72 +97,82 @@ const SubscriptionPage = () => {
             {features.map((feature) => (
               <div
                 key={feature.name} // Use feature name as key for stability
-                // Reduced padding, gap, and text size for smaller screens
-                className="grid grid-cols-3 gap-2 p-2 sm:gap-4 sm:p-3 items-center text-xs sm:text-sm"
+                // Reduced padding p-1.5, gap-1.5, text-xs
+                className="grid grid-cols-3 gap-1.5 p-1.5 items-center text-xs" // Reduced padding, gap, text-xs
               >
                 <div className="text-left">{feature.name}</div>
                 <div className="flex justify-center">
                   {feature.basic ? (
-                    <OutlineCheckIcon className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" /> // Smaller icon on mobile
+                    <OutlineCheckIcon className="h-4 w-4 text-green-500" /> // Kept icon size
                   ) : (
-                    <OutlineXIcon className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" /> // Smaller icon on mobile
+                    <OutlineXIcon className="h-4 w-4 text-red-500" /> // Kept icon size
                   )}
                 </div>
                 <div className="flex justify-center">
                   {feature.premium ? (
-                    <OutlineCheckIcon className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" /> // Smaller icon on mobile
+                    <OutlineCheckIcon className="h-4 w-4 text-green-500" /> // Kept icon size
                   ) : (
-                    <OutlineXIcon className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" /> // Smaller icon on mobile
+                    <OutlineXIcon className="h-4 w-4 text-red-500" /> // Kept icon size
                   )}
                 </div>
               </div>
             ))}
           </div>
         </div>
-
-        {/* Pricing Section */}
-        <div className="border-t border-gray-300 dark:border-gray-600 pt-6 text-center">
-          {/* Adjusted pricing title size: text-xl default, text-2xl on sm */}
-          <h3 className="text-lg sm:text-xl font-semibold mb-4">
+        {/* Pricing Section - Reduced pt-5 */}
+        <div className="border-t border-gray-300 dark:border-gray-600 pt-5 text-center">
+          {" "}
+          {/* Reduced pt */}
+          {/* Adjusted pricing title size: text-lg default, text-xl on sm, mb-3 */}
+          <h3 className="text-lg sm:text-xl font-semibold mb-3">
+            {" "}
+            {/* Reduced mb */}
             Choose Your Plan
           </h3>
-
-          {/* Plan Selection Buttons */}
-          <div className="flex flex-row gap-2 mb-6 sm:grid sm:grid-cols-3 sm:gap-3">
+          {/* Plan Selection Buttons - Reduced mb-5, gap-2 */}
+          <div className="flex flex-col gap-2 mb-5 grid grid-cols-3 sm:gap-2">
+            {" "}
+            {/* Reduced mb, gap */}
             {Object.values(plans).map((plan) => (
               <button
                 key={plan.id}
                 onClick={() => setSelectedPlan(plan.id)}
                 className={classNames(
-                  "flex-1 p-1.5 rounded-lg border transition-all duration-200 text-left",
-                  "sm:p-3",
+                  "flex-1 p-2 rounded-lg border transition-all duration-200 text-left", // Reduced padding p-2
+                  "sm:p-2.5", // Slightly larger padding on sm
                   selectedPlan === plan.id
                     ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 ring-2 ring-blue-500"
                     : "border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                 )}
               >
-                <p className="font-bold text-xs mb-0 sm:text-base sm:mb-1">
+                {/* Reduced font sizes */}
+                <p className="font-bold text-xs mb-0.5 sm:text-sm sm:mb-0.5">
+                  {" "}
+                  {/* Reduced mb */}
                   {plan.name}
                 </p>
-                <p className="text-base font-extrabold mb-0 sm:text-xl sm:mb-1">
+                <p className="text-base font-extrabold mb-0.5 sm:text-lg sm:mb-0.5">
+                  {" "}
+                  {/* Reduced mb */}
                   {plan.price}
                 </p>
                 <p className="text-xs text-gray-600 dark:text-gray-400">
                   per {plan.interval}
                 </p>
                 {plan.save && (
-                  <span className="inline-block bg-yellow-200 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-100 text-xs font-semibold mt-1 px-1.5 py-0.5 rounded sm:px-2">
+                  <span className="inline-block bg-yellow-200 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-100 text-xs font-semibold mt-1 px-1.5 py-0.5 rounded">
+                    {" "}
+                    {/* Kept size */}
                     {plan.save}
                   </span>
                 )}
               </button>
             ))}
           </div>
-
-          {/* Subscribe Button */}
+          {/* Subscribe Button - Reduced padding py-2 px-6 */}
           <button
             onClick={() => handleSubscription(selectedPlan)}
-            className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-8 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+            className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 text-sm" // Reduced padding, added text-sm
           >
             Subscribe to {plans[selectedPlan].name} Plan
           </button>

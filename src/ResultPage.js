@@ -38,33 +38,44 @@ const ResultPage = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-12">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-12">
+      {" "}
+      {/* Reduced overall padding on small screens */}
       <TopNavbar />
-      <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full">
-        <h1 className="text-3xl font-bold mb-6 text-center">Quiz Completed!</h1>
+      {/* Reduced padding p-6, max-w-sm */}
+      <div className="bg-white dark:bg-dark-grey p-6 rounded-lg shadow-lg max-w-sm w-full mt-8">
+        {/* Reduced title size text-2xl, mb-4 */}
+        <h1 className="text-2xl font-bold mb-4 text-center">Quiz Completed!</h1>
 
         {/* Display Pass/Fail status and message */}
-        <div className="flex items-center justify-center mb-6">
+        {/* Reduced mb-4 */}
+        <div className="flex items-center justify-center mb-4">
           {isPassed ? (
             <div className="flex items-center text-center">
-              <CheckCircleIcon className="h-8 w-8 text-green-500 dark:text-green-400 mr-2" />{" "}
-              {/* Smaller icon with mr-2 */}
+              {/* Reduced icon size h-6 w-6, mr-1 */}
+              <CheckCircleIcon className="h-6 w-6 text-green-500 dark:text-green-400 mr-1" />
               <div className="flex flex-col">
-                <h2 className="text-2xl font-bold text-green-500 dark:text-green-400">
+                {/* Reduced text size text-xl */}
+                <h2 className="text-xl font-bold text-green-500 dark:text-green-400">
                   Passed
                 </h2>
-                <p className="text-green-500 dark:text-green-400">Good job!</p>
+                {/* Reduced text size text-sm */}
+                <p className="text-sm text-green-500 dark:text-green-400">
+                  Good job!
+                </p>
               </div>
             </div>
           ) : (
             <div className="flex items-center text-center">
-              <XCircleIcon className="h-8 w-8 text-red-500 dark:text-red-400 mr-2" />{" "}
-              {/* Smaller icon with mr-2 */}
+              {/* Reduced icon size h-6 w-6, mr-1 */}
+              <XCircleIcon className="h-6 w-6 text-red-500 dark:text-red-400 mr-1" />
               <div className="flex flex-col">
-                <h2 className="text-2xl font-bold text-red-500 dark:text-red-400">
+                {/* Reduced text size text-xl */}
+                <h2 className="text-xl font-bold text-red-500 dark:text-red-400">
                   Failed
                 </h2>
-                <p className="text-red-500 dark:text-red-400">
+                {/* Reduced text size text-sm */}
+                <p className="text-sm text-red-500 dark:text-red-400">
                   Don't worry, keep practicing!
                 </p>
               </div>
@@ -72,52 +83,68 @@ const ResultPage = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 gap-6 mb-8">
+        {/* Reduced gap-4, mb-6 */}
+        <div className="grid grid-cols-1 gap-4 mb-6">
           {/* Correct Answers */}
-          <div className="flex items-center space-x-4 p-4 rounded-lg border border-green-500 dark:border-green-700">
-            <CheckCircleIcon className="h-10 w-10 text-green-500 dark:text-green-400" />
+          {/* Reduced padding p-3, space-x-3 */}
+          <div className="flex items-center space-x-3 p-3 rounded-lg border border-green-500 dark:border-green-700">
+            {/* Reduced icon size h-8 w-8 */}
+            <CheckCircleIcon className="h-8 w-8 text-green-500 dark:text-green-400" />
             <div>
-              <p className="font-medium">Correct Answers</p>
-              <p className="text-xl font-bold">{correctAnswers}</p>
+              {/* Reduced text size text-sm */}
+              <p className="text-sm font-medium">Correct Answers</p>
+              {/* Reduced text size text-lg */}
+              <p className="text-lg font-bold">{correctAnswers}</p>
             </div>
           </div>
 
           {/* Incorrect Answers */}
-          <div className="flex items-center space-x-4 p-4 rounded-lg border border-red-500 dark:border-red-700">
-            <XCircleIcon className="h-10 w-10 text-red-500 dark:text-red-400" />
+          {/* Reduced padding p-3, space-x-3 */}
+          <div className="flex items-center space-x-3 p-3 rounded-lg border border-red-500 dark:border-red-700">
+            {/* Reduced icon size h-8 w-8 */}
+            <XCircleIcon className="h-8 w-8 text-red-500 dark:text-red-400" />
             <div>
-              <p className="font-medium">Incorrect Answers</p>
-              <p className="text-xl font-bold">{incorrectAnswers}</p>
+              {/* Reduced text size text-sm */}
+              <p className="text-sm font-medium">Incorrect Answers</p>
+              {/* Reduced text size text-lg */}
+              <p className="text-lg font-bold">{incorrectAnswers}</p>
             </div>
           </div>
 
           {/* Percentage */}
-          <div className="flex items-center space-x-4 p-4 rounded-lg border border-blue-500 dark:border-blue-700">
-            <ChartPieIcon className="h-10 w-10 text-blue-500 dark:text-blue-400" />
+          {/* Reduced padding p-3, space-x-3 */}
+          <div className="flex items-center space-x-3 p-3 rounded-lg border border-blue-500 dark:border-blue-700">
+            {/* Reduced icon size h-8 w-8 */}
+            <ChartPieIcon className="h-8 w-8 text-blue-500 dark:text-blue-400" />
             <div>
-              <p className="font-medium">Percentage</p>
-              <p className="text-xl font-bold">{percentage}%</p>
+              {/* Reduced text size text-sm */}
+              <p className="text-sm font-medium">Percentage</p>
+              {/* Reduced text size text-lg */}
+              <p className="text-lg font-bold">{percentage}%</p>
             </div>
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row gap-4">
-          {" "}
-          {/* Use flex layout for buttons */}
+        {/* Reduced gap-3 */}
+        <div className="flex flex-col sm:flex-row gap-3">
           {/* Retake Quiz Button */}
+          {/* Reduced padding py-2 px-4, text-sm */}
           <button
             onClick={handleRetakeQuiz}
-            className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
+            className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center text-sm"
           >
-            <ArrowPathIcon className="h-5 w-5 mr-2 inline-block" />
+            {/* Reduced icon size h-4 w-4, mr-1 */}
+            <ArrowPathIcon className="h-4 w-4 mr-1 inline-block" />
             Retake Quiz
           </button>
           {/* Go Home Button */}
+          {/* Reduced padding py-2 px-4, text-sm */}
           <Link
             to="/"
-            className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center" // Use flex-1 for equal width
+            className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center text-sm" // Use flex-1 for equal width
             onClick={handleGoHome}
           >
-            <ArrowLeftIcon className="h-5 w-5 mr-2 inline-block" />
+            {/* Reduced icon size h-4 w-4, mr-1 */}
+            <ArrowLeftIcon className="h-4 w-4 mr-1 inline-block" />
             Go Back to Home
           </Link>
         </div>
