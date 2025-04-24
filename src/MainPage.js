@@ -105,7 +105,7 @@ const MainPage = () => {
               <ArrowRightIcon className="h-5 w-5 ml-2" />
             </Link>
             <a
-              href="https://firebasestorage.googleapis.com/v0/b/myproject-6969b.firebasestorage.app/o/app-release.apk?alt=media&token=07a1ffb2-8361-4760-8102-67816c0ec766" // <-- Your APK URL
+              href="https://firebasestorage.googleapis.com/v0/b/myproject-6969b.firebasestorage.app/o/app-release.apk?alt=media&token=2087d683-fd89-4b80-b96b-a122481f5ce2" // <-- Your APK URL
               target="_blank"
               rel="noopener noreferrer"
               download

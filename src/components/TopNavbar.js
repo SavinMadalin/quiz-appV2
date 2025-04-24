@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { loginWithGoogle, logout as firebaseLogout } from "../firebase";
+import { loginWithGoogle, logout as firebaseLogout } from "../firebase"; // loginWithGoogle might not be needed if disabled
 import { useSelector } from "react-redux";
 import {
   UserCircleIcon,
@@ -9,18 +9,29 @@ import {
   ExclamationTriangleIcon,
   EnvelopeIcon,
 } from "@heroicons/react/24/outline";
-import { GoogleLogo } from "../components/Logos";
+import { GoogleLogo } from "../components/Logos"; // Assuming you have this
 import { Link } from "react-router-dom";
 import classNames from "classnames";
+
+// Simple Apple Logo Placeholder (replace with a better SVG if you have one)
+const AppleLogo = ({ className }) => (
+  <svg
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+  >
+    <path d="M19.1 12.75C19.1 11.19 20.16 10.41 20.28 10.35C19.32 8.85 17.94 8.19 16.86 8.13C15.3 8.01 13.95 8.91 13.26 8.91C12.57 8.91 11.52 8.01 10.08 8.1C8.85 8.16 7.65 8.82 6.84 9.99C5.07 12.45 6.06 16.53 7.83 18.99C8.7 20.16 9.78 21.48 11.19 21.48C12.54 21.48 13.05 20.73 14.58 20.73C16.11 20.73 16.56 21.48 18.03 21.45C19.44 21.42 20.37 20.16 21.18 18.96C19.83 18.15 19.11 16.5 19.11 14.79C19.11 14.79 19.1 12.75 19.1 12.75ZM15.03 6.87C15.84 5.97 16.35 4.74 16.23 3.51C14.97 3.6 13.83 4.35 13.05 5.25C12.33 6.09 11.76 7.35 11.91 8.58C13.23 8.55 14.28 7.77 15.03 6.87Z" />
+  </svg>
+);
 
 const TopNavbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const { user } = useSelector((state) => state.user);
-  const [error, setError] = useState(null);
-  const [isEmailSent, setIsEmailSent] = useState(false);
+  // Removed error and isEmailSent states as they weren't used for login buttons
 
-  // Define handleLogin here to be accessible by triggerFlutterGoogleSignIn's fallback
+  // handleLogin is kept for potential future use or other login methods
   const handleLogin = async (loginFunction, providerName) => {
     try {
       await loginFunction();
@@ -29,20 +40,6 @@ const TopNavbar = () => {
       console.error(`Login with ${providerName} failed:`, error);
     }
   };
-
-  // --- Moved triggerFlutterGoogleSignIn INSIDE the component ---
-  function triggerFlutterGoogleSignIn() {
-    if (window.AuthChannel && window.AuthChannel.postMessage) {
-      console.log(
-        "Requesting Flutter to initiate Google Sign-In via AuthChannel"
-      );
-      window.AuthChannel.postMessage("initiateGoogleSignIn");
-    } else {
-      console.log("AuthChannel not found, using standard web flow.");
-      // Now it can access handleLogin directly
-      handleLogin(loginWithGoogle, "Google");
-    }
-  }
 
   const handleLogout = async () => {
     try {
@@ -69,15 +66,7 @@ const TopNavbar = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (error || isEmailSent) {
-      const timer = setTimeout(() => {
-        setError(null);
-        setIsEmailSent(false);
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [error, isEmailSent]);
+  // Removed error/isEmailSent useEffect
 
   const formatUserName = (name) => {
     if (!name) return "";
@@ -185,22 +174,48 @@ const TopNavbar = () => {
               </div>
             ) : (
               <div className="py-1 flex flex-col">
-                <button
-                  onClick={triggerFlutterGoogleSignIn} // Use the combined trigger function
-                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 hover:bg-light-grey dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200"
-                >
-                  <GoogleLogo className="h-5 w-5 text-gray-700 dark:text-gray-300" />{" "}
-                  <span className="sm:hidden"></span>
-                  <span className="hidden sm:inline">Login with Google</span>
-                </button>
-                <Link
-                  to="/login"
-                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 hover:bg-light-grey dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200"
-                >
-                  <EnvelopeIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />{" "}
-                  <span className="sm:hidden"></span>
-                  <span className="hidden sm:inline">Login with Email</span>
-                </Link>
+                {/* --- Google Login Button (Disabled with Tooltip) --- */}
+                <div className="relative group">
+                  {/* --- Email Login Link (Remains Active) --- */}
+                  <Link
+                    to="/login"
+                    className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 hover:bg-light-grey dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200"
+                  >
+                    <EnvelopeIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />{" "}
+                    <span className="sm:hidden"></span>
+                    <span className="hidden sm:inline">Login with Email</span>
+                  </Link>
+                  <button
+                    // onClick={() => handleLogin(loginWithGoogle, "Google")} // Removed onClick
+                    disabled // Added disabled attribute
+                    className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed" // Added opacity-50 and cursor-not-allowed
+                  >
+                    <GoogleLogo className="h-3 w-3 text-gray-700 dark:text-gray-300" />{" "}
+                    <span className="sm:hidden"></span>
+                    <span className="hidden sm:inline">Login with Google</span>
+                  </button>
+                  {/* Tooltip */}
+                  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-30">
+                    This will be available soon
+                  </span>
+                </div>
+
+                {/* --- Apple Login Button (Disabled with Tooltip) --- */}
+                <div className="relative group">
+                  <button
+                    // onClick={() => handleLogin(loginWithApple, "Apple")} // Placeholder for Apple login function
+                    disabled // Added disabled attribute
+                    className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed" // Added opacity-50 and cursor-not-allowed
+                  >
+                    <AppleLogo className="h-5 w-5 text-gray-700 dark:text-gray-300" />{" "}
+                    <span className="sm:hidden"></span>
+                    <span className="hidden sm:inline">Login with Apple</span>
+                  </button>
+                  {/* Tooltip */}
+                  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-30">
+                    This will be available soon
+                  </span>
+                </div>
               </div>
             )}
           </div>

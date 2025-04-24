@@ -2,16 +2,53 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/android-chrome-192x192.png" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
       content="Web site created using create-react-app"
     />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/favicon.ico" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>DevPrep</title>
+
+    <script>
+      window.getCurrentTheme = function() {
+        // Your logic to determine the theme (check localStorage, classList, etc.)
+        const storedTheme = localStorage.getItem('theme'); // Example
+        if (document.documentElement.classList.contains('dark')) {
+           return 'dark';
+        }
+        if (storedTheme === 'dark' || storedTheme === 'light') {
+           return storedTheme;
+        }
+        // Default fallback
+        return 'light';
+      };
+
+      // Also, immediately apply the theme class based on stored value or preference
+      // This prevents flashing before React loads
+      (function() {
+        const theme = window.getCurrentTheme(); // Use the function we just defined
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        localStorage.setItem('theme', newTheme);
+
+// --- IMPORTANT: Notify Flutter via ThemeChannel ---
+        if (window.ThemeChannel && window.ThemeChannel.postMessage) {
+        console.log(`Notifying Flutter. New theme: ${newTheme}`);
+         window.ThemeChannel.postMessage(newTheme);
+          } else {
+            console.warn("Flutter ThemeChannel not available.");
+}
+      })();
+
+    </script>
+
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

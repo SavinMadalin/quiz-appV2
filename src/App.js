@@ -1,18 +1,9 @@
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  useNavigate,
-} from "react-router-dom"; // Import useNavigate
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Import useNavigate
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState, useRef } from "react";
 import { setUser } from "./redux/userSlice";
 // Import necessary Firebase functions
-import {
-  onAuthStateChangedListener,
-  auth, // Assuming 'auth' is exported from your firebase.js
-} from "./firebase";
-import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
+import { onAuthStateChangedListener } from "./firebase";
 import MainPage from "./MainPage";
 import QuizConfigPage from "./QuizConfigPage";
 import HistoryPage from "./HistoryPage";
@@ -119,116 +110,43 @@ function App() {
     >
       {/* Router needs to be inside App for useNavigate to work in child components */}
       <Router>
-        <AppContent
-          quizConfig={quizConfig}
-          emailVerified={emailVerified}
-          setEmailSent={setEmailSent}
-          setIsDeletingUser={setIsDeletingUser}
-          setIsRegistering={setIsRegistering}
-          serializeUser={serializeUser} // Pass serializeUser down
-        />
+        <div className="">
+          <Routes>
+            <Route path="/" element={<MainPage />} />
+            <Route path="/subscription" element={<SubscriptionPage />} />{" "}
+            {/* Add subscription route */}
+            <Route path="/history" element={<HistoryPage />} />
+            <Route
+              path="/settings"
+              element={
+                <SettingsPage
+                  emailVerified={emailVerified}
+                  setEmailSent={setEmailSent}
+                  setIsDeletingUser={setIsDeletingUser}
+                />
+              }
+            />{" "}
+            {/* Pass setIsDeletingUser */}
+            <Route path="/quiz-config" element={<QuizConfigPage />} />
+            <Route path="/quiz" element={<QuizPage />} />
+            <Route path="/result" element={<ResultPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/register"
+              element={
+                <RegisterPage
+                  setEmailSent={setEmailSent}
+                  setIsRegistering={setIsRegistering}
+                />
+              }
+            />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />{" "}
+            {/* Add this route */}
+            <Route path="/confirmation" element={<ConfirmationPage />} />
+            <Route path="/auth/action" element={<AuthActionHandlerPage />} />
+          </Routes>
+        </div>
       </Router>
-    </div>
-  );
-}
-
-// Separate component to use hooks like useNavigate inside the Router context
-function AppContent({
-  quizConfig,
-  emailVerified,
-  setEmailSent,
-  setIsDeletingUser,
-  setIsRegistering,
-  serializeUser, // Receive serializeUser
-}) {
-  const dispatch = useDispatch();
-  const navigate = useNavigate(); // Now useNavigate can be called here
-
-  // --- Updated function to handle token from Flutter ---
-  useEffect(() => {
-    window.handleFlutterSignInToken = async (idToken) => {
-      // Make the function async
-      console.log("Received idToken from Flutter:", idToken);
-
-      if (!idToken) {
-        console.error("Received null or empty idToken from Flutter.");
-        if (window.Toaster) {
-          window.Toaster.postMessage("Google Sign-In failed (empty token).");
-        }
-        return;
-      }
-
-      try {
-        // 1. Create a Google Auth credential using the idToken
-        const credential = GoogleAuthProvider.credential(idToken);
-
-        // 2. Sign in with the credential using Firebase client SDK
-        // 'auth' needs to be your initialized Firebase Auth instance
-        const userCredential = await signInWithCredential(auth, credential);
-
-        console.log(
-          "Firebase Sign-In with credential successful:",
-          userCredential.user
-        );
-
-        // No need to manually dispatch setUser here.
-        // The onAuthStateChanged listener will automatically detect the
-        // signed-in user and update the Redux state.
-
-        // Optional: Navigate the user after successful sign-in
-        // navigate('/'); // Navigate to home or dashboard
-      } catch (error) {
-        console.error(
-          "Error signing in with credential from Flutter token:",
-          error
-        );
-        if (window.Toaster) {
-          window.Toaster.postMessage(`Google Sign-In failed: ${error.message}`);
-        }
-        // Handle specific errors if needed (e.g., invalid token)
-      }
-    };
-
-    // Cleanup function
-    return () => {
-      delete window.handleFlutterSignInToken;
-    };
-    // Add 'auth' to dependencies if it's not stable, though usually it is.
-  }, [dispatch, navigate, serializeUser]); // Added dependencies
-
-  return (
-    <div className="">
-      <Routes>
-        <Route path="/" element={<MainPage />} />
-        <Route path="/subscription" element={<SubscriptionPage />} />
-        <Route path="/history" element={<HistoryPage />} />
-        <Route
-          path="/settings"
-          element={
-            <SettingsPage
-              emailVerified={emailVerified}
-              setEmailSent={setEmailSent}
-              setIsDeletingUser={setIsDeletingUser}
-            />
-          }
-        />
-        <Route path="/quiz-config" element={<QuizConfigPage />} />
-        <Route path="/quiz" element={<QuizPage />} />
-        <Route path="/result" element={<ResultPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route
-          path="/register"
-          element={
-            <RegisterPage
-              setEmailSent={setEmailSent}
-              setIsRegistering={setIsRegistering}
-            />
-          }
-        />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/confirmation" element={<ConfirmationPage />} />
-        <Route path="/auth/action" element={<AuthActionHandlerPage />} />
-      </Routes>
     </div>
   );
 }
