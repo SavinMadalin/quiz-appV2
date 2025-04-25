@@ -55,7 +55,7 @@ const SubscriptionPage = () => {
 
   return (
     // Apply the standard page layout padding
-    <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-12 pb-24 lg:pl-52">
+    <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-12 pb-24 lg:pl-52 lg:mt-8">
       {" "}
       {/* Reduced padding */}
       <TopNavbar />

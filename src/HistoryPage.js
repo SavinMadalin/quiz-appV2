@@ -28,12 +28,12 @@ const HistoryPage = () => {
   const { user, isAuthenticated, isEmailVerified } = useSelector(
     (state) => state.user
   );
-  const [selectedCategory, setSelectedCategory] = useState("backend-engineer"); // Default category
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [categories, setCategories] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
   const [fetchError, setFetchError] = useState(null);
   const [activeTab, setActiveTab] = useState("custom"); // 'custom' or 'interview'
-  const [selectedFeedback, setSelectedFeedback] = useState(null); // New state for selected feedback
+  const [selectedFeedback, setSelectedFeedback] = useState(null);
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -52,11 +52,24 @@ const HistoryPage = () => {
           id: doc.id,
         }));
         setHistory(results);
-        // Get the unique categories
+
         const uniqueCategories = [
           ...new Set(results.map((item) => item.category)),
         ];
         setCategories(uniqueCategories);
+
+        if (uniqueCategories.length > 0) {
+          if (uniqueCategories.length === 1) {
+            setSelectedCategory(uniqueCategories[0]);
+          } else {
+            const randomIndex = Math.floor(
+              Math.random() * uniqueCategories.length
+            );
+            setSelectedCategory(uniqueCategories[randomIndex]);
+          }
+        } else {
+          setSelectedCategory(null);
+        }
       } catch (error) {
         console.error("Error fetching history:", error);
         setFetchError("Failed to load quiz history. Please try again later.");
@@ -66,14 +79,12 @@ const HistoryPage = () => {
     };
 
     fetchHistory();
-  }, [user?.uid]); // <-- Changed dependency array to [user?.uid]
+  }, [user?.uid]);
 
   const handleSeeFeedback = async (result) => {
     if (result.feedback) {
-      // If feedback is already in the result object, use it
       setSelectedFeedback(result.feedback);
     } else {
-      // Otherwise, fetch it from the database
       try {
         const docRef = doc(db, "results", result.id);
         const docSnap = await getDoc(docRef);
@@ -94,37 +105,40 @@ const HistoryPage = () => {
     setSelectedFeedback(null);
   };
 
-  // Filter data for the chart and the table
   const filteredHistory = useMemo(() => {
     let filtered =
       activeTab === "interview"
         ? history.filter((result) => result.quizType === "interview")
         : history.filter((result) => result.quizType === "custom");
 
-    // If not authenticated or not verified, filter out interview mode results
     if (!isAuthenticated || !isEmailVerified) {
       filtered = filtered.filter((result) => result.quizType === "custom");
     }
     return filtered;
   }, [history, activeTab, isAuthenticated, isEmailVerified]);
 
-  // Filter data for the chart
-  const chartData = filteredHistory
-    .filter((item) => item.category === selectedCategory)
-    .sort((a, b) => a.timestamp.seconds - b.timestamp.seconds)
-    .map((item, index) => ({
-      name: new Date(item.timestamp.seconds * 1000).toLocaleDateString(),
-      score: item.score,
-      key: index,
-    }));
+  const chartData = useMemo(() => {
+    if (!selectedCategory) return [];
+    return filteredHistory
+      .filter((item) => item.category === selectedCategory)
+      .sort((a, b) => a.timestamp.seconds - b.timestamp.seconds)
+      .map((item, index) => ({
+        name: new Date(item.timestamp.seconds * 1000).toLocaleDateString(),
+        score: item.score,
+        key: index,
+      }));
+  }, [filteredHistory, selectedCategory]);
 
-  // Filter the data to get only the last 10 results.
-  const lastTenResults = filteredHistory.slice(0, 100);
+  const limitedHistory = useMemo(
+    () => filteredHistory.slice(0, 100),
+    [filteredHistory]
+  );
 
-  // Function to sort data
   const getSortValue = (item, key) => {
-    // Determine the number of questions based on quiz type
-    const numQuestions = item.quizType === "interview" ? 15 : 10;
+    const numQuestions =
+      item.quizType === "interview"
+        ? 15 // Use constant MOCK_INTERVIEW_QUESTIONS
+        : 10; // Use constant CUSTOM_QUIZ_QUESTIONS
     switch (key) {
       case "date":
         return item.timestamp.seconds;
@@ -134,15 +148,15 @@ const HistoryPage = () => {
         return item.quizType === "interview"
           ? item.timeTaken
           : item.timePerQuestion !== undefined
-          ? item.timePerQuestion
-          : "0";
+          ? parseInt(item.timePerQuestion, 10)
+          : 0;
       case "percentage":
-        return item.score / numQuestions; // Use numQuestions here
+        return item.score / numQuestions;
       case "status":
         return item.score / numQuestions >=
           (item.quizType === "interview" ? 0.66 : 0.8)
           ? 1
-          : 0; // Use numQuestions here and the correct percentage
+          : 0;
       default:
         return 0;
     }
@@ -150,9 +164,9 @@ const HistoryPage = () => {
 
   const sortedHistory = useMemo(() => {
     if (!sortConfig.key) {
-      return lastTenResults;
+      return limitedHistory;
     }
-    return [...lastTenResults].sort((a, b) => {
+    return [...limitedHistory].sort((a, b) => {
       const aValue = getSortValue(a, sortConfig.key);
       const bValue = getSortValue(b, sortConfig.key);
 
@@ -168,7 +182,7 @@ const HistoryPage = () => {
         ? -1
         : 0;
     });
-  }, [lastTenResults, sortConfig]);
+  }, [limitedHistory, sortConfig]);
 
   const requestSort = (key) => {
     let direction = "ascending";
@@ -183,61 +197,70 @@ const HistoryPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-12 pb-20 lg:pl-28">
+    // Main page container
+    <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-16 pb-24 lg:pl-52 lg:pt-8">
       <TopNavbar />
       <Navbar />
-      <div className="bg-white dark:bg-dark-grey p-6 rounded-lg shadow-lg max-w-4xl w-11/12 md:w-10/12 mt-8 mb-12">
-        {/* Changed w-10/12 to w-11/12 md:w-10/12 */}
+
+      {/* Content Area */}
+      <div className="max-w-4xl w-full mt-4 mb-8">
         {fetchError && <p className="text-red-500 text-center">{fetchError}</p>}
         {isLoading ? (
-          <div className="flex justify-center">
-            <div className="bg-white dark:bg-dark-grey p-6 rounded-lg shadow-lg w-full h-full flex justify-center items-center">
+          <div className="flex justify-center p-4">
+            <div className="bg-white dark:bg-dark-grey p-4 rounded-lg shadow-lg flex justify-center items-center">
               <Spinner />
             </div>
           </div>
         ) : (
           <>
             {!isAuthenticated ? (
-              <p className="text-center">
+              <div className="bg-white dark:bg-dark-grey p-4 rounded-lg shadow-lg text-center text-sm sm:text-base">
                 No history available, you have to log in to enable this feature.
-              </p>
+              </div>
             ) : history.length === 0 ? (
-              <p className="text-center">No quiz history available.</p>
+              <div className="bg-white dark:bg-dark-grey p-4 rounded-lg shadow-lg text-center text-sm sm:text-base">
+                No quiz history available.
+              </div>
             ) : (
               <>
                 {/* Tabs */}
-                <HistoryTabs
-                  activeTab={activeTab}
-                  setActiveTab={setActiveTab}
-                />
-
-                {/* Sorting and History Table */}
-                <HistoryTable
-                  sortedHistory={sortedHistory}
-                  sortConfig={sortConfig}
-                  requestSort={requestSort}
-                  handleSeeFeedback={handleSeeFeedback} // Pass handleSeeFeedback
-                />
-
-                {/* Chart Box */}
-                <div className="mt-2 p-1 rounded-lg shadow-md border border-gray-300 dark:border-gray-700">
-                  {/* Category Buttons */}
-                  <CategoryFilter
-                    categories={categories}
-                    selectedCategory={selectedCategory}
-                    handleCategoryClick={handleCategoryClick}
-                  />
-                  {/* Chart */}
-                  <HistoryChart
-                    chartData={chartData}
-                    selectedCategory={selectedCategory}
+                <div className="mb-4 lg:mt-4">
+                  <HistoryTabs
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
                   />
                 </div>
+
+                {/* Sorting and History Table - Re-added the wrapper div */}
+                <div className="bg-white dark:bg-dark-grey p-4 rounded-lg shadow-lg mb-4">
+                  <HistoryTable
+                    sortedHistory={sortedHistory}
+                    sortConfig={sortConfig}
+                    requestSort={requestSort}
+                    handleSeeFeedback={handleSeeFeedback}
+                  />
+                </div>
+
+                {/* Chart Box */}
+                {categories.length > 0 && selectedCategory && (
+                  <div className="bg-white dark:bg-dark-grey p-4 rounded-lg shadow-lg mt-4">
+                    <CategoryFilter
+                      categories={categories}
+                      selectedCategory={selectedCategory}
+                      handleCategoryClick={handleCategoryClick}
+                    />
+                    <HistoryChart
+                      chartData={chartData}
+                      selectedCategory={selectedCategory}
+                    />
+                  </div>
+                )}
               </>
             )}
           </>
         )}
       </div>
+
       {/* Feedback Popup */}
       {selectedFeedback && (
         <FeedbackPopup

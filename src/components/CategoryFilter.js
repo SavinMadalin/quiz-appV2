@@ -7,13 +7,14 @@ const CategoryFilter = ({
   handleCategoryClick,
 }) => {
   return (
-    <div className="flex flex-wrap gap-2 mb-1 justify-center">
-      {/* Added justify-center */}
+    // Reduced gap-1, mb-0.5
+    <div className="flex flex-wrap gap-1 mb-0.5 justify-center p-1">
       {categories.map((category) => (
         <button
           key={category}
           onClick={() => handleCategoryClick(category)}
-          className={`px-2 py-1 rounded-full text-xs ${
+          // Reduced padding px-1.5 py-0.5, text-[10px] or text-xs
+          className={`px-1.5 py-0.5 rounded-full text-[10px] sm:text-xs ${
             selectedCategory === category
               ? "bg-blue-500 text-white"
               : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"

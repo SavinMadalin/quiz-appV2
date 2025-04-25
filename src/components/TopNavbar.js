@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { loginWithGoogle, logout as firebaseLogout } from "../firebase"; // loginWithGoogle might not be needed if disabled
+import { logout as firebaseLogout } from "../firebase"; // loginWithGoogle might not be needed if disabled
 import { useSelector } from "react-redux";
 import {
   UserCircleIcon,
@@ -174,17 +174,17 @@ const TopNavbar = () => {
               </div>
             ) : (
               <div className="py-1 flex flex-col">
+                {/* --- Email Login Link (Remains Active) --- */}
+                <Link
+                  to="/login"
+                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 hover:bg-light-grey dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200"
+                >
+                  <EnvelopeIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />{" "}
+                  <span className="sm:hidden"></span>
+                  <span className="hidden sm:inline">Login with Email</span>
+                </Link>
                 {/* --- Google Login Button (Disabled with Tooltip) --- */}
                 <div className="relative group">
-                  {/* --- Email Login Link (Remains Active) --- */}
-                  <Link
-                    to="/login"
-                    className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 hover:bg-light-grey dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200"
-                  >
-                    <EnvelopeIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />{" "}
-                    <span className="sm:hidden"></span>
-                    <span className="hidden sm:inline">Login with Email</span>
-                  </Link>
                   <button
                     // onClick={() => handleLogin(loginWithGoogle, "Google")} // Removed onClick
                     disabled // Added disabled attribute
@@ -194,12 +194,7 @@ const TopNavbar = () => {
                     <span className="sm:hidden"></span>
                     <span className="hidden sm:inline">Login with Google</span>
                   </button>
-                  {/* Tooltip */}
-                  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-30">
-                    This will be available soon
-                  </span>
                 </div>
-
                 {/* --- Apple Login Button (Disabled with Tooltip) --- */}
                 <div className="relative group">
                   <button

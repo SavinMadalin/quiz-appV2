@@ -16,8 +16,8 @@ const HistoryChart = ({ chartData, selectedCategory }) => {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="custom-tooltip bg-gray-800 dark:bg-gray-700 p-2 rounded-md shadow-md text-white">
-          {/* Changed background color and text color */}
+        // Reduced padding p-1.5, text-xs
+        <div className="custom-tooltip bg-gray-800 dark:bg-gray-700 p-1.5 rounded-md shadow-md text-white text-xs">
           <p className="label">{`${label}`}</p>
           <p className="intro">{`Score: ${payload[0].value}`}</p>
         </div>
@@ -27,29 +27,34 @@ const HistoryChart = ({ chartData, selectedCategory }) => {
   };
 
   return (
-    <div className="mt-2 p-1 rounded-lg shadow-md border border-gray-300 dark:border-gray-700">
+    // Reduced padding p-0.5
+    <div className="mt-2 p-0.5 rounded-lg shadow-md border border-gray-300 dark:border-gray-700">
       {chartData.length === 0 ? (
-        <p>No data for this category</p>
+        // Reduced text size text-sm
+        <p className="text-center text-sm p-4">No data for this category</p>
       ) : (
         <>
-          <div className="w-full flex justify-center">
-            <ResponsiveContainer width="95%" height={250}>
-              {/* Changed width to 100% and added ResponsiveContainer */}
+          {/* Apply height classes here: default h-[200px], lg:h-[300px] */}
+          <div className="w-full flex justify-center h-[200px] lg:h-[300px]">
+            {/* ResponsiveContainer will fill the parent's height */}
+            <ResponsiveContainer width="95%" height="100%">
               <LineChart
                 data={chartData}
-                margin={{ top: 10, right: 10, left: -35, bottom: -5 }} // Adjusted left margin
+                // Adjusted margins slightly
+                margin={{ top: 5, right: 5, left: -30, bottom: 0 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-                <YAxis />
-                {/* Use the custom tooltip */}
+                {/* Reduced tick font size */}
+                <XAxis dataKey="name" tick={{ fontSize: 9 }} />
+                <YAxis tick={{ fontSize: 9 }} />
                 <Tooltip content={<CustomTooltip />} />
-                <Legend />
+                {/* Reduced legend font size */}
+                <Legend wrapperStyle={{ fontSize: "10px" }} />
                 <Line
                   type="monotone"
                   dataKey="score"
                   stroke="#8884d8"
-                  activeDot={{ r: 8 }}
+                  activeDot={{ r: 6 }} // Slightly smaller active dot
                 />
               </LineChart>
             </ResponsiveContainer>

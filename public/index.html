@@ -36,12 +36,12 @@
         } else {
           document.documentElement.classList.remove('dark');
         }
-        localStorage.setItem('theme', newTheme);
+        localStorage.setItem('theme', theme);
 
 // --- IMPORTANT: Notify Flutter via ThemeChannel ---
         if (window.ThemeChannel && window.ThemeChannel.postMessage) {
-        console.log(`Notifying Flutter. New theme: ${newTheme}`);
-         window.ThemeChannel.postMessage(newTheme);
+        console.log(`Notifying Flutter. New theme: ${theme}`);
+         window.ThemeChannel.postMessage(theme);
           } else {
             console.warn("Flutter ThemeChannel not available.");
 }
