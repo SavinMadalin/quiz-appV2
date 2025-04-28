@@ -12,6 +12,8 @@ import {
 import { useState, useEffect, useRef } from "react";
 import classNames from "classnames"; // Import classNames
 import { mainCategories } from "./constants"; // Import from constants.js
+import Spinner from "./Spinner"; // Import Spinner
+import { useSubscription } from "./contexts/SubscriptionContext"; // Import useSubscription
 
 const QuizConfigPage = () => {
   const dispatch = useDispatch();
@@ -25,6 +27,12 @@ const QuizConfigPage = () => {
     ...quizConfig,
     category: "core-languages", // Default to core-languages
   });
+  const {
+    isPremium,
+    isLoadingStatus: isLoadingSubscription,
+    subscriptionStatus,
+  } = useSubscription();
+
   const [selectedSubcategories, setSelectedSubcategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [error, setError] = useState(null);
@@ -46,9 +54,6 @@ const QuizConfigPage = () => {
     return mainCategories.find((cat) => cat.value === categoryValue);
   };
 
-  // Determine if the user is restricted
-  const isRestrictedUser = !isAuthenticated || !isEmailVerified;
-
   // Initialize with default category and handle restrictions
   useEffect(() => {
     // Always default to 'core-languages'
@@ -61,14 +66,14 @@ const QuizConfigPage = () => {
     }));
     setSubcategories(initialCategory?.subcategories || []);
 
-    // If restricted, pre-select 'java', otherwise reset selection
-    if (isRestrictedUser) {
-      setSelectedSubcategories(["java"]);
+    if (!isPremium) {
+      setSelectedSubcategories(["java"]); // Default for free users
+      setActiveTab("custom"); // Force custom mode
     } else {
-      setSelectedSubcategories([]);
+      setSelectedSubcategories([]); // Reset for premium users
     }
     setError(null);
-  }, [isAuthenticated, isEmailVerified]); // Rerun if auth status changes
+  }, [isAuthenticated, isEmailVerified, isPremium]); // Rerun if auth status changes
 
   const getDisplaySubcategoryName = (subcategoryValue) => {
     switch (subcategoryValue) {
@@ -101,7 +106,7 @@ const QuizConfigPage = () => {
     const currentCategory = getCurrentCategory(draftSettings.category);
     const hasSubcategories = currentCategory?.subcategories?.length > 0;
 
-    if (isRestrictedUser) {
+    if (!isPremium) {
       // Restricted: Enable only if 'core-languages' and 'java' are selected
       setIsStartButtonDisabled(
         !(
@@ -117,11 +122,11 @@ const QuizConfigPage = () => {
         setIsStartButtonDisabled(false);
       }
     }
-  }, [selectedSubcategories, draftSettings.category, isRestrictedUser]);
+  }, [selectedSubcategories, draftSettings.category, isPremium]);
 
   const handleChange = (name, value) => {
     // Prevent changing category if restricted
-    if (name === "category" && isRestrictedUser && value !== "core-languages") {
+    if (name === "category" && !isPremium && value !== "core-languages") {
       return;
     }
 
@@ -132,7 +137,7 @@ const QuizConfigPage = () => {
       const selectedMainCategory = getCurrentCategory(value);
       setSubcategories(selectedMainCategory?.subcategories || []);
       // Reset or enforce subcategory selection based on restriction
-      if (isRestrictedUser && value === "core-languages") {
+      if (!isPremium && value === "core-languages") {
         setSelectedSubcategories(["java"]);
       } else {
         setSelectedSubcategories([]);
@@ -147,13 +152,13 @@ const QuizConfigPage = () => {
 
   const handleSubcategoryChange = (subcategory) => {
     // Prevent changing subcategory if restricted and it's not 'java'
-    if (isRestrictedUser && subcategory !== "java") {
+    if (!isPremium && subcategory !== "java") {
       return;
     }
 
     setSelectedSubcategories((prev) => {
       // If restricted, only allow 'java' to be toggled (effectively, it stays selected)
-      if (isRestrictedUser) {
+      if (!isPremium) {
         return ["java"]; // Keep java selected
       }
       // Normal toggle logic for unrestricted users
@@ -173,7 +178,7 @@ const QuizConfigPage = () => {
     // Ensure correct subcategories are passed based on restriction
     let finalSubcategories = [];
     if (hasSubcategories) {
-      if (isRestrictedUser) {
+      if (!isPremium) {
         finalSubcategories = ["java"]; // Force java if restricted
       } else {
         finalSubcategories = selectedSubcategories;
@@ -201,7 +206,7 @@ const QuizConfigPage = () => {
 
   const toggleCategoryDropdown = () => {
     // Don't open dropdown if restricted (only one option anyway)
-    if (isRestrictedUser) return;
+    if (!isPremium) return;
     setIsCategoryDropdownOpen(!isCategoryDropdownOpen);
   };
 
@@ -231,7 +236,18 @@ const QuizConfigPage = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
+  // --- Add Loading State Handling ---
+  if (isLoadingSubscription) {
+    return (
+      <div className="flex flex-col items-center justify-start min-h-screen p-4 bg-gray-200 dark:bg-gray-900 pt-12 pb-24 lg:pl-52">
+        <TopNavbar />
+        <Navbar />
+        <div className="flex justify-center items-center flex-grow">
+          <Spinner />
+        </div>
+      </div>
+    );
+  }
   // Determine if the current category has subcategories to display
   const currentCategoryHasSubcategories = subcategories.length > 0;
 
@@ -267,18 +283,18 @@ const QuizConfigPage = () => {
                   }
                 }}
                 // Disable tab switching if restricted
-                disabled={isRestrictedUser}
+                disabled={!isPremium}
                 className={classNames(
                   "w-full py-3 focus:outline-none text-base",
                   activeTab === "interview"
                     ? "border-b-2 border-blue-500 text-blue-500"
                     : "text-gray-700 dark:text-gray-300",
-                  isRestrictedUser ? "opacity-50 cursor-not-allowed" : ""
+                  !isPremium ? "opacity-50 cursor-not-allowed" : ""
                 )}
               >
                 <span className="block text-center">Interview Mode</span>
               </button>
-              {isRestrictedUser && (
+              {!isPremium && (
                 <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max max-w-full bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity text-center">
                   Verify your email to access Interview Mode.
                 </span>
@@ -300,12 +316,10 @@ const QuizConfigPage = () => {
             <button
               type="button"
               onClick={toggleCategoryDropdown}
-              disabled={isRestrictedUser} // Disable button if restricted
+              disabled={!isPremium} // Disable button if restricted
               className={classNames(
                 "mt-1 p-2 border rounded-md bg-light-grey dark:bg-gray-800 dark:text-white w-full focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-between text-base",
-                isRestrictedUser
-                  ? "cursor-not-allowed opacity-70"
-                  : "cursor-pointer"
+                !isPremium ? "cursor-not-allowed opacity-70" : "cursor-pointer"
               )}
             >
               <span>
@@ -321,7 +335,7 @@ const QuizConfigPage = () => {
                   )}
               </span>
               {/* Hide dropdown icon if restricted */}
-              {!isRestrictedUser &&
+              {isPremium &&
                 (isCategoryDropdownOpen ? (
                   <ChevronUpIcon className="h-5 w-5" />
                 ) : (
@@ -329,7 +343,7 @@ const QuizConfigPage = () => {
                 ))}
             </button>
             {/* Only show dropdown options if not restricted */}
-            {isCategoryDropdownOpen && !isRestrictedUser && (
+            {isCategoryDropdownOpen && isPremium && (
               <div className="absolute z-10 mt-1 w-full rounded-md bg-gray-100 dark:bg-gray-700 shadow-lg ring-1 ring-black ring-opacity-5 max-h-60 overflow-y-auto">
                 <div className="py-1">
                   {mainCategories.map((cat) => (
@@ -337,12 +351,10 @@ const QuizConfigPage = () => {
                       key={cat.value}
                       onClick={() => handleChange("category", cat.value)}
                       // Disable other categories if restricted (redundant due to dropdown visibility, but safe)
-                      disabled={
-                        isRestrictedUser && cat.value !== "core-languages"
-                      }
+                      disabled={!isPremium && cat.value !== "core-languages"}
                       className={classNames(
                         "block w-full px-4 py-2 text-left text-sm border-b border-gray-300 dark:border-gray-600 last:border-b-0",
-                        isRestrictedUser && cat.value !== "core-languages"
+                        !isPremium && cat.value !== "core-languages"
                           ? "text-gray-400 cursor-not-allowed"
                           : "text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                       )}
@@ -360,7 +372,7 @@ const QuizConfigPage = () => {
             )}
           </div>
           {/* Show restriction message */}
-          {isRestrictedUser && (
+          {!isPremium && (
             <p className="text-xs text-yellow-400 dark:text-yellow-300 mt-1">
               Only Core Languages / Java is available. Verify email for more
               options.
@@ -379,7 +391,7 @@ const QuizConfigPage = () => {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {subcategories.map((sub) => {
                 // Determine if the button should be disabled
-                const isDisabled = isRestrictedUser && sub !== "java";
+                const isDisabled = !isPremium && sub !== "java";
                 return (
                   <button
                     key={sub}
@@ -461,7 +473,7 @@ const QuizConfigPage = () => {
           </p>
         )}
         {activeTab === "interview" &&
-          !isRestrictedUser && ( // Only show if not restricted
+          isPremium && ( // Only show if not restricted
             <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
               Prepare for your interview. The quiz will have 15 questions and 20
               minutes total time.
@@ -484,7 +496,7 @@ const QuizConfigPage = () => {
             Start
           </button>
           {isStartButtonDisabled &&
-            !isRestrictedUser &&
+            isPremium &&
             currentCategoryHasSubcategories && (
               <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 At least one subcategory must be selected

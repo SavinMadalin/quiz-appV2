@@ -1,5 +1,6 @@
+// src/components/TopNavbar.js
 import React, { useState, useEffect, useRef } from "react";
-import { logout as firebaseLogout } from "../firebase"; // loginWithGoogle might not be needed if disabled
+import { logout as firebaseLogout } from "../firebase";
 import { useSelector } from "react-redux";
 import {
   UserCircleIcon,
@@ -9,12 +10,15 @@ import {
   ExclamationTriangleIcon,
   EnvelopeIcon,
 } from "@heroicons/react/24/outline";
-import { GoogleLogo } from "../components/Logos"; // Assuming you have this
+import { StarIcon as SolidStarIcon } from "@heroicons/react/24/solid"; // <-- Import Solid StarIcon
+import { GoogleLogo } from "../components/Logos";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
+import { useSubscription } from "../contexts/SubscriptionContext"; // <-- Import useSubscription
 
 // Simple Apple Logo Placeholder (replace with a better SVG if you have one)
 const AppleLogo = ({ className }) => (
+  // ... (AppleLogo component remains the same)
   <svg
     className={className}
     xmlns="http://www.w3.org/2000/svg"
@@ -29,9 +33,9 @@ const TopNavbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const { user } = useSelector((state) => state.user);
-  // Removed error and isEmailSent states as they weren't used for login buttons
+  const { isPremium } = useSubscription(); // <-- Get premium status
 
-  // handleLogin is kept for potential future use or other login methods
+  // ... (handleLogin, handleLogout, toggleDropdown, handleOutsideClick, useEffect remain the same) ...
   const handleLogin = async (loginFunction, providerName) => {
     try {
       await loginFunction();
@@ -66,8 +70,6 @@ const TopNavbar = () => {
     };
   }, []);
 
-  // Removed error/isEmailSent useEffect
-
   const formatUserName = (name) => {
     if (!name) return "";
     const firstSpaceIndex = name.indexOf(" ");
@@ -87,6 +89,7 @@ const TopNavbar = () => {
         "bg-gray-100 dark:bg-gray-800 border-b border-gray-300 dark:border-gray-700"
       )}
     >
+      {/* ... (Logo remains the same) ... */}
       <div className="text-4xl font-extrabold tracking-tight">
         <span className="text-yellow-400">Dev</span>
         <span className="text-gray-800 dark:text-white lg:text-gray-800 lg:dark:text-white">
@@ -97,7 +100,7 @@ const TopNavbar = () => {
         <button
           type="button"
           className={classNames(
-            "inline-flex justify-center items-center w-full sm:w-32 h-12 rounded-md px-4 py-3 text-base font-semibold bg-transparent",
+            "inline-flex justify-center items-center w-full sm:w-auto h-12 rounded-md px-4 py-3 text-base font-semibold bg-transparent", // Adjusted sm:w-32 to sm:w-auto for flexibility
             "text-gray-800 dark:text-white",
             "hover:bg-transparent lg:hover:bg-gray-300 lg:dark:hover:bg-gray-700"
           )}
@@ -106,6 +109,7 @@ const TopNavbar = () => {
         >
           {user ? (
             <div className="flex items-center gap-2">
+              {/* Email Verification Warning */}
               {!user.emailVerified && (
                 <div className="relative group">
                   <ExclamationTriangleIcon className="h-5 w-5 text-red-500 mr-1 cursor-pointer" />
@@ -115,15 +119,24 @@ const TopNavbar = () => {
                   </span>
                 </div>
               )}
+              {/* User Icon */}
               <UserCircleIcon
                 className={classNames(
                   "h-6 w-6",
                   "text-gray-800 dark:text-white"
                 )}
               />
+              {isPremium && (
+                <div className="relative group ml-1">
+                  {" "}
+                  {/* Added ml-1 for spacing */}
+                  <SolidStarIcon className="h-4 w-4 text-yellow-400" />
+                </div>
+              )}
+              {/* Username */}
               <span
                 className={classNames(
-                  "truncate",
+                  "truncate", // Keep truncate
                   "text-gray-800 dark:text-white"
                 )}
               >
@@ -135,6 +148,7 @@ const TopNavbar = () => {
               Login
             </span>
           )}
+          {/* Dropdown Arrow */}
           {isDropdownOpen ? (
             <ChevronUpIcon
               className={classNames(
@@ -154,6 +168,7 @@ const TopNavbar = () => {
           )}
         </button>
 
+        {/* Dropdown Menu */}
         {isDropdownOpen && (
           <div
             className="origin-top-right absolute right-0 mt-2 w-full sm:w-48 rounded-md bg-white shadow-lg dark:bg-dark-grey ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 dark:divide-gray-700 focus:outline-none z-20"
@@ -162,6 +177,7 @@ const TopNavbar = () => {
             aria-labelledby="options-menu"
           >
             {user ? (
+              // Logout Button
               <div className="py-1">
                 <button
                   onClick={handleLogout}
@@ -173,8 +189,9 @@ const TopNavbar = () => {
                 </button>
               </div>
             ) : (
+              // Login Buttons
               <div className="py-1 flex flex-col">
-                {/* --- Email Login Link (Remains Active) --- */}
+                {/* Email Login Link */}
                 <Link
                   to="/login"
                   className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 hover:bg-light-grey dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200"
@@ -183,24 +200,26 @@ const TopNavbar = () => {
                   <span className="sm:hidden"></span>
                   <span className="hidden sm:inline">Login with Email</span>
                 </Link>
-                {/* --- Google Login Button (Disabled with Tooltip) --- */}
+                {/* Google Login Button (Disabled) */}
                 <div className="relative group">
                   <button
-                    // onClick={() => handleLogin(loginWithGoogle, "Google")} // Removed onClick
-                    disabled // Added disabled attribute
-                    className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed" // Added opacity-50 and cursor-not-allowed
+                    disabled
+                    className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
                   >
                     <GoogleLogo className="h-3 w-3 text-gray-700 dark:text-gray-300" />{" "}
                     <span className="sm:hidden"></span>
                     <span className="hidden sm:inline">Login with Google</span>
                   </button>
+                  {/* Tooltip */}
+                  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-30">
+                    This will be available soon
+                  </span>
                 </div>
-                {/* --- Apple Login Button (Disabled with Tooltip) --- */}
+                {/* Apple Login Button (Disabled) */}
                 <div className="relative group">
                   <button
-                    // onClick={() => handleLogin(loginWithApple, "Apple")} // Placeholder for Apple login function
-                    disabled // Added disabled attribute
-                    className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed" // Added opacity-50 and cursor-not-allowed
+                    disabled
+                    className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
                   >
                     <AppleLogo className="h-5 w-5 text-gray-700 dark:text-gray-300" />{" "}
                     <span className="sm:hidden"></span>

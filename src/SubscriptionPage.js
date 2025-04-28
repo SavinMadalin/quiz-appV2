@@ -1,16 +1,29 @@
 // src/SubscriptionPage.js
-import React, { useState } from "react"; // Import useState
+import React, { useState } from "react";
 import Navbar from "./Navbar";
 import TopNavbar from "./components/TopNavbar";
-import { StarIcon } from "@heroicons/react/24/solid"; // Using solid icons for emphasis
+import { StarIcon } from "@heroicons/react/24/solid";
 import {
-  CheckIcon as OutlineCheckIcon, // Checkmark for Premium
-  XMarkIcon as OutlineXIcon, // X mark for Basic
+  CheckIcon as OutlineCheckIcon,
+  XMarkIcon as OutlineXIcon,
 } from "@heroicons/react/24/outline";
-import classNames from "classnames"; // Import classNames for conditional styling
+import classNames from "classnames";
+import { useStripe } from "@stripe/react-stripe-js";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom"; // Import Link for messages
+
+// Base URL for your backend API (consider putting in .env)
+// const API_BASE_URL = "http://localhost:4242"; // Or your deployed backend URL
+const API_BASE_URL = "https://devprep-backend-902764868157.us-central1.run.app"; // Or your deployed backend URL
 
 const SubscriptionPage = () => {
-  const [selectedPlan, setSelectedPlan] = useState("monthly"); // State for selected plan ('monthly', 'sixMonths', 'yearly')
+  const [selectedPlan, setSelectedPlan] = useState("monthly");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const stripe = useStripe();
+  const { user, isAuthenticated, isEmailVerified } = useSelector(
+    (state) => state.user
+  );
 
   // Feature comparison data
   const features = [
@@ -23,20 +36,22 @@ const SubscriptionPage = () => {
     { name: "Priority Support", basic: false, premium: true },
   ];
 
-  // Example plan details
+  // Plan details - **IMPORTANT: Add Stripe Price IDs from your backend .env**
   const plans = {
     monthly: {
       id: "monthly",
       name: "Monthly",
       price: "$9.99",
       interval: "month",
+      stripePriceId: "price_1RInSv5v1qgAdBzCu5ctKVbF", // <-- Replace
     },
     sixMonths: {
       id: "sixMonths",
       name: "6 Months",
       price: "$49.99",
       interval: "6 months",
-      save: "Save 15%", // Optional save message
+      save: "Save 15%",
+      stripePriceId: "prod_SDDzlRadtr2DUz", // <-- Replace
     },
     yearly: {
       id: "yearly",
@@ -44,13 +59,82 @@ const SubscriptionPage = () => {
       price: "$89.99",
       interval: "year",
       save: "Save 25%",
+      stripePriceId: "prod_SDE0Xa8PWvI4ir", // <-- Replace
     },
   };
 
-  // Placeholder function for handling subscription logic
-  const handleSubscription = (planId) => {
-    console.log("Subscribing to plan:", planId);
-    // Add your subscription logic here (e.g., redirect to Stripe checkout)
+  const handleSubscription = async () => {
+    setError(null);
+
+    if (!stripe) {
+      setError("Payment system initializing... Please wait a moment.");
+      return;
+    }
+    if (!isAuthenticated || !user) {
+      setError("Please log in to subscribe."); // Should be caught by ProtectedRoute, but good fallback
+      return;
+    }
+    if (!isEmailVerified) {
+      setError(
+        <>
+          Please verify your account email before subscribing. Check your inbox
+          or visit{" "}
+          <Link to="/settings" className="underline hover:text-blue-400">
+            Settings
+          </Link>{" "}
+          to resend.
+        </>
+      );
+      return;
+    }
+
+    setIsLoading(true);
+    const selectedPlanDetails = plans[selectedPlan];
+
+    try {
+      // Call backend to create the checkout session
+      const response = await fetch(`${API_BASE_URL}/create-checkout-session`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Add Authorization header if your backend requires it
+          // 'Authorization': `Bearer ${user.token}` // Get token from Redux state if needed
+        },
+        body: JSON.stringify({
+          priceId: selectedPlanDetails.stripePriceId,
+          planId: selectedPlanDetails.id,
+          userId: user.uid, // Send user ID (backend should ideally verify via token)
+          isVerified: isEmailVerified, // <-- Send verification status
+          userEmail: user.email, // <-- Send user's email
+          userName: user.displayName,
+        }),
+      });
+
+      const session = await response.json();
+
+      if (!response.ok) {
+        // Handle specific errors from backend
+        throw new Error(
+          session.error || `Failed to create session (${response.status})`
+        );
+      }
+
+      // Redirect to Stripe Checkout
+      const { error: stripeError } = await stripe.redirectToCheckout({
+        sessionId: session.id,
+      });
+
+      // This point is only reached if `redirectToCheckout` fails (e.g., network issue)
+      if (stripeError) {
+        console.error("Stripe redirect error:", stripeError);
+        setError(stripeError.message || "Failed to redirect to payment page.");
+      }
+    } catch (err) {
+      console.error("Subscription error:", err);
+      setError(err.message || "An unexpected error occurred.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
