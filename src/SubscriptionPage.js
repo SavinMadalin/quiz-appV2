@@ -16,7 +16,7 @@ import Spinner from "./Spinner"; // Assuming you have a Spinner component
 
 // const API_BASE_URL = "http://localhost:4242";
 const API_BASE_URL =
-  "https://devprep-backend-902764868157.europe-west4.run.app";
+  "https://devprep-backend--myproject-6969b.europe-west4.hosted.app";
 
 const SubscriptionPage = () => {
   const [selectedPlan, setSelectedPlan] = useState("monthly");
