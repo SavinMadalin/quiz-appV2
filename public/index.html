@@ -11,8 +11,8 @@
     />
     <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' https://js.stripe.com 'unsafe-inline';
-    connect-src 'self' https://devprep-backend-902764868157.us-central1.run.app http://localhost:4242 https://api.stripe.com https://*.firebaseio.com https://firestore.googleapis.com https://*.googleapis.com https://www.googleapis.com;
+    script-src 'self' 'unsafe-inline' https://js.stripe.com 'sha256-BNulBYV1JXGvq9NQg7814ZyyVZCqfRI1aq5d+PSIdgI=' 'sha256-ytrMnkhmgs3R/hrqlDci1Dfb+jn9MF8kFoyy6oyvkJ0=' 'sha256-agVSHA/eAewTYmLxzAIytt5bR5BkvZAzCaHuhH9ScyM=';
+    connect-src 'self' https://devprep-backend-902764868157.europe-west4.run.app http://localhost:4242 https://api.stripe.com https://*.firebaseio.com https://firestore.googleapis.com https://*.googleapis.com https://www.googleapis.com;
     frame-src 'self' https://js.stripe.com https://hooks.stripe.com;
     style-src 'self' 'unsafe-inline';
     img-src 'self' https://*.stripe.com data:;

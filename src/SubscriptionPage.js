@@ -6,11 +6,13 @@ import { StarIcon } from "@heroicons/react/24/solid";
 import {
   CheckIcon as OutlineCheckIcon,
   XMarkIcon as OutlineXIcon,
+  ArrowPathIcon, // Import spinner icon or use your existing Spinner component
 } from "@heroicons/react/24/outline";
 import classNames from "classnames";
 import { useStripe } from "@stripe/react-stripe-js";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom"; // Import Link for messages
+import Spinner from "./Spinner"; // Assuming you have a Spinner component
 
 // const API_BASE_URL = "http://localhost:4242";
 const API_BASE_URL =
@@ -18,7 +20,7 @@ const API_BASE_URL =
 
 const SubscriptionPage = () => {
   const [selectedPlan, setSelectedPlan] = useState("monthly");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // This state will control the spinner
   const [error, setError] = useState(null);
   const stripe = useStripe();
   const { user, isAuthenticated, isEmailVerified } = useSelector(
@@ -36,14 +38,14 @@ const SubscriptionPage = () => {
     { name: "Priority Support", basic: false, premium: true },
   ];
 
-  // Plan details - **IMPORTANT: Add Stripe Price IDs from your backend .env**
+  // Plan details
   const plans = {
     monthly: {
       id: "monthly",
       name: "Monthly",
       price: "$9.99",
       interval: "month",
-      stripePriceId: "price_1RInSv5v1qgAdBzCu5ctKVbF", // <-- Replace
+      stripePriceId: "price_1RInSv5v1qgAdBzCu5ctKVbF",
     },
     sixMonths: {
       id: "sixMonths",
@@ -51,7 +53,7 @@ const SubscriptionPage = () => {
       price: "$49.99",
       interval: "6 months",
       save: "Save 15%",
-      stripePriceId: "prod_SDDzlRadtr2DUz", // <-- Replace
+      stripePriceId: "prod_SDDzlRadtr2DUz",
     },
     yearly: {
       id: "yearly",
@@ -59,7 +61,7 @@ const SubscriptionPage = () => {
       price: "$89.99",
       interval: "year",
       save: "Save 25%",
-      stripePriceId: "prod_SDE0Xa8PWvI4ir", // <-- Replace
+      stripePriceId: "prod_SDE0Xa8PWvI4ir",
     },
   };
 
@@ -71,7 +73,7 @@ const SubscriptionPage = () => {
       return;
     }
     if (!isAuthenticated || !user) {
-      setError("Please log in to subscribe."); // Should be caught by ProtectedRoute, but good fallback
+      setError("Please log in to subscribe.");
       return;
     }
     if (!isEmailVerified) {
@@ -88,24 +90,21 @@ const SubscriptionPage = () => {
       return;
     }
 
-    setIsLoading(true);
+    setIsLoading(true); // <<< --- SET LOADING TO TRUE HERE ---
     const selectedPlanDetails = plans[selectedPlan];
 
     try {
-      // Call backend to create the checkout session
       const response = await fetch(`${API_BASE_URL}/create-checkout-session`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Add Authorization header if your backend requires it
-          // 'Authorization': `Bearer ${user.token}` // Get token from Redux state if needed
         },
         body: JSON.stringify({
           priceId: selectedPlanDetails.stripePriceId,
           planId: selectedPlanDetails.id,
-          userId: user.uid, // Send user ID (backend should ideally verify via token)
-          isVerified: isEmailVerified, // <-- Send verification status
-          userEmail: user.email, // <-- Send user's email
+          userId: user.uid,
+          isVerified: isEmailVerified,
+          userEmail: user.email,
           userName: user.displayName,
         }),
       });
@@ -113,131 +112,103 @@ const SubscriptionPage = () => {
       const session = await response.json();
 
       if (!response.ok) {
-        // Handle specific errors from backend
         throw new Error(
           session.error || `Failed to create session (${response.status})`
         );
       }
 
-      // Redirect to Stripe Checkout
       const { error: stripeError } = await stripe.redirectToCheckout({
         sessionId: session.id,
       });
 
-      // This point is only reached if `redirectToCheckout` fails (e.g., network issue)
       if (stripeError) {
         console.error("Stripe redirect error:", stripeError);
         setError(stripeError.message || "Failed to redirect to payment page.");
       }
+      // If redirectToCheckout is successful, the user is navigated away,
+      // so setIsLoading(false) might not be strictly necessary here if navigation happens.
+      // However, it's good practice to have it in the finally block.
     } catch (err) {
       console.error("Subscription error:", err);
       setError(err.message || "An unexpected error occurred.");
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // <<< --- SET LOADING TO FALSE IN FINALLY ---
     }
   };
 
   return (
-    // Apply the standard page layout padding
     <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-12 pb-24 lg:pl-52 lg:mt-8">
-      {" "}
-      {/* Reduced padding */}
       <TopNavbar />
       <Navbar />
-      {/* Main Content Area - Reduced padding, max-w-lg */}
       <div className="bg-white dark:bg-dark-grey p-5 md:p-6 rounded-lg shadow-lg max-w-lg w-full mt-8">
-        {" "}
-        {/* Reduced padding, max-w-lg */}
-        {/* Adjusted title size: text-xl default, text-2xl on sm, mb-3 */}
         <h2 className="text-xl sm:text-2xl font-bold mb-3 text-center flex items-center justify-center gap-1.5">
-          {" "}
-          {/* Reduced mb, gap */}
-          <StarIcon className="h-6 w-6 sm:h-7 sm:w-7 text-yellow-400" />{" "}
-          {/* Adjusted icon size */}
+          <StarIcon className="h-6 w-6 sm:h-7 sm:w-7 text-yellow-400" />
           Unlock Premium Access
         </h2>
-        {/* Adjusted paragraph size: text-sm default, text-base on sm, mb-5 */}
         <p className="text-sm sm:text-base text-center mb-5 text-gray-700 dark:text-gray-300">
-          {" "}
-          {/* Reduced mb */}
           Supercharge your interview preparation with DevPrep Premium!
         </p>
-        {/* Feature Comparison Table - Reduced mb-6 */}
+
+        {/* Feature Comparison Table */}
         <div className="mb-6 border rounded-lg overflow-hidden border-gray-300 dark:border-gray-600">
-          {" "}
-          {/* Reduced mb */}
-          {/* Header Row - Reduced padding p-2, gap-2 */}
           <div className="grid grid-cols-3 gap-2 bg-gray-100 dark:bg-gray-700 p-2 font-semibold text-center text-sm">
-            {" "}
-            {/* Reduced padding, gap, text-sm */}
             <div className="text-left">Feature</div>
             <div>Basic</div>
             <div className="flex items-center justify-center gap-1 text-yellow-500">
               <StarIcon className="h-4 w-4" /> Premium
             </div>
           </div>
-          {/* Feature Rows */}
           <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {features.map((feature) => (
               <div
-                key={feature.name} // Use feature name as key for stability
-                // Reduced padding p-1.5, gap-1.5, text-xs
-                className="grid grid-cols-3 gap-1.5 p-1.5 items-center text-xs" // Reduced padding, gap, text-xs
+                key={feature.name}
+                className="grid grid-cols-3 gap-1.5 p-1.5 items-center text-xs"
               >
                 <div className="text-left">{feature.name}</div>
                 <div className="flex justify-center">
                   {feature.basic ? (
-                    <OutlineCheckIcon className="h-4 w-4 text-green-500" /> // Kept icon size
+                    <OutlineCheckIcon className="h-4 w-4 text-green-500" />
                   ) : (
-                    <OutlineXIcon className="h-4 w-4 text-red-500" /> // Kept icon size
+                    <OutlineXIcon className="h-4 w-4 text-red-500" />
                   )}
                 </div>
                 <div className="flex justify-center">
                   {feature.premium ? (
-                    <OutlineCheckIcon className="h-4 w-4 text-green-500" /> // Kept icon size
+                    <OutlineCheckIcon className="h-4 w-4 text-green-500" />
                   ) : (
-                    <OutlineXIcon className="h-4 w-4 text-red-500" /> // Kept icon size
+                    <OutlineXIcon className="h-4 w-4 text-red-500" />
                   )}
                 </div>
               </div>
             ))}
           </div>
         </div>
-        {/* Pricing Section - Reduced pt-5 */}
+
+        {/* Pricing Section */}
         <div className="border-t border-gray-300 dark:border-gray-600 pt-5 text-center">
-          {" "}
-          {/* Reduced pt */}
-          {/* Adjusted pricing title size: text-lg default, text-xl on sm, mb-3 */}
           <h3 className="text-lg sm:text-xl font-semibold mb-3">
-            {" "}
-            {/* Reduced mb */}
             Choose Your Plan
           </h3>
-          {/* Plan Selection Buttons - Reduced mb-5, gap-2 */}
+          {/* Plan Selection Buttons */}
           <div className="flex flex-col gap-2 mb-5 grid grid-cols-3 sm:gap-2">
-            {" "}
-            {/* Reduced mb, gap */}
             {Object.values(plans).map((plan) => (
               <button
                 key={plan.id}
                 onClick={() => setSelectedPlan(plan.id)}
+                disabled={isLoading} // Disable plan selection while loading
                 className={classNames(
-                  "flex-1 p-2 rounded-lg border transition-all duration-200 text-left", // Reduced padding p-2
-                  "sm:p-2.5", // Slightly larger padding on sm
+                  "flex-1 p-2 rounded-lg border transition-all duration-200 text-left",
+                  "sm:p-2.5",
                   selectedPlan === plan.id
                     ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 ring-2 ring-blue-500"
-                    : "border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                    : "border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50",
+                  isLoading ? "opacity-50 cursor-not-allowed" : ""
                 )}
               >
-                {/* Reduced font sizes */}
                 <p className="font-bold text-xs mb-0.5 sm:text-sm sm:mb-0.5">
-                  {" "}
-                  {/* Reduced mb */}
                   {plan.name}
                 </p>
                 <p className="text-base font-extrabold mb-0.5 sm:text-lg sm:mb-0.5">
-                  {" "}
-                  {/* Reduced mb */}
                   {plan.price}
                 </p>
                 <p className="text-xs text-gray-600 dark:text-gray-400">
@@ -245,20 +216,35 @@ const SubscriptionPage = () => {
                 </p>
                 {plan.save && (
                   <span className="inline-block bg-yellow-200 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-100 text-xs font-semibold mt-1 px-1.5 py-0.5 rounded">
-                    {" "}
-                    {/* Kept size */}
                     {plan.save}
                   </span>
                 )}
               </button>
             ))}
           </div>
-          {/* Subscribe Button - Reduced padding py-2 px-6 */}
+
+          {/* Error Message Display */}
+          {error && (
+            <div className="mb-4 text-red-500 text-sm text-center">{error}</div>
+          )}
+
+          {/* Subscribe Button */}
           <button
-            onClick={() => handleSubscription(selectedPlan)}
-            className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 text-sm" // Reduced padding, added text-sm
+            onClick={handleSubscription} // Changed from onClick={() => handleSubscription(selectedPlan)} as selectedPlan is already in state
+            disabled={isLoading} // Disable button when loading
+            className={classNames(
+              "w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 text-sm",
+              isLoading ? "opacity-50 cursor-not-allowed" : ""
+            )}
           >
-            Subscribe to {plans[selectedPlan].name} Plan
+            {isLoading ? (
+              <div className="flex items-center justify-center">
+                <ArrowPathIcon className="animate-spin h-5 w-5 mr-2" />
+                Processing...
+              </div>
+            ) : (
+              `Subscribe to ${plans[selectedPlan].name} Plan`
+            )}
           </button>
         </div>
       </div>
