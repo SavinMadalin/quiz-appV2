@@ -12,9 +12,9 @@ import { useStripe } from "@stripe/react-stripe-js";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom"; // Import Link for messages
 
-// Base URL for your backend API (consider putting in .env)
-// const API_BASE_URL = "http://localhost:4242"; // Or your deployed backend URL
-const API_BASE_URL = "https://devprep-backend-902764868157.us-central1.run.app"; // Or your deployed backend URL
+// const API_BASE_URL = "http://localhost:4242";
+const API_BASE_URL =
+  "https://devprep-backend-902764868157.europe-west4.run.app";
 
 const SubscriptionPage = () => {
   const [selectedPlan, setSelectedPlan] = useState("monthly");
