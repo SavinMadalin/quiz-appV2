@@ -19,7 +19,7 @@ import SubscriptionPage from "./SubscriptionPage";
 import ResetPasswordPage from "./ResetPasswordPage";
 import AuthActionHandlerPage from "./AuthActionHandlerPage";
 import SubscriptionSuccessPage from "./SubscriptionSuccessPage";
-
+import SubscriptionSettingsPage from "./SubscriptionSettingsPage"; // Import the new page
 function AppContent() {
   const dispatch = useDispatch();
   // Note: useNavigate needs to be called within a component rendered by Router
@@ -142,6 +142,7 @@ function AppContent() {
               }
             />
             <Route path="/reset-password" element={<ResetPasswordPage />} />{" "}
+            <Route path="/subscription-settings" element={<SubscriptionSettingsPage />} /> {/* Add this route */}
             {/* Add this route */}
             <Route path="/confirmation" element={<ConfirmationPage />} />
             <Route path="/auth/action" element={<AuthActionHandlerPage />} />
