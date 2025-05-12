@@ -15,7 +15,7 @@ const ChangePlanPopup = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50 p-4 pt-20">
       {/* Inner container for the popup content - Removed ml-20 to re-center horizontally */}
       {/* Added max-w-sm w-full for consistent sizing */}
-      <div className="bg-white dark:bg-dark-grey p-6 rounded-lg shadow-xl max-w-sm w-full relative ml-20">
+      <div className="bg-white dark:bg-dark-grey p-6 rounded-lg shadow-xl max-w-sm w-full relative sm:ml-20">
         <h3 className="text-xl font-bold mb-4 text-center">
           Select a New Plan
         </h3>
@@ -38,9 +38,20 @@ const ChangePlanPopup = ({
                 isLoading ? "opacity-50 cursor-not-allowed" : ""
               )}
             >
-              <span className="font-bold text-base">{plan.name} Plan</span>
+              <div className="flex justify-between items-center mb-1">
+                {" "}
+                {/* Flex container for name and save badge */}
+                <span className="font-bold text-base">{plan.name} Plan</span>
+                {plan.save && (
+                  <span className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                    {" "}
+                    {/* Updated Save Badge */}
+                    {plan.save}
+                  </span>
+                )}
+              </div>
               <span className="text-sm text-gray-600 dark:text-gray-400">
-                {plan.price} per {plan.interval} {plan.save && `(${plan.save})`}
+                {plan.price} per {plan.interval}
               </span>
               {isLoading && ( // Show spinner inside the button if loading
                 <div className="flex items-center justify-center mt-2">

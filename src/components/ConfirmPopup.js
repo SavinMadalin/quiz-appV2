@@ -6,7 +6,7 @@ const ConfirmPopup = ({ message, onConfirm, onCancel }) => {
     // Outer container for the overlay and centering
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       {/* Inner container for the popup content - Added ml-8 */}
-      <div className="bg-white dark:bg-dark-grey p-6 rounded-lg shadow-lg max-w-md w-full ml-20">
+      <div className="bg-white dark:bg-dark-grey p-6 rounded-lg shadow-lg max-w-md w-full sm:ml-20">
         <p className="mb-4">{message}</p>
         <div className="flex justify-end space-x-4">
           <button

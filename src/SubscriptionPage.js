@@ -99,7 +99,7 @@ const SubscriptionPage = () => {
       return;
     }
 
-    setIsLoading(true); // <<< --- SET LOADING TO TRUE HERE ---
+    setIsLoading(true);
     const selectedPlanDetails = plans[selectedPlan];
 
     try {
@@ -134,14 +134,11 @@ const SubscriptionPage = () => {
         console.error("Stripe redirect error:", stripeError);
         setError(stripeError.message || "Failed to redirect to payment page.");
       }
-      // If redirectToCheckout is successful, the user is navigated away,
-      // so setIsLoading(false) might not be strictly necessary here if navigation happens.
-      // However, it's good practice to have it in the finally block.
     } catch (err) {
       console.error("Subscription error:", err);
       setError(err.message || "An unexpected error occurred.");
     } finally {
-      setIsLoading(false); // <<< --- SET LOADING TO FALSE IN FINALLY ---
+      setIsLoading(false);
     }
   };
 
@@ -161,45 +158,45 @@ const SubscriptionPage = () => {
     <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-12 pb-24 lg:pl-52 lg:mt-8">
       <TopNavbar />
       <Navbar />
-      <div className="bg-white dark:bg-dark-grey p-5 md:p-6 rounded-lg shadow-lg max-w-lg w-full mt-8">
-        <h2 className="text-xl sm:text-2xl font-bold mb-3 text-center flex items-center justify-center gap-1.5">
-          <StarIcon className="h-6 w-6 sm:h-7 sm:w-7 text-yellow-400" />
+      <div className="bg-white dark:bg-dark-grey p-5 md:p-6 lg:p-8 rounded-lg shadow-lg max-w-lg lg:max-w-2xl w-full mt-8">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 lg:mb-4 text-center flex items-center justify-center gap-1.5">
+          <StarIcon className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 text-yellow-400" />
           {isPremium ? "Your Premium Access" : "Unlock Premium Access"}
         </h2>
-        <p className="text-sm sm:text-base text-center mb-5 text-gray-700 dark:text-gray-300">
+        <p className="text-sm sm:text-base lg:text-lg text-center mb-5 lg:mb-6 text-gray-700 dark:text-gray-300">
           {isPremium
             ? "Thank you for being a DevPrep Premium member!"
             : "Supercharge your interview preparation with DevPrep Premium!"}
         </p>
 
         {/* Feature Comparison Table (always shown) */}
-        <div className="mb-6 border rounded-lg overflow-hidden border-gray-300 dark:border-gray-600">
-          <div className="grid grid-cols-3 gap-2 bg-gray-100 dark:bg-gray-700 p-2 font-semibold text-center text-sm">
+        <div className="mb-6 lg:mb-8 border rounded-lg overflow-hidden border-gray-300 dark:border-gray-600">
+          <div className="grid grid-cols-3 gap-2 bg-gray-100 dark:bg-gray-700 p-2 lg:p-3 font-semibold text-center text-sm lg:text-base">
             <div className="text-left">Feature</div>
             <div>Basic</div>
             <div className="flex items-center justify-center gap-1 text-yellow-500">
-              <StarIcon className="h-4 w-4" /> Premium
+              <StarIcon className="h-4 w-4 lg:h-5 lg:w-5" /> Premium
             </div>
           </div>
           <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {features.map((feature) => (
               <div
                 key={feature.name}
-                className="grid grid-cols-3 gap-1.5 p-1.5 items-center text-xs"
+                className="grid grid-cols-3 gap-1.5 lg:gap-2 p-1.5 lg:p-2 items-center text-xs lg:text-sm"
               >
                 <div className="text-left">{feature.name}</div>
                 <div className="flex justify-center">
                   {feature.basic ? (
-                    <OutlineCheckIcon className="h-4 w-4 text-green-500" />
+                    <OutlineCheckIcon className="h-4 w-4 lg:h-5 lg:w-5 text-green-500" />
                   ) : (
-                    <OutlineXIcon className="h-4 w-4 text-red-500" />
+                    <OutlineXIcon className="h-4 w-4 lg:h-5 lg:w-5 text-red-500" />
                   )}
                 </div>
                 <div className="flex justify-center">
                   {feature.premium ? (
-                    <OutlineCheckIcon className="h-4 w-4 text-green-500" />
+                    <OutlineCheckIcon className="h-4 w-4 lg:h-5 lg:w-5 text-green-500" />
                   ) : (
-                    <OutlineXIcon className="h-4 w-4 text-red-500" />
+                    <OutlineXIcon className="h-4 w-4 lg:h-5 lg:w-5 text-red-500" />
                   )}
                 </div>
               </div>
@@ -208,26 +205,26 @@ const SubscriptionPage = () => {
         </div>
 
         {/* Conditional Section: Plans or Settings Button */}
-        <div className="border-t border-gray-300 dark:border-gray-600 pt-5">
+        <div className="border-t border-gray-300 dark:border-gray-600 pt-5 lg:pt-6">
           {isPremium ? (
             <>
-              <p className="text-base font-bold mb-4 text-gray-700 dark:text-gray-300">
+              <p className="text-base lg:text-lg font-bold mb-4 text-gray-700 dark:text-gray-300 text-center">
                 Manage your subscription details:
               </p>
               <button
                 onClick={() => navigate("/subscription-settings")}
-                className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 text-sm flex items-center justify-center gap-2"
+                className="w-full sm:w-auto mx-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 lg:py-3 lg:px-8 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 text-sm lg:text-base flex items-center justify-center gap-2"
               >
-                <Cog6ToothIcon className="h-5 w-5" />
+                <Cog6ToothIcon className="h-5 w-5 lg:h-6 lg:w-6" />
                 Subscription Settings
               </button>
             </>
           ) : (
             <>
-              <h3 className="text-lg sm:text-xl font-semibold mb-3">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-3 lg:mb-4">
                 Choose Your Plan
               </h3>
-              <div className="flex flex-col gap-2 mb-5 grid grid-cols-3 sm:gap-2">
+              <div className="flex flex-col gap-2 mb-5 lg:mb-6 grid grid-cols-3 sm:gap-2 lg:gap-3">
                 {Object.values(plans).map((plan) => (
                   <button
                     key={plan.id}
@@ -235,24 +232,24 @@ const SubscriptionPage = () => {
                     disabled={isLoading}
                     className={classNames(
                       "flex-1 p-2 rounded-lg border transition-all duration-200 text-left",
-                      "sm:p-2.5",
+                      "sm:p-2.5 lg:p-3",
                       selectedPlan === plan.id
                         ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 ring-2 ring-blue-500"
                         : "border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50",
                       isLoading ? "opacity-50 cursor-not-allowed" : ""
                     )}
                   >
-                    <p className="font-bold text-xs mb-0.5 sm:text-sm sm:mb-0.5">
+                    <p className="font-bold text-xs mb-0.5 sm:text-sm lg:text-base sm:mb-0.5">
                       {plan.name}
                     </p>
-                    <p className="text-base font-extrabold mb-0.5 sm:text-lg sm:mb-0.5">
+                    <p className="text-base font-extrabold mb-0.5 sm:text-lg lg:text-xl sm:mb-0.5">
                       {plan.price}
                     </p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                    <p className="text-xs lg:text-sm text-gray-600 dark:text-gray-400">
                       per {plan.interval}
                     </p>
                     {plan.save && (
-                      <span className="inline-block bg-yellow-200 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-100 text-xs font-semibold mt-1 px-1.5 py-0.5 rounded">
+                      <span className="inline-block bg-yellow-200 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-100 text-xs lg:text-sm font-semibold mt-1 px-1.5 py-0.5 lg:px-2 lg:py-1 rounded">
                         {plan.save}
                       </span>
                     )}
@@ -261,7 +258,7 @@ const SubscriptionPage = () => {
               </div>
 
               {error && (
-                <div className="mb-4 text-red-500 text-sm text-center">
+                <div className="mb-4 text-red-500 text-sm lg:text-base text-center">
                   {error}
                 </div>
               )}
@@ -270,13 +267,13 @@ const SubscriptionPage = () => {
                 onClick={handleSubscription}
                 disabled={isLoading}
                 className={classNames(
-                  "w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 text-sm",
+                  "w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 lg:py-3 lg:px-8 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 text-sm lg:text-base",
                   isLoading ? "opacity-50 cursor-not-allowed" : ""
                 )}
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
-                    <ArrowPathIcon className="animate-spin h-5 w-5 mr-2" />
+                    <ArrowPathIcon className="animate-spin h-5 w-5 lg:h-6 lg:w-6 mr-2" />
                     Processing...
                   </div>
                 ) : (

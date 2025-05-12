@@ -390,7 +390,7 @@ const QuizPage = () => {
   const questionParts = extractCodeSnippets(currentQuestionData.question);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white p-6 pt-12">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white p-6 pt-12">
       <TopNavbar />
 
       {showConfirmPopup && (

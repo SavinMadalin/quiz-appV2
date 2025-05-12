@@ -224,7 +224,9 @@ const HistoryPage = () => {
             ) : (
               <>
                 {/* Tabs */}
-                <div className="mb-4 lg:mt-4">
+                <div className="mb-4 lg:mt-4 lg:mb-6">
+                  {" "}
+                  {/* Changed lg:mb-6 */}
                   <HistoryTabs
                     activeTab={activeTab}
                     setActiveTab={setActiveTab}
