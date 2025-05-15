@@ -185,7 +185,7 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
     <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-20 pb-28 lg:pl-28">
       <TopNavbar />
       <Navbar />
-      <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-sm w-full mt-8">
+      <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-sm w-full mt-4">
         <h2 className="text-3xl font-bold mb-8 flex items-center gap-2">
           <CogIcon className="h-8 w-8" />
           Settings

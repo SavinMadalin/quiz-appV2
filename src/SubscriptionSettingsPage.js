@@ -366,7 +366,7 @@ const SubscriptionSettingsPage = () => {
       <TopNavbar />
       <Navbar />
       <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full mt-8">
-        <h2 className="text-3xl font-bold mb-8 flex items-center gap-2">
+        <h2 className="text-2xl font-bold mb-8 flex items-center gap-2">
           <CreditCardIcon className="h-8 w-8" />
           Subscription Settings
         </h2>
