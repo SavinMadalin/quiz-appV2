@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Navbar from "./Navbar";
 import TopNavbar from "./components/TopNavbar";
 import { StarIcon } from "@heroicons/react/24/solid";
+import { auth } from "./firebase";
 import {
   CheckIcon as OutlineCheckIcon,
   XMarkIcon as OutlineXIcon,
@@ -74,6 +75,15 @@ const SubscriptionPage = () => {
     },
   };
 
+  const getAuthToken = async () => {
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      return await currentUser.getIdToken();
+    }
+    console.warn("No current user found to get ID token.");
+    return null;
+  };
+
   const handleSubscription = async () => {
     setError(null);
 
@@ -98,6 +108,7 @@ const SubscriptionPage = () => {
       );
       return;
     }
+    const token = await getAuthToken();
 
     setIsLoading(true);
     const selectedPlanDetails = plans[selectedPlan];
@@ -107,6 +118,7 @@ const SubscriptionPage = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           priceId: selectedPlanDetails.stripePriceId,

@@ -9,7 +9,8 @@ runConfig:
   environmentVariables:
     NODE_OPTIONS: "--max-old-space-size=2048"
 runtime: nodejs20
-
+staticAssets:
+  directory: build
 # Environment variables and secrets
 env:
   - variable: REACT_APP_FIREBASE_STORAGE_BUCKET

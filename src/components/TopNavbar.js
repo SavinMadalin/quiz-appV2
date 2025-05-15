@@ -181,7 +181,7 @@ const TopNavbar = () => {
               <div className="py-1">
                 <button
                   onClick={handleLogout}
-                  className="block w-full h-12 px-4 py-2 text-sm text-red-400 bg-white dark:bg-dark-grey hover:bg-light-grey dark:hover:bg-gray-700 rounded-md flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200"
+                  className="block w-full h-12 px-4 py-2 text-sm text-red-400 bg-white dark:bg-dark-grey rounded-md flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200"
                   style={{ width: "100%", maxWidth: "100%" }}
                 >
                   <ArrowRightOnRectangleIcon className="h-5 w-5 text-red-400" />
@@ -210,10 +210,6 @@ const TopNavbar = () => {
                     <span className="sm:hidden"></span>
                     <span className="hidden sm:inline">Login with Google</span>
                   </button>
-                  {/* Tooltip */}
-                  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-30">
-                    This will be available soon
-                  </span>
                 </div>
                 {/* Apple Login Button (Disabled) */}
                 <div className="relative group">
