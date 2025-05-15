@@ -1,15 +1,20 @@
 // src/MainPage.js
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux"; // Import useSelector to get auth state
 import Navbar from "./Navbar";
 import TopNavbar from "./components/TopNavbar";
-import { CheckCircleIcon, LightBulbIcon } from "@heroicons/react/24/outline";
-import { ArrowRightIcon } from "@heroicons/react/24/solid";
+import {
+  CheckCircleIcon,
+  LightBulbIcon,
+  ArrowRightIcon as OutlineArrowRightIcon,
+  UserPlusIcon,
+} from "@heroicons/react/24/outline"; // Changed to outline for consistency
+import { StarIcon as SolidStarIcon } from "@heroicons/react/24/solid"; // For subscribe button
 import { storage } from "./firebase"; // Import storage from firebase.js
 import { ref, getDownloadURL } from "firebase/storage"; // Import storage functions
-// Removed QuestionGenerator import as it's not used here
-import { AndroidLogo } from "./components/Logos";
 import Spinner from "./Spinner"; // Import Spinner
+import { useSubscription } from "./contexts/SubscriptionContext"; // Import useSubscription
 
 const EmailSentPopup = ({ onClose }) => {
   useEffect(() => {
@@ -18,7 +23,7 @@ const EmailSentPopup = ({ onClose }) => {
     }, 3000);
     return () => clearTimeout(timer);
   }, [onClose]);
-  console.log("EmailSentPopup rendered");
+  // console.log("EmailSentPopup rendered"); // Keep for debugging if needed
   return (
     <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white p-4 rounded-md shadow-lg z-50 flex items-center gap-2">
       <CheckCircleIcon className="h-6 w-6" />
@@ -32,8 +37,12 @@ const MainPage = () => {
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
   const [randomTip, setRandomTip] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
-  const [tipsAndTricks, setTipsAndTricks] = useState([]); // Add tipsAndTricks state
+  const [isLoading, setIsLoading] = useState(true);
+  const [tipsAndTricks, setTipsAndTricks] = useState([]);
+
+  const { isAuthenticated } = useSelector((state) => state.user);
+  const { isPremium, isLoadingStatus: isLoadingSubscription } =
+    useSubscription(); // Get isPremium
 
   useEffect(() => {
     if (location.state?.isEmailSent) {
@@ -47,34 +56,30 @@ const MainPage = () => {
       const timer = setTimeout(() => {
         setShowPopup(false);
       }, 3000);
-
       return () => clearTimeout(timer);
     }
   }, [showPopup]);
 
   useEffect(() => {
     const fetchTipsAndTricks = async () => {
-      setIsLoading(true); // Start loading
+      setIsLoading(true);
       try {
-        const storageRef = ref(storage, "tips/tips.json"); // Reference to the JSON file in Firebase Storage
-        const url = await getDownloadURL(storageRef); // Get the download URL
-        const response = await fetch(url); // Fetch the JSON data
-        if (!response.ok) throw new Error("Failed to fetch tips"); // Check response status
-        const data = await response.json(); // Parse the JSON data
-        setTipsAndTricks(data); // Set the tips and tricks data
+        const storageRef = ref(storage, "tips/tips.json");
+        const url = await getDownloadURL(storageRef);
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Failed to fetch tips");
+        const data = await response.json();
+        setTipsAndTricks(data);
       } catch (error) {
         console.error("Error fetching tips and tricks:", error);
-        // Handle error (e.g., display an error message to the user)
       } finally {
-        setIsLoading(false); // Stop loading
+        setIsLoading(false);
       }
     };
-
     fetchTipsAndTricks();
   }, []);
 
   useEffect(() => {
-    // Select a random tip when the component mounts or tips data changes
     if (tipsAndTricks.length > 0) {
       const randomIndex = Math.floor(Math.random() * tipsAndTricks.length);
       setRandomTip(tipsAndTricks[randomIndex]);
@@ -82,77 +87,75 @@ const MainPage = () => {
   }, [tipsAndTricks]);
 
   return (
-    // Adjusted padding: p-4 default, sm:p-6 for slightly larger screens
     <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-16 pb-24 lg:pl-52 lg:mt-8">
       <TopNavbar />
       {showPopup && <EmailSentPopup onClose={() => setShowPopup(false)} />}
-
-      {/* Hero Section */}
-      {/* Adjusted padding: p-6 default, sm:p-8 for larger screens. Reduced mb-8 */}
       <section className="bg-white dark:bg-dark-grey p-6 sm:p-8 rounded-lg shadow-lg max-w-4xl w-full mt-8 mb-8">
         <div className="text-center">
-          {/* Adjusted heading size: text-4xl default, sm:text-5xl, lg:text-6xl. Reduced mb-3 */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-3">
             <span className="text-yellow-400">Dev</span>
             <span className="text-black dark:text-white">Prep</span>
           </h1>
-          {/* Adjusted paragraph size: text-base default, sm:text-lg. Reduced mb-6 */}
           <p className="text-base sm:text-lg mb-6">
             Ace your tech interviews with our targeted quizzes and expert tips.
           </p>
-          {/* Start Button & Download Button */}
-          {/* Adjusted button padding/text size: py-2 px-5 text-sm default, sm:py-3 sm:px-6 sm:text-base */}
-          <div className="flex flex-col items-center gap-3 sm:gap-4">
-            {" "}
-            {/* Reduced gap */}
+
+          {/* Buttons Section */}
+          <div className="flex flex-col items-center gap-4 my-8">
+            {/* Sign up for free Button */}
+            {!isAuthenticated && (
+              <Link
+                to="/register"
+                className="w-full max-w-xs inline-flex items-center justify-center px-8 py-3 bg-green-500 hover:bg-green-600 text-white text-lg font-semibold rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+              >
+                <UserPlusIcon className="mr-2 h-6 w-6" /> Sign up for free
+                {/* Changed Icon and added mr-2 */}
+              </Link>
+            )}
+
+            {/* Start your dev prep journey Button */}
             <Link
               to="/quiz-config"
-              className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-5 text-sm sm:py-3 sm:px-6 sm:text-base rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center w-fit"
+              className="w-full max-w-xs bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 text-lg rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
             >
-              Start
-              {/* Adjusted icon size: h-4 w-4 default, sm:h-5 sm:w-5 */}
-              <ArrowRightIcon className="h-4 w-4 sm:h-5 sm:w-5 ml-2" />
+              Start your DevPrep journey
+              <OutlineArrowRightIcon className="ml-2 h-5 w-5" />
             </Link>
-            <a
-              href="https://firebasestorage.googleapis.com/v0/b/myproject-6969b.firebasestorage.app/o/app-release.apk?alt=media&token=867796c5-811b-4aec-ae20-cb8ae3a80c93"
-              target="_blank"
-              rel="noopener noreferrer"
-              download
-              // Adjusted padding/text size: py-2 px-4 text-xs default, sm:py-2 sm:px-5 sm:text-sm
-              className="inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 text-xs sm:py-2 sm:px-5 sm:text-sm rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 w-fit"
-            >
-              {/* Adjusted icon size: h-4 w-4 default, sm:h-5 sm:w-5 */}
-              <AndroidLogo className="h-4 w-4 sm:h-5 sm:w-5 mr-2" /> Download
-              app for Android
-            </a>
+
+            {/* Subscribe for premium content Button */}
+            {isAuthenticated && !isPremium && !isLoadingSubscription && (
+              <Link
+                to="/subscription"
+                className="w-full max-w-xs bg-gray-700 hover:bg-gray-900 text-yellow-300 font-bold py-3 px-6 text-lg rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
+              >
+                <SolidStarIcon className="mr-2 h-5 w-5" />
+                Subscribe for premium
+              </Link>
+            )}
+            {isAuthenticated && !isPremium && isLoadingSubscription && (
+              <div className="w-full max-w-xs h-[54px] flex justify-center items-center">
+                {" "}
+                {/* Match button height */}
+                <Spinner />
+              </div>
+            )}
           </div>
         </div>
       </section>
-
-      {/* Random Tip Section */}
-      {/* Adjusted mb-8 */}
       {randomTip && !isLoading && (
         <section className="max-w-4xl w-full mb-8">
-          {/* Adjusted padding: p-6 default, sm:p-8 */}
           <div className="bg-white dark:bg-dark-grey p-6 sm:p-8 rounded-lg shadow-lg">
-            {/* Adjusted mb-4 */}
             <div className="flex items-center mb-4">
-              {/* Adjusted icon size: h-6 w-6 default, sm:h-8 sm:w-8 */}
               <LightBulbIcon className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-400 mr-2" />
-              {/* Adjusted heading size: text-xl default, sm:text-2xl, lg:text-3xl */}
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold">
                 Tip & Trick
               </h2>
             </div>
-            {/* Adjusted padding p-3 default, sm:p-4 */}
             <div className="border rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow duration-300">
-              {/* Adjusted heading size: text-base default, sm:text-lg. Reduced mb-1 */}
               <h3 className="font-semibold text-base sm:text-lg mb-1">
                 {randomTip.title}
               </h3>
-              {/* Adjusted text size: text-xs default, sm:text-sm. Reduced mb-1 */}
               <p className="text-xs sm:text-sm mb-1">{randomTip.description}</p>
-              {/* Adjusted text size: text-xs default, sm:text-sm */}
               <a
                 href={randomTip.link}
                 target="_blank"
@@ -165,10 +168,8 @@ const MainPage = () => {
           </div>
         </section>
       )}
-
-      {/* Loading Spinner */}
-      {isLoading && <Spinner />}
-
+      {isLoading && !randomTip && <Spinner />}{" "}
+      {/* Show spinner if tips are loading and no tip is yet available */}
       <Navbar />
     </div>
   );

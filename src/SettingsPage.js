@@ -15,6 +15,7 @@ import {
   XMarkIcon,
   MoonIcon,
   SunIcon,
+  ArrowDownTrayIcon, // For download button
 } from "@heroicons/react/24/outline";
 import { db, deleteUser, logout, updateDisplayName } from "./firebase";
 import {
@@ -27,20 +28,20 @@ import {
 import ConfirmPopup from "./components/ConfirmPopup";
 import { useNavigate } from "react-router-dom";
 import { setUser } from "./redux/userSlice";
-import { resendVerificationEmail } from "./firebase"; // Import the resend email function
+import { resendVerificationEmail } from "./firebase";
 import { toggleTheme } from "./redux/themeSlice";
+import { AndroidLogo } from "./components/Logos"; // Import AndroidLogo
 
 const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
-  // Receive setIsDeletingUser
   const dispatch = useDispatch();
   const { user, isAuthenticated } = useSelector((state) => state.user);
   const navigate = useNavigate();
 
-  const [isEmailSent, setIsEmailSent] = useState(false);
+  const [isEmailSentMessageVisible, setIsEmailSentMessageVisible] =
+    useState(false); // Renamed for clarity
   const [error, setError] = useState(null);
   const { isDarkMode } = useSelector((state) => state.theme);
 
-  // Local state for draft settings
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [showDeleteConfirmPopup, setShowDeleteConfirmPopup] = useState(false);
   const [showReauthenticatePopup, setShowReauthenticatePopup] = useState(false);
@@ -51,18 +52,15 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
     setError(null);
     try {
       await resendVerificationEmail();
-      setEmailSent(true); // Notify App.js that the email was sent
-      setIsEmailSent(true);
+      setEmailSent(true); // Notify App.js
+      setIsEmailSentMessageVisible(true); // Show local message
 
-      // Automatically hide the success message after 3 seconds
       setTimeout(() => {
-        setIsEmailSent(false);
+        setIsEmailSentMessageVisible(false);
       }, 3000);
     } catch (err) {
       console.error("Error resending verification email:", err);
       setError("Wait at least 1 minute before resending the email.");
-
-      // Automatically hide the error message after 3 seconds
       setTimeout(() => {
         setError(null);
       }, 3000);
@@ -71,22 +69,15 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
 
   const handleThemeToggle = () => {
     dispatch(toggleTheme());
-
     const newIsDarkMode = !isDarkMode;
     const themeMessage = newIsDarkMode ? "dark" : "light";
-
-    console.log("Attempting to send theme message:", themeMessage); // <-- Add this
-    console.log("Does ThemeChannel exist?", window.ThemeChannel); // <-- Add this
-
     if (window.ThemeChannel && window.ThemeChannel.postMessage) {
       window.ThemeChannel.postMessage(themeMessage);
-      console.log("Theme message sent successfully!"); // <-- Add this
     } else {
-      console.error("ThemeChannel is not available or postMessage is missing."); // <-- Add this
+      console.error("ThemeChannel is not available or postMessage is missing.");
     }
   };
 
-  // Update the body class when the theme changes
   useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add("dark");
@@ -111,7 +102,6 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
         where("userId", "==", user.uid)
       );
       const querySnapshot = await getDocs(q);
-
       querySnapshot.forEach(async (doc) => {
         await deleteDoc(doc.ref);
       });
@@ -132,11 +122,11 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
 
   const handleConfirmDelete = async () => {
     setShowDeleteConfirmPopup(false);
-    setIsDeletingUser(true); // Set isDeletingUser to true before deleting
+    setIsDeletingUser(true);
     try {
       await deleteUser();
       await logout();
-      dispatch(setUser(null)); // Clear the user state in Redux
+      dispatch(setUser(null));
       navigate("/login");
     } catch (error) {
       if (error.code === "auth/requires-recent-login") {
@@ -145,7 +135,7 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
         console.error("Error deleting user:", error);
       }
     } finally {
-      setIsDeletingUser(false); // Set isDeletingUser to false after deleting (success or failure)
+      setIsDeletingUser(false);
     }
   };
 
@@ -155,7 +145,7 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
       await logout();
       navigate("/login");
     } catch (error) {
-      console.error("Error deleting user:", error);
+      console.error("Error during reauthentication logout:", error); // More specific error
     }
   };
 
@@ -169,7 +159,7 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
 
   const handleEditName = () => {
     setIsEditingName(true);
-    setNewDisplayName(user.displayName);
+    setNewDisplayName(user.displayName || ""); // Ensure newDisplayName is not null
   };
 
   const handleSaveName = async () => {
@@ -201,7 +191,6 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
           Settings
         </h2>
 
-        {/* Warning Icon and Resend Button */}
         {isAuthenticated && user && !emailVerified && (
           <div className="mb-6">
             <div className="flex items-center gap-3 mb-2">
@@ -219,8 +208,7 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
                 Resend Verification Email
               </button>
             </div>
-            {/* Display the messages under the button */}
-            {isEmailSent && (
+            {isEmailSentMessageVisible && (
               <p className="text-green-500 text-sm mt-2">
                 Verification email sent successfully!
               </p>
@@ -229,7 +217,6 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
           </div>
         )}
 
-        {/* User Information Section */}
         {isAuthenticated && user && (
           <section className="mb-8">
             <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -261,7 +248,7 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
                 </>
               ) : (
                 <>
-                  <span>{user.displayName}</span>
+                  <span>{user.displayName || "Not set"}</span>
                   <button
                     onClick={handleEditName}
                     className="text-blue-500 hover:text-blue-600"
@@ -277,33 +264,28 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
           </section>
         )}
 
-        {/* Other Settings */}
         <section className="mb-8">
           <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
             <PaintBrushIcon className="h-6 w-6" />
             Appearance
           </h3>
-          {/* Theme Toggle Section */}
           <div className="mb-6">
             <div className="flex items-center justify-center space-x-4">
-              {/* Sun Icon (Light Mode) */}
               <button
                 onClick={handleThemeToggle}
                 className={`p-2 rounded-full focus:outline-none transition-colors duration-300 ${
                   !isDarkMode
-                    ? "bg-yellow-400 text-white shadow-md" // Highlight if light mode is active
+                    ? "bg-yellow-400 text-white shadow-md"
                     : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
                 }`}
               >
                 <SunIcon className="h-6 w-6" />
               </button>
-
-              {/* Moon Icon (Dark Mode) */}
               <button
                 onClick={handleThemeToggle}
                 className={`p-2 rounded-full focus:outline-none transition-colors duration-300 ${
                   isDarkMode
-                    ? "bg-gray-800 text-white shadow-md" // Highlight if dark mode is active
+                    ? "bg-gray-800 text-white shadow-md"
                     : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
                 }`}
               >
@@ -313,7 +295,23 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
           </div>
         </section>
 
-        {/* Reset History Button */}
+        {/* Application Section - New */}
+        <section className="mb-8">
+          <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <ArrowDownTrayIcon className="h-6 w-6" />
+            Application
+          </h3>
+          <a
+            href="https://firebasestorage.googleapis.com/v0/b/myproject-6969b.firebasestorage.app/o/app-release.apk?alt=media&token=867796c5-811b-4aec-ae20-cb8ae3a80c93"
+            target="_blank"
+            rel="noopener noreferrer"
+            download
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center gap-2"
+          >
+            <AndroidLogo className="h-5 w-5" /> Download for Android
+          </a>
+        </section>
+
         {isAuthenticated && user && (
           <section className="mb-8">
             <button
@@ -325,7 +323,6 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
           </section>
         )}
 
-        {/* Delete Account Button */}
         {isAuthenticated && user && (
           <section className="mb-8 flex flex-col gap-2">
             <button
@@ -337,7 +334,7 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
           </section>
         )}
       </div>
-      {/* Confirm Popups */}
+
       {showConfirmPopup && (
         <ConfirmPopup
           message="Are you sure you want to reset your history?"
@@ -345,7 +342,6 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
           onCancel={handleCancelReset}
         />
       )}
-
       {showDeleteConfirmPopup && (
         <ConfirmPopup
           message="Are you sure you want to delete your account? This action cannot be undone."
@@ -353,7 +349,6 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
           onCancel={handleCancelDelete}
         />
       )}
-
       {showReauthenticatePopup && (
         <ConfirmPopup
           message="You need to re-authenticate to delete your account. Do you want to go to login page?"
