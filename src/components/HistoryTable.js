@@ -88,15 +88,17 @@ const HistoryTable = ({
   };
 
   const sortButtonClass =
-    "font-semibold flex items-center justify-center p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-xs";
+    "font-semibold flex items-center justify-center p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-xs flex-shrink-0"; // Added flex-shrink-0
 
   return (
-    <div className="max-h-[280px] md:max-h-[220px] overflow-y-auto overflow-x-auto pb-2">
+    <div className="max-h-[280px] md:max-h-[220px] overflow-y-auto pb-2">
+      {" "}
+      {/* Removed overflow-x-auto from here */}
       {/* Sorting Buttons Header - Responsive */}
       <div
         className={classNames(
           "mb-2 p-2 border-b border-gray-300 dark:border-gray-600",
-          "flex flex-wrap gap-2 justify-center", // Mobile: flex wrap
+          "flex flex-nowrap gap-2 overflow-x-auto justify-start", // Mobile: no wrap, horizontal scroll, start alignment
           "md:grid md:grid-cols-12 md:items-center md:gap-1 md:px-1 md:sticky md:top-0 md:bg-white md:dark:bg-dark-grey md:py-2 md:z-10" // Desktop: grid, sticky
         )}
       >
@@ -137,9 +139,10 @@ const HistoryTable = ({
           Status {getSortIcon("status")}
         </button>
       </div>
-
       {/* History Items - Container */}
-      <div className="flex flex-col gap-3 md:gap-1 md:min-w-[700px] px-1">
+      <div className="flex flex-col gap-3 md:gap-1 md:min-w-[700px] px-1 overflow-x-auto">
+        {" "}
+        {/* Added overflow-x-auto here for desktop table if needed */}
         {sortedHistory.map((result, index) => {
           const numQuestions = result.quizType === "interview" ? 15 : 10;
           const percentage = ((result.score / numQuestions) * 100).toFixed(0);
@@ -207,9 +210,9 @@ const HistoryTable = ({
 
                 {/* Feedback Button (Moved Here) */}
                 {result.quizType === "interview" && (
-                  <div className="mt-2 flex justify-left items-center">
+                  <div className="mt-2 flex justify-start items-center">
                     {" "}
-                    {/* Added mt-2 and centering */}
+                    {/* Changed to justify-start */}
                     <button
                       onClick={() => handleSeeFeedback(result)}
                       className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-md text-xs flex items-center gap-1 w-auto" // Adjusted padding and width
