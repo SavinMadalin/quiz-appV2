@@ -214,11 +214,11 @@ const HistoryPage = () => {
         ) : (
           <>
             {!isAuthenticated ? (
-              <div className="bg-white dark:bg-dark-grey p-4 rounded-lg shadow-lg text-center text-sm sm:text-base">
+              <div className="bg-white dark:bg-dark-grey p-4 rounded-lg shadow-lg text-center text-sm sm:text-base mt-4">
                 No history available, you have to log in to enable this feature.
               </div>
             ) : history.length === 0 ? (
-              <div className="bg-white dark:bg-dark-grey p-4 rounded-lg shadow-lg text-center text-sm sm:text-base">
+              <div className="bg-white dark:bg-dark-grey p-4 rounded-lg shadow-lg text-center text-sm sm:text-base mt-4">
                 No quiz history available.
               </div>
             ) : (

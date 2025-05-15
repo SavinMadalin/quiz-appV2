@@ -82,7 +82,7 @@ const RegisterPage = ({ setEmailSent, setIsRegistering }) => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white p-6 pt-12 pb-20 lg:pl-28">
       <TopNavbar />
-      <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full">
+      <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full mt-8">
         <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
         {error && <div className="text-red-500 mb-4">{error}</div>}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">

@@ -279,7 +279,7 @@ const SubscriptionPage = () => {
                 onClick={handleSubscription}
                 disabled={isLoading}
                 className={classNames(
-                  "w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 lg:py-3 lg:px-8 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 text-sm lg:text-base",
+                  "w-full sm:w-auto mx-auto bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 lg:py-3 lg:px-8 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 text-sm lg:text-base flex items-center justify-center gap-2",
                   isLoading ? "opacity-50 cursor-not-allowed" : ""
                 )}
               >

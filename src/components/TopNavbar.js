@@ -194,7 +194,7 @@ const TopNavbar = () => {
                 {/* Email Login Link */}
                 <Link
                   to="/login"
-                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 hover:bg-light-grey dark:hover:bg-gray-700 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200"
+                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200"
                 >
                   <EnvelopeIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />{" "}
                   <span className="sm:hidden"></span>
