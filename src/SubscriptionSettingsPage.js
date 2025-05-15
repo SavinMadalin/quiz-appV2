@@ -20,8 +20,10 @@ import ConfirmPopup from "./components/ConfirmPopup";
 import classNames from "classnames";
 import ChangePlanPopup from "./components/ChangePlanPopup";
 
-const API_BASE_URL =
-  "https://devprep-backend--myproject-6969b.europe-west4.hosted.app"; // Or your actual backend URL
+const API_BASE_URL = "http://localhost:4242";
+
+// const API_BASE_URL =
+//   "https://devprep-backend--myproject-6969b.europe-west4.hosted.app"; // Or your actual backend URL
 
 const SubscriptionSettingsPage = () => {
   const {
