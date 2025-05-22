@@ -113,7 +113,12 @@ function AppContent() {
       <Router>
         <div className="">
           <Routes>
-            <Route path="/" element={<MainPage />} />
+            {" "}
+            {/* Pass setEmailSent to MainPage */}
+            <Route
+              path="/"
+              element={<MainPage setEmailSent={setEmailSent} />}
+            />
             <Route path="/subscription" element={<SubscriptionPage />} />{" "}
             {/* Add subscription route */}
             <Route path="/history" element={<HistoryPage />} />
@@ -142,7 +147,11 @@ function AppContent() {
               }
             />
             <Route path="/reset-password" element={<ResetPasswordPage />} />{" "}
-            <Route path="/subscription-settings" element={<SubscriptionSettingsPage />} /> {/* Add this route */}
+            <Route
+              path="/subscription-settings"
+              element={<SubscriptionSettingsPage />}
+            />{" "}
+            {/* Add this route */}
             {/* Add this route */}
             <Route path="/confirmation" element={<ConfirmationPage />} />
             <Route path="/auth/action" element={<AuthActionHandlerPage />} />

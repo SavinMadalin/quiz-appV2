@@ -9,9 +9,10 @@ import {
   LightBulbIcon,
   ArrowRightIcon as OutlineArrowRightIcon,
   UserPlusIcon,
+  EnvelopeIcon, // For resend email
 } from "@heroicons/react/24/outline"; // Changed to outline for consistency
 import { StarIcon as SolidStarIcon } from "@heroicons/react/24/solid"; // For subscribe button
-import { storage } from "./firebase"; // Import storage from firebase.js
+import { storage, resendVerificationEmail } from "./firebase"; // Import storage and resendVerificationEmail
 import { ref, getDownloadURL } from "firebase/storage"; // Import storage functions
 import Spinner from "./Spinner"; // Import Spinner
 import { useSubscription } from "./contexts/SubscriptionContext"; // Import useSubscription
@@ -32,15 +33,20 @@ const EmailSentPopup = ({ onClose }) => {
   );
 };
 
-const MainPage = () => {
+const MainPage = ({ setEmailSent }) => {
+  // Receive setEmailSent as a prop
   const location = useLocation();
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
   const [randomTip, setRandomTip] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [tipsAndTricks, setTipsAndTricks] = useState([]);
+  const [emailResendError, setEmailResendError] = useState(null);
+  const [emailResendSuccess, setEmailResendSuccess] = useState(false);
 
-  const { isAuthenticated } = useSelector((state) => state.user);
+  const { isAuthenticated, isEmailVerified } = useSelector(
+    (state) => state.user
+  );
   const { isPremium, isLoadingStatus: isLoadingSubscription } =
     useSubscription(); // Get isPremium
 
@@ -85,9 +91,27 @@ const MainPage = () => {
       setRandomTip(tipsAndTricks[randomIndex]);
     }
   }, [tipsAndTricks]);
+  const handleResendEmail = async () => {
+    setEmailResendError(null);
+    setEmailResendSuccess(false);
+    try {
+      await resendVerificationEmail();
+      setEmailSent(true); // Notify AppContent to start polling
+      setEmailResendSuccess(true);
+      setTimeout(() => {
+        setEmailResendSuccess(false);
+      }, 3000);
+    } catch (err) {
+      console.error("Error resending verification email:", err);
+      setEmailResendError("Wait at least 1 minute before resending the email.");
+      setTimeout(() => {
+        setEmailResendError(null);
+      }, 3000);
+    }
+  };
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-16 pb-24 lg:pl-52 lg:mt-8">
+    <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-16 pb-24 lg:pl-52 lg:mt-8">
       <TopNavbar />
       {showPopup && <EmailSentPopup onClose={() => setShowPopup(false)} />}
       <section className="bg-white dark:bg-dark-grey p-6 sm:p-8 rounded-lg shadow-lg max-w-4xl w-full mt-8 mb-8">
@@ -122,16 +146,38 @@ const MainPage = () => {
               <OutlineArrowRightIcon className="ml-2 h-5 w-5" />
             </Link>
 
-            {/* Subscribe for premium content Button */}
-            {isAuthenticated && !isPremium && !isLoadingSubscription && (
-              <Link
-                to="/subscription"
-                className="w-full max-w-xs bg-gray-700 hover:bg-gray-900 text-yellow-300 font-bold py-3 px-6 text-lg rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
-              >
-                <SolidStarIcon className="mr-2 h-5 w-5" />
-                Subscribe for premium
-              </Link>
-            )}
+            {isAuthenticated &&
+              !isPremium &&
+              !isLoadingSubscription &&
+              (isEmailVerified ? (
+                <Link
+                  to="/subscription"
+                  className="w-full max-w-xs bg-gray-700 hover:bg-gray-900 text-yellow-300 font-bold py-3 px-6 text-lg rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
+                >
+                  <SolidStarIcon className="mr-2 h-5 w-5" />
+                  Subscribe for premium
+                </Link>
+              ) : (
+                <div className="w-full max-w-xs flex flex-col items-center">
+                  <button
+                    onClick={handleResendEmail}
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 text-lg rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
+                  >
+                    <EnvelopeIcon className="mr-2 h-6 w-6" />
+                    Resend Confirmation Email
+                  </button>
+                  {emailResendSuccess && (
+                    <p className="text-green-500 text-sm mt-2">
+                      Verification email sent!
+                    </p>
+                  )}
+                  {emailResendError && (
+                    <p className="text-red-500 text-sm mt-2">
+                      {emailResendError}
+                    </p>
+                  )}
+                </div>
+              ))}
             {isAuthenticated && !isPremium && isLoadingSubscription && (
               <div className="w-full max-w-xs h-[54px] flex justify-center items-center">
                 {" "}

@@ -46,7 +46,7 @@ const AuthActionHandlerPage = () => {
 
   // Optionally display a loading indicator while redirecting
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-200 dark:bg-gray-900">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
       <Spinner />
       <p className="ml-4 text-gray-700 dark:text-white">
         Processing your request...

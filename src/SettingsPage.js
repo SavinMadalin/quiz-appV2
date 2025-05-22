@@ -17,7 +17,7 @@ import {
   SunIcon,
   ArrowDownTrayIcon, // For download button
 } from "@heroicons/react/24/outline";
-import { db, deleteUser, logout, updateDisplayName } from "./firebase";
+import { auth, db, deleteUser, logout, updateDisplayName } from "./firebase";
 import {
   collection,
   query,
@@ -47,6 +47,21 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
   const [showReauthenticatePopup, setShowReauthenticatePopup] = useState(false);
   const [newDisplayName, setNewDisplayName] = useState("");
   const [isEditingName, setIsEditingName] = useState(false);
+  const [deleteError, setDeleteError] = useState(null); // New error state for deletion
+
+  // Define API_BASE_URL (ensure consistency with other files for production/development)
+  const API_BASE_URL = "http://localhost:4242";
+  // const API_BASE_URL = "https://devprep-backend--myproject-6969b.europe-west4.hosted.app";
+
+  // getAuthToken can be defined here or imported if it becomes a shared utility
+  const getAuthToken = async () => {
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      return await currentUser.getIdToken();
+    }
+    console.warn("No current user found to get ID token.");
+    return null;
+  };
 
   const handleResendEmail = async () => {
     setError(null);
@@ -117,22 +132,96 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
   };
 
   const handleDeleteAccount = () => {
+    setDeleteError(null); // Clear previous delete error
     setShowDeleteConfirmPopup(true);
   };
-
+  // Helper function for retrying the backend deletion call
+  const attemptBackendDeletionWithRetries = async (
+    token,
+    maxRetries = 3,
+    delay = 1000
+  ) => {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const backendResponse = await fetch(
+          `${API_BASE_URL}/delete-user-and-subscription`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              userId: user.uid,
+              userEmail: user.email,
+              userName: user.displayName,
+            }),
+          }
+        );
+        if (backendResponse.ok) {
+          return backendResponse; // Success
+        }
+        // If not ok, but not a network error, don't retry for client/server errors like 4xx/5xx immediately
+        // unless it's a specific case we want to retry (e.g. 503 Service Unavailable)
+        // For now, we'll let it fall through to throw an error if not ok.
+        const errorData = await backendResponse.json();
+        throw new Error(
+          errorData.error || `Server error: ${backendResponse.status}`
+        );
+      } catch (error) {
+        if (attempt === maxRetries) throw error; // Last attempt, rethrow
+        await new Promise((resolve) => setTimeout(resolve, delay * attempt)); // Simple fixed delay, or delay * attempt for exponential
+      }
+    }
+  };
   const handleConfirmDelete = async () => {
     setShowDeleteConfirmPopup(false);
     setIsDeletingUser(true);
+    setDeleteError(null); // Clear previous errors
     try {
-      await deleteUser();
-      await logout();
-      dispatch(setUser(null));
-      navigate("/login");
+      // 1. Get auth token
+      const token = await getAuthToken();
+      if (!token) {
+        throw new Error("Authentication failed. Please log in again.");
+      }
+
+      // 2. Attempt to delete Firebase Auth user FIRST
+      await deleteUser(); // This is the Firebase Auth user deletion from firebase.js
+
+      // 3. If Firebase user deletion is successful, proceed to delete backend (Stripe/Firestore) data
+      await attemptBackendDeletionWithRetries(token); // Call the retry helper
+
+      // 4. All deletions successful, now logout locally
+      await logout(); // Firebase logout
+      dispatch(setUser(null)); // Clear Redux state
+      navigate("/login"); // Navigate to login page
     } catch (error) {
-      if (error.code === "auth/requires-recent-login") {
+      if (error.message === "Authentication failed. Please log in again.") {
+        setDeleteError(error.message);
+      } else if (error.code === "auth/requires-recent-login") {
         setShowReauthenticatePopup(true);
+        setDeleteError("Please log in again to complete account deletion.");
+      } else if (
+        error.message.includes(
+          "Your account was removed from Firebase, but we encountered an issue"
+        )
+      ) {
+        // This is the critical error from step 3's backend call failure
+        console.error("Critical error during account deletion:", error.message);
+        setDeleteError(error.message);
+        // Attempt to ensure local logout as Firebase user is gone
+        try {
+          await logout();
+          dispatch(setUser(null));
+        } catch (e) {
+          /* ignore */
+        }
+        navigate("/login"); // Guide user to login, as their account is partially deleted
       } else {
         console.error("Error deleting user:", error);
+        setDeleteError(
+          error.message || "An error occurred while deleting your account."
+        );
       }
     } finally {
       setIsDeletingUser(false);
@@ -182,7 +271,7 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-20 pb-28 lg:pl-28">
+    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-20 pb-28 lg:pl-28">
       <TopNavbar />
       <Navbar />
       <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-sm w-full mt-4">
@@ -325,6 +414,11 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
 
         {isAuthenticated && user && (
           <section className="mb-8 flex flex-col gap-2">
+            {deleteError && (
+              <p className="text-red-500 text-sm mb-2 text-center">
+                {deleteError}
+              </p>
+            )}
             <button
               onClick={handleDeleteAccount}
               className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-md flex items-center justify-center gap-2 w-full"

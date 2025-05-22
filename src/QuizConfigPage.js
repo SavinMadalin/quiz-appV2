@@ -239,7 +239,7 @@ const QuizConfigPage = () => {
   // --- Add Loading State Handling ---
   if (isLoadingSubscription) {
     return (
-      <div className="flex flex-col items-center justify-start min-h-screen p-4 bg-gray-200 dark:bg-gray-900 pt-12 pb-24 lg:pl-52">
+      <div className="flex flex-col items-center justify-start min-h-screen p-4 bg-gray-100 dark:bg-gray-900 pt-12 pb-24 lg:pl-52">
         <TopNavbar />
         <Navbar />
         <div className="flex justify-center items-center flex-grow">
@@ -252,7 +252,7 @@ const QuizConfigPage = () => {
   const currentCategoryHasSubcategories = subcategories.length > 0;
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-4 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-12 pb-24 lg:pl-52">
+    <div className="flex flex-col items-center justify-start min-h-screen p-4 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-12 pb-24 lg:pl-52">
       <TopNavbar />
       <Navbar />
       <div className="bg-white dark:bg-dark-grey p-7 rounded-lg shadow-lg max-w-md w-full mt-8 mb-8">

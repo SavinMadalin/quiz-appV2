@@ -20,10 +20,10 @@ import ConfirmPopup from "./components/ConfirmPopup";
 import classNames from "classnames";
 import ChangePlanPopup from "./components/ChangePlanPopup";
 
-// const API_BASE_URL = "http://localhost:4242";
+const API_BASE_URL = "http://localhost:4242";
 
-const API_BASE_URL =
-  "https://devprep-backend--myproject-6969b.europe-west4.hosted.app"; // Or your actual backend URL
+// const API_BASE_URL =
+//   "https://devprep-backend--myproject-6969b.europe-west4.hosted.app"; // Or your actual backend URL
 
 const SubscriptionSettingsPage = () => {
   const {
@@ -312,7 +312,7 @@ const SubscriptionSettingsPage = () => {
 
   if (isLoadingSubscription) {
     return (
-      <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-gray-200 dark:bg-gray-900 pt-20 pb-28 lg:pl-28">
+      <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-20 pb-28 lg:pl-28">
         <TopNavbar />
         <Navbar />
         <div className="flex justify-center items-center flex-grow">
@@ -324,7 +324,7 @@ const SubscriptionSettingsPage = () => {
 
   if (!subscriptionDetails || !subscriptionDetails.status) {
     return (
-      <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-20 pb-28 lg:pl-28">
+      <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-20 pb-28 lg:pl-28">
         <TopNavbar />
         <Navbar />
         <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full mt-8 text-center">
@@ -364,7 +364,7 @@ const SubscriptionSettingsPage = () => {
   );
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-20 pb-28 lg:pl-28">
+    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-20 pb-28 lg:pl-28">
       <TopNavbar />
       <Navbar />
       <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full mt-8">

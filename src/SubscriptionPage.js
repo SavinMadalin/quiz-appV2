@@ -17,9 +17,9 @@ import { Link, useNavigate } from "react-router-dom"; // Import Link for message
 import { useSubscription } from "./contexts/SubscriptionContext"; // Import useSubscription
 import Spinner from "./Spinner";
 
-// const API_BASE_URL = "http://localhost:4242";
-const API_BASE_URL =
-  "https://devprep-backend--myproject-6969b.europe-west4.hosted.app";
+const API_BASE_URL = "http://localhost:4242";
+// const API_BASE_URL =
+//   "https://devprep-backend--myproject-6969b.europe-west4.hosted.app";
 
 const SubscriptionPage = () => {
   const [selectedPlan, setSelectedPlan] = useState("monthly");
@@ -156,7 +156,7 @@ const SubscriptionPage = () => {
 
   if (isLoadingSubscriptionStatus) {
     return (
-      <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-12 pb-24 lg:pl-52 lg:mt-8">
+      <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-12 pb-24 lg:pl-52 lg:mt-8">
         <TopNavbar />
         <Navbar />
         <div className="flex justify-center items-center flex-grow">
@@ -167,7 +167,7 @@ const SubscriptionPage = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white pt-12 pb-24 lg:pl-52 lg:mt-8">
+    <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-12 pb-24 lg:pl-52 lg:mt-8">
       <TopNavbar />
       <Navbar />
       <div className="bg-white dark:bg-dark-grey p-5 md:p-6 lg:p-8 rounded-lg shadow-lg max-w-lg lg:max-w-2xl w-full mt-8">

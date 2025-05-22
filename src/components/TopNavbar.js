@@ -85,24 +85,26 @@ const TopNavbar = () => {
   return (
     <div
       className={classNames(
-        "p-6 fixed top-0 left-0 right-0 z-50 flex flex-row justify-between items-center h-12 md:h-12 pt-6",
-        "bg-gray-100 dark:bg-gray-800 border-b border-gray-300 dark:border-gray-700"
+        "px-4 sm:px-6 fixed top-0 left-0 right-0 z-50 flex flex-row justify-between items-center h-12 md:h-12", // Adjusted padding for better layout within fixed height
+        "bg-gray-100 dark:bg-gray-800 border-b border-gray-300 dark:border-gray-700",
+        "lg:bg-cyan-600 lg:dark:bg-gray-800 lg:border-b-cyan-700 lg:dark:border-b-gray-700" // Peacock blue for large screens
       )}
     >
       {/* ... (Logo remains the same) ... */}
       <div className="text-4xl font-extrabold tracking-tight">
         <span className="text-yellow-400">Dev</span>
-        <span className="text-gray-800 dark:text-white lg:text-gray-800 lg:dark:text-white">
+        <span className="sm:text-gray-800 dark:text-white lg:text-white lg:dark:text-white">
           Prep
         </span>
       </div>
+
       <div className="relative inline-block text-left" ref={dropdownRef}>
         <button
           type="button"
           className={classNames(
             "inline-flex justify-center items-center w-full sm:w-auto h-12 rounded-md px-4 py-3 text-base font-semibold bg-transparent", // Adjusted sm:w-32 to sm:w-auto for flexibility
-            "text-gray-800 dark:text-white",
-            "hover:bg-transparent lg:hover:bg-gray-300 lg:dark:hover:bg-gray-700"
+            "text-gray-800 dark:text-white lg:text-white lg:dark:text-white",
+            "hover:bg-transparent lg:hover:bg-cyan-700 lg:dark:hover:bg-cyan-700" // Denim hover for light LG, Peacock hover for dark LG
           )}
           onClick={toggleDropdown}
           id="options-menu"
@@ -123,7 +125,7 @@ const TopNavbar = () => {
               <UserCircleIcon
                 className={classNames(
                   "h-6 w-6",
-                  "text-gray-800 dark:text-white"
+                  "text-gray-800 dark:text-white lg:text-white lg:dark:text-white"
                 )}
               />
               {isPremium && (
@@ -137,14 +139,18 @@ const TopNavbar = () => {
               <span
                 className={classNames(
                   "truncate", // Keep truncate
-                  "text-gray-800 dark:text-white"
+                  "text-gray-800 dark:text-white lg:text-white lg:dark:text-white"
                 )}
               >
                 {formatUserName(user.displayName)}
               </span>{" "}
             </div>
           ) : (
-            <span className={classNames("text-gray-800 dark:text-white")}>
+            <span
+              className={classNames(
+                "text-gray-800 dark:text-white lg:text-white lg:dark:text-white"
+              )}
+            >
               Login
             </span>
           )}
@@ -153,7 +159,7 @@ const TopNavbar = () => {
             <ChevronUpIcon
               className={classNames(
                 "-mr-1 ml-2 h-5 w-5",
-                "text-gray-800 dark:text-white"
+                "text-gray-800 dark:text-white lg:text-white lg:dark:text-white"
               )}
               aria-hidden="true"
             />
@@ -161,7 +167,7 @@ const TopNavbar = () => {
             <ChevronDownIcon
               className={classNames(
                 "-mr-1 ml-2 h-5 w-5",
-                "text-gray-800 dark:text-white"
+                "text-gray-800 dark:text-white lg:text-white lg:dark:text-white"
               )}
               aria-hidden="true"
             />

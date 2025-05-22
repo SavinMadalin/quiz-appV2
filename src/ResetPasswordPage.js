@@ -119,7 +119,7 @@ function ResetPasswordPage() {
   // Display loading spinner during initial code verification
   if (isVerifyingCode) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white p-6 pt-12 pb-20 lg:pl-28">
+      <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white p-6 pt-12 pb-20 lg:pl-28">
         <TopNavbar />
         <Spinner />
       </div>
@@ -128,7 +128,7 @@ function ResetPasswordPage() {
 
   return (
     // Apply the same outer layout as LoginPage/RegisterPage
-    <div className="flex justify-center items-center min-h-screen bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-white p-6 pt-12 pb-20 lg:pl-28">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white p-6 pt-12 pb-20 lg:pl-28">
       <TopNavbar />
       {/* Apply the same inner container styling */}
       <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full">
