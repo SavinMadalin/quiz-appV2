@@ -10,6 +10,10 @@ import {
   ArrowRightIcon as OutlineArrowRightIcon,
   UserPlusIcon,
   EnvelopeIcon, // For resend email
+  AcademicCapIcon, // For premium benefit
+  SparklesIcon, // For premium benefit
+  BoltIcon, // For premium benefit
+  ShieldCheckIcon,
 } from "@heroicons/react/24/outline"; // Changed to outline for consistency
 import { StarIcon as SolidStarIcon } from "@heroicons/react/24/solid"; // For subscribe button
 import { storage, resendVerificationEmail } from "./firebase"; // Import storage and resendVerificationEmail
@@ -32,6 +36,31 @@ const EmailSentPopup = ({ onClose }) => {
     </div>
   );
 };
+
+const premiumBenefits = [
+  {
+    name: "Unlock All Categories & Questions",
+    description:
+      "Dive deep into specialized topics with our full question bank.",
+    icon: SparklesIcon,
+  },
+  {
+    name: "Master Interview Mode",
+    description:
+      "Simulate real interview scenarios and get AI-powered feedback.",
+    icon: AcademicCapIcon,
+  },
+  {
+    name: "Personalized Feedback",
+    description: "Receive tailored advice to sharpen your skills effectively.",
+    icon: BoltIcon,
+  },
+  {
+    name: "Priority Support",
+    description: "Get your queries resolved faster with our dedicated support.",
+    icon: ShieldCheckIcon,
+  },
+];
 
 const MainPage = ({ setEmailSent }) => {
   // Receive setEmailSent as a prop
@@ -216,6 +245,46 @@ const MainPage = ({ setEmailSent }) => {
       )}
       {isLoading && !randomTip && <Spinner />}{" "}
       {/* Show spinner if tips are loading and no tip is yet available */}
+      <section className="max-w-4xl w-full mb-8">
+        <div className="bg-white dark:bg-dark-grey p-6 sm:p-8 rounded-lg shadow-xl">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold flex items-center justify-center gap-2">
+              <SolidStarIcon className="h-7 w-7 text-yellow-300" />
+              Unlock DevPrep Premium
+            </h2>
+            <p className="text-sm sm:text-base mt-2 text-blue-500">
+              Elevate your preparation to the next level.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-4 mb-8">
+            {premiumBenefits.map((benefit) => (
+              <div
+                key={benefit.name}
+                className="border rounded-lg flex items-start gap-3 p-3 dark:bg-white/10 bg-gray-100 rounded-lg"
+              >
+                <benefit.icon className="h-6 w-6 text-yellow-300 mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold text-base sm:text-lg">
+                    {benefit.name}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-blue-500">
+                    {benefit.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center">
+            <Link
+              to="/subscription"
+              className="inline-flex items-center justify-center px-8 py-3 bg-yellow-400 hover:bg-yellow-500 text-gray-800 text-lg font-semibold rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50"
+            >
+              View Premium Plans{" "}
+              <OutlineArrowRightIcon className="ml-2 h-5 w-5" />
+            </Link>
+          </div>
+        </div>
+      </section>
       <Navbar />
     </div>
   );

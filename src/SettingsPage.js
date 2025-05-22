@@ -271,13 +271,13 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-20 pb-28 lg:pl-28">
+    <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-16 pb-24 lg:pl-52 lg:mt-8">
       <TopNavbar />
       <Navbar />
-      <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-sm w-full mt-4">
-        <h2 className="text-3xl font-bold mb-8 flex items-center gap-2">
-          <CogIcon className="h-8 w-8" />
-          Settings
+      <div className="bg-white dark:bg-gray-800/90 p-6 sm:p-8 rounded-xl shadow-2xl max-w-lg w-full mt-8 border border-gray-200 dark:border-gray-700">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-10 text-center flex items-center justify-center gap-2 text-gray-800 dark:text-white">
+          <CogIcon className="h-7 w-7 sm:h-8 sm:w-8 text-indigo-500" />
+          Account Settings
         </h2>
 
         {isAuthenticated && user && !emailVerified && (
@@ -285,14 +285,14 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
             <div className="flex items-center gap-3 mb-2">
               <div className="relative group">
                 <ExclamationTriangleIcon className="h-6 w-6 text-yellow-500 cursor-pointer" />
-                <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-yellow-500 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-700 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                   Your email is not verified. Please verify your email to access
                   all features.
                 </span>
               </div>
               <button
                 onClick={handleResendEmail}
-                className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md text-sm flex items-center gap-2"
+                className="bg-indigo-500 hover:bg-indigo-600 text-white py-1.5 px-4 rounded-md text-sm font-medium flex items-center gap-2 shadow-sm hover:shadow-md transition-all"
               >
                 Resend Verification Email
               </button>
@@ -308,25 +308,27 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
 
         {isAuthenticated && user && (
           <section className="mb-8">
-            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <UserCircleIcon className="h-6 w-6" />
+            <h3 className="text-lg sm:text-xl font-semibold mb-5 flex items-center gap-2 text-gray-700 dark:text-gray-200 border-b border-gray-300 dark:border-gray-600 pb-2">
+              <UserCircleIcon className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-500" />
               User Information
             </h3>
-            <div className="mb-1 flex items-center gap-2">
-              <span className="font-medium">Name:</span>
+            <div className="mb-3 flex items-center gap-2 text-sm sm:text-base">
+              <span className="font-medium text-gray-600 dark:text-gray-300">
+                Name:
+              </span>
               {isEditingName ? (
-                <>
+                <div className="flex items-center gap-2 flex-grow">
                   <input
                     type="text"
                     value={newDisplayName}
                     onChange={(e) => setNewDisplayName(e.target.value)}
-                    className="p-1 border rounded-md bg-light-grey dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-grow p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
                   />
                   <button
                     onClick={handleSaveName}
-                    className="text-green-500 hover:text-green-600"
+                    className="p-1.5 text-green-500 hover:text-green-600"
                   >
-                    <CheckIcon className="h-5 w-5" />
+                    <CheckIcon className="h-5 w-5 sm:h-6 sm:w-6" />
                   </button>
                   <button
                     onClick={handleCancelEditName}
@@ -334,28 +336,35 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
                   >
                     <XMarkIcon className="h-5 w-5" />
                   </button>
-                </>
+                </div>
               ) : (
-                <>
-                  <span>{user.displayName || "Not set"}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-800 dark:text-gray-100">
+                    {user.displayName || "Not set"}
+                  </span>
                   <button
                     onClick={handleEditName}
-                    className="text-blue-500 hover:text-blue-600"
+                    className="text-indigo-500 hover:text-indigo-600"
                   >
-                    <PencilIcon className="h-5 w-5" />
+                    <PencilIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                   </button>
-                </>
+                </div>
               )}
             </div>
-            <p>
-              <span className="font-medium">Email:</span> {user.email}
+            <p className="text-sm sm:text-base">
+              <span className="font-medium text-gray-600 dark:text-gray-300">
+                Email:
+              </span>{" "}
+              <span className="text-gray-800 dark:text-gray-100">
+                {user.email}
+              </span>
             </p>
           </section>
         )}
 
         <section className="mb-8">
-          <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            <PaintBrushIcon className="h-6 w-6" />
+          <h3 className="text-lg sm:text-xl font-semibold mb-5 flex items-center gap-2 text-gray-700 dark:text-gray-200 border-b border-gray-300 dark:border-gray-600 pb-2">
+            <PaintBrushIcon className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-500" />
             Appearance
           </h3>
           <div className="mb-6">
@@ -364,30 +373,30 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
                 onClick={handleThemeToggle}
                 className={`p-2 rounded-full focus:outline-none transition-colors duration-300 ${
                   !isDarkMode
-                    ? "bg-yellow-400 text-white shadow-md"
-                    : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                    ? "bg-indigo-500 text-white shadow-lg"
+                    : "bg-gray-200 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
                 }`}
               >
-                <SunIcon className="h-6 w-6" />
+                <SunIcon className="h-5 w-5 sm:h-6 sm:w-6" />
               </button>
               <button
                 onClick={handleThemeToggle}
                 className={`p-2 rounded-full focus:outline-none transition-colors duration-300 ${
                   isDarkMode
-                    ? "bg-gray-800 text-white shadow-md"
-                    : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                    ? "bg-indigo-500 text-white shadow-lg"
+                    : "bg-gray-200 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
                 }`}
               >
-                <MoonIcon className="h-6 w-6" />
+                <MoonIcon className="h-5 w-5 sm:h-6 sm:w-6" />
               </button>
             </div>
           </div>
         </section>
 
         {/* Application Section - New */}
-        <section className="mb-8">
-          <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            <ArrowDownTrayIcon className="h-6 w-6" />
+        <section className="mb-10">
+          <h3 className="text-lg sm:text-xl font-semibold mb-5 flex items-center gap-2 text-gray-700 dark:text-gray-200 border-b border-gray-300 dark:border-gray-600 pb-2">
+            <ArrowDownTrayIcon className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-500" />
             Application
           </h3>
           <a
@@ -395,7 +404,7 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
             target="_blank"
             rel="noopener noreferrer"
             download
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center gap-2"
+            className="w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2.5 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center gap-2 text-sm sm:text-base"
           >
             <AndroidLogo className="h-5 w-5" /> Download for Android
           </a>
@@ -403,17 +412,22 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
 
         {isAuthenticated && user && (
           <section className="mb-8">
+            <h3 className="text-lg sm:text-xl font-semibold mb-5 flex items-center gap-2 text-gray-700 dark:text-gray-200 border-b border-gray-300 dark:border-gray-600 pb-2">
+              <TrashIcon className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-500" />
+              Account Data
+            </h3>
             <button
               onClick={handleResetHistory}
-              className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-md flex items-center justify-center gap-2 w-full"
+              className="bg-orange-500 hover:bg-orange-600 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 w-full shadow-sm hover:shadow-md transition-all text-sm sm:text-base"
             >
-              <TrashIcon className="h-5 w-5" /> <span>Reset history</span>
+              <TrashIcon className="h-4 w-4 sm:h-5 sm:w-5" />{" "}
+              <span>Reset Quiz History</span>
             </button>
           </section>
         )}
 
         {isAuthenticated && user && (
-          <section className="mb-8 flex flex-col gap-2">
+          <section className="flex flex-col gap-3">
             {deleteError && (
               <p className="text-red-500 text-sm mb-2 text-center">
                 {deleteError}
@@ -421,7 +435,7 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
             )}
             <button
               onClick={handleDeleteAccount}
-              className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-md flex items-center justify-center gap-2 w-full"
+              className="bg-red-600 hover:bg-red-700 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 w-full shadow-sm hover:shadow-md transition-all text-sm sm:text-base"
             >
               <ExclamationTriangleIcon className="h-5 w-5" /> Delete Account
             </button>

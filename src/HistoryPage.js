@@ -203,38 +203,39 @@ const HistoryPage = () => {
       <Navbar />
 
       {/* Content Area */}
-      <div className="max-w-4xl w-full mt-4 mb-8">
-        {fetchError && <p className="text-red-500 text-center">{fetchError}</p>}
+      <div className="max-w-4xl w-full mt-8 mb-8">
+        {" "}
+        {/* Added mt-8 for consistency */}
+        {fetchError && (
+          <p className="text-red-500 text-center mb-4">{fetchError}</p>
+        )}
         {isLoading ? (
-          <div className="flex justify-center p-4">
-            <div className="bg-white dark:bg-dark-grey p-4 rounded-lg shadow-lg flex justify-center items-center">
-              <Spinner />
-            </div>
+          <div className="flex justify-center items-center p-8 bg-white dark:bg-gray-800/90 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700">
+            <Spinner />
           </div>
         ) : (
           <>
             {!isAuthenticated ? (
-              <div className="bg-white dark:bg-dark-grey p-4 rounded-lg shadow-lg text-center text-sm sm:text-base mt-4">
+              <div className="bg-white dark:bg-gray-800/90 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 text-center text-sm sm:text-base">
                 No history available, you have to log in to enable this feature.
               </div>
             ) : history.length === 0 ? (
-              <div className="bg-white dark:bg-dark-grey p-4 rounded-lg shadow-lg text-center text-sm sm:text-base mt-4">
+              <div className="bg-white dark:bg-gray-800/90 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 text-center text-sm sm:text-base">
                 No quiz history available.
               </div>
             ) : (
               <>
                 {/* Tabs */}
-                <div className="mb-4 lg:mt-4 lg:mb-6">
-                  {" "}
-                  {/* Changed lg:mb-6 */}
+                <div className="mb-6 lg:mb-8">
                   <HistoryTabs
                     activeTab={activeTab}
                     setActiveTab={setActiveTab}
                   />
                 </div>
 
-                {/* Sorting and History Table - Re-added the wrapper div */}
-                <div className="bg-white dark:bg-dark-grey p-4 rounded-lg shadow-lg mb-4">
+                {/* Sorting and History Table */}
+                {/* Applied new card styling */}
+                <div className="bg-white dark:bg-gray-800/90 p-4 sm:p-6 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 mb-6 lg:mb-8">
                   <HistoryTable
                     sortedHistory={sortedHistory}
                     sortConfig={sortConfig}
@@ -245,7 +246,7 @@ const HistoryPage = () => {
 
                 {/* Chart Box */}
                 {categories.length > 0 && selectedCategory && (
-                  <div className="bg-white dark:bg-dark-grey p-4 rounded-lg shadow-lg mt-4">
+                  <div className="bg-white dark:bg-gray-800/90 p-4 sm:p-6 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700">
                     <CategoryFilter
                       categories={categories}
                       selectedCategory={selectedCategory}

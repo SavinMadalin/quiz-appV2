@@ -312,10 +312,10 @@ const SubscriptionSettingsPage = () => {
 
   if (isLoadingSubscription) {
     return (
-      <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-20 pb-28 lg:pl-28">
+      <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-100 dark:bg-gray-900 pt-16 pb-24 lg:pl-52 lg:mt-8">
         <TopNavbar />
         <Navbar />
-        <div className="flex justify-center items-center flex-grow">
+        <div className="flex justify-center items-center flex-grow mt-8">
           <Spinner />
         </div>
       </div>
@@ -324,11 +324,11 @@ const SubscriptionSettingsPage = () => {
 
   if (!subscriptionDetails || !subscriptionDetails.status) {
     return (
-      <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-20 pb-28 lg:pl-28">
+      <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-16 pb-24 lg:pl-52 lg:mt-8">
         <TopNavbar />
         <Navbar />
-        <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full mt-8 text-center">
-          <h2 className="text-2xl font-bold mb-4">
+        <div className="bg-white dark:bg-gray-800/90 p-6 sm:p-8 rounded-xl shadow-2xl max-w-md w-full mt-8 border border-gray-200 dark:border-gray-700 text-center">
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-800 dark:text-white">
             No Active Subscription Found
           </h2>
           <p className="mb-6">
@@ -336,7 +336,7 @@ const SubscriptionSettingsPage = () => {
           </p>
           <button
             onClick={() => navigate("/subscription")}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+            className="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2.5 px-6 rounded-lg shadow-md hover:shadow-lg transition-all"
           >
             View Subscription Plans
           </button>
@@ -364,47 +364,60 @@ const SubscriptionSettingsPage = () => {
   );
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-20 pb-28 lg:pl-28">
+    <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-16 pb-24 lg:pl-52 lg:mt-8">
       <TopNavbar />
       <Navbar />
-      <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full mt-8">
-        <h2 className="text-2xl font-bold mb-8 flex items-center gap-2">
-          <CreditCardIcon className="h-8 w-8" />
+      <div className="bg-white dark:bg-gray-800/90 p-6 sm:p-8 rounded-xl shadow-2xl max-w-lg w-full mt-8 border border-gray-200 dark:border-gray-700">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-10 text-center flex items-center justify-center gap-2 text-gray-800 dark:text-white">
+          <CreditCardIcon className="h-7 w-7 sm:h-8 sm:w-8 text-indigo-500" />
           Subscription Plan
         </h2>
 
         {/* Current Plan Section */}
-        <section className="mb-6">
-          <h3 className="text-xl font-semibold mb-3">Current Plan</h3>
-          <div className="space-y-2 text-sm">
-            <p>
-              <span className="font-medium">Plan:</span> {planName}
+        <section className="mb-8">
+          <h3 className="text-lg sm:text-xl font-semibold mb-5 flex items-center gap-2 text-gray-700 dark:text-gray-200 border-b border-gray-300 dark:border-gray-600 pb-2">
+            Current Plan
+          </h3>
+          <div className="space-y-3 text-sm sm:text-base">
+            <p className="flex justify-between">
+              <span className="font-medium text-gray-600 dark:text-gray-300">
+                Plan:
+              </span>{" "}
+              <span className="text-gray-800 dark:text-gray-100">
+                {planName}
+              </span>
             </p>
-            <p className="flex items-center">
-              <span className="font-medium mr-1">Status:</span>
-              {status === "active" ? (
-                <CheckBadgeIcon className="h-5 w-5 text-green-500 mr-1" />
-              ) : (
-                <XCircleIcon className="h-5 w-5 text-red-500 mr-1" />
-              )}
-              <span
-                className={classNames(
-                  "capitalize",
-                  status === "active"
-                    ? "text-green-600 dark:text-green-400"
-                    : "text-red-600 dark:text-red-400"
+            <p className="flex justify-between items-center">
+              <span className="font-medium text-gray-600 dark:text-gray-300">
+                Status:
+              </span>
+              <span className="flex items-center">
+                {status === "active" ? (
+                  <CheckBadgeIcon className="h-5 w-5 text-green-500 mr-1" />
+                ) : (
+                  <XCircleIcon className="h-5 w-5 text-red-500 mr-1" />
                 )}
-              >
-                {status}
+                <span
+                  className={classNames(
+                    "capitalize",
+                    status === "active"
+                      ? "text-green-600 dark:text-green-400"
+                      : "text-red-600 dark:text-red-400"
+                  )}
+                >
+                  {status}
+                </span>
               </span>
             </p>
             {status === "active" && (
-              <p className="flex items-center">
-                <CalendarDaysIcon className="h-5 w-5 text-gray-500 dark:text-gray-400 mr-1" />
-                <span className="font-medium mr-1">
+              <p className="flex justify-between items-center">
+                <span className="font-medium text-gray-600 dark:text-gray-300 flex items-center gap-1.5">
+                  <CalendarDaysIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                   {cancelAtPeriodEnd ? "Cancels on:" : "Renews on:"}
-                </span>{" "}
-                {nextBillingOrCancellationDate}
+                </span>
+                <span className="text-gray-800 dark:text-gray-100">
+                  {nextBillingOrCancellationDate}
+                </span>
               </p>
             )}
             {cancelAtPeriodEnd && (
@@ -418,22 +431,31 @@ const SubscriptionSettingsPage = () => {
 
         {/* Manage Auto-Renewal / Cancel Subscription Section */}
         {subscriptionDetails?.status === "active" && (
-          <section className="mb-6">
-            <h3 className="text-xl font-semibold mb-3">Subscription Renewal</h3>
+          <section className="mb-8">
+            <h3 className="text-lg sm:text-xl font-semibold mb-5 flex items-center gap-2 text-gray-700 dark:text-gray-200 border-b border-gray-300 dark:border-gray-600 pb-2">
+              Subscription Renewal
+            </h3>
             {autoRenewError && (
-              <p className="text-red-500 text-sm mb-4">{autoRenewError}</p>
+              <p className="text-red-500 text-sm mb-3 text-center">
+                {autoRenewError}
+              </p>
             )}
             {autoRenewSuccess && (
-              <p className="text-green-500 text-sm mb-4">{autoRenewSuccess}</p>
+              <p className="text-green-500 text-sm mb-3 text-center">
+                {autoRenewSuccess}
+              </p>
             )}
             {cancelError && !planChangeSuccess && (
-              <p className="text-red-500 text-sm mb-4">{cancelError}</p>
+              <p className="text-red-500 text-sm mb-3 text-center">
+                {cancelError}
+              </p>
             )}
 
             {/* Auto-Renewal Status and Toggle */}
-            <div className="flex items-center justify-between gap-3 text-sm mb-4">
-              <span className="font-medium">Auto-Renewal:</span>
-              {/* ON/OFF Toggle Button */}
+            <div className="flex items-center justify-between gap-3 text-sm sm:text-base p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+              <span className="font-medium text-gray-700 dark:text-gray-200">
+                Auto-Renewal:
+              </span>
               <button
                 onClick={() => {
                   // If auto-renew is currently ON (cancelAtPeriodEnd is false),
@@ -449,10 +471,10 @@ const SubscriptionSettingsPage = () => {
                 }}
                 disabled={isTogglingAutoRenew || isCancelling || isChangingPlan}
                 className={classNames(
-                  "relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed",
+                  "relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed",
                   subscriptionDetails.cancelAtPeriodEnd
-                    ? "bg-gray-400"
-                    : "bg-green-600" // Background based on state
+                    ? "bg-gray-300 dark:bg-gray-600"
+                    : "bg-green-500" // Background based on state
                 )}
               >
                 <span className="sr-only">Toggle Auto-Renewal</span>
@@ -473,13 +495,17 @@ const SubscriptionSettingsPage = () => {
         {status === "active" &&
           !cancelAtPeriodEnd && // Can only change plan if active and not set to cancel
           availableUpgradePlans.length > 0 && (
-            <section className="mb-6">
-              <h3 className="text-xl font-semibold mb-3">Change Plan</h3>
+            <section className="mb-8">
+              <h3 className="text-lg sm:text-xl font-semibold mb-5 flex items-center gap-2 text-gray-700 dark:text-gray-200 border-b border-gray-300 dark:border-gray-600 pb-2">
+                Change Plan
+              </h3>
               {planChangeError && !cancelError && (
-                <p className="text-red-500 text-sm mb-4">{planChangeError}</p>
+                <p className="text-red-500 text-sm mb-3 text-center">
+                  {planChangeError}
+                </p>
               )}
               {planChangeSuccess && (
-                <p className="text-green-500 text-sm mb-4">
+                <p className="text-green-500 text-sm mb-3 text-center">
                   Plan change initiated! Your new plan will take effect on your
                   next billing date ({nextBillingOrCancellationDate}).
                 </p>
@@ -488,16 +514,16 @@ const SubscriptionSettingsPage = () => {
                 onClick={() => setShowChangePlanPopup(true)} // Open the popup
                 disabled={isChangingPlan || isCancelling || isTogglingAutoRenew}
                 className={classNames(
-                  "w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center gap-2 transition-opacity disabled:opacity-50",
+                  "w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 shadow-sm hover:shadow-md transition-all text-sm sm:text-base",
                   isChangingPlan || isCancelling || isTogglingAutoRenew
                     ? "opacity-50 cursor-not-allowed"
                     : ""
                 )}
               >
                 {isChangingPlan ? (
-                  <ArrowPathIcon className="animate-spin h-5 w-5 mr-2" />
+                  <ArrowPathIcon className="animate-spin h-5 w-5" />
                 ) : (
-                  <PencilSquareIcon className="h-5 w-5 mr-2" />
+                  <PencilSquareIcon className="h-5 w-5" />
                 )}
                 Change Plan
               </button>
@@ -506,16 +532,18 @@ const SubscriptionSettingsPage = () => {
 
         {/* Manage Billing (Stripe Customer Portal) */}
         <section>
-          <h3 className="text-xl font-semibold mb-3">Billing Information</h3>
+          <h3 className="text-lg sm:text-xl font-semibold mb-5 flex items-center gap-2 text-gray-700 dark:text-gray-200 border-b border-gray-300 dark:border-gray-600 pb-2">
+            Billing Information
+          </h3>
           <button
             onClick={() =>
               alert(
                 "Redirect to Stripe Customer Portal functionality to be implemented."
               )
             }
-            disabled={isChangingPlan || isCancelling || isTogglingAutoRenew}
+            disabled={isChangingPlan || isCancelling || isTogglingAutoRenew} // Can be enabled if portal is independent
             className={classNames(
-              "w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center gap-2 transition-opacity disabled:opacity-50",
+              "w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 shadow-sm hover:shadow-md transition-all text-sm sm:text-base",
               isChangingPlan || isCancelling || isTogglingAutoRenew
                 ? "opacity-50 cursor-not-allowed"
                 : ""

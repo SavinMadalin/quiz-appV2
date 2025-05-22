@@ -252,25 +252,28 @@ const QuizConfigPage = () => {
   const currentCategoryHasSubcategories = subcategories.length > 0;
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-4 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-12 pb-24 lg:pl-52">
+    <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-16 pb-24 lg:pl-52 lg:mt-8">
       <TopNavbar />
       <Navbar />
-      <div className="bg-white dark:bg-dark-grey p-7 rounded-lg shadow-lg max-w-md w-full mt-8 mb-8">
-        <h1 className="text-xl font-bold mb-2 text-center flex items-center justify-center gap-2">
-          <Cog6ToothIcon className="h-6 w-6 text-blue-500 dark:text-blue-400" />
+      <div className="bg-white dark:bg-gray-800/90 p-6 sm:p-8 rounded-xl shadow-2xl max-w-md w-full mt-8 border border-gray-200 dark:border-gray-700">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-8 text-center flex items-center justify-center gap-2 text-gray-800 dark:text-white">
+          <Cog6ToothIcon className="h-7 w-7 sm:h-8 sm:w-8 text-indigo-500" />
           Configuration
         </h1>
 
         {/* Tabs */}
-        <div className="mb-4 border-b border-gray-300 dark:border-gray-600">
-          <div className="flex w-full">
+        <div className="mb-6">
+          {" "}
+          {/* Adjusted margin */}
+          <div className="flex w-full border-b border-gray-300 dark:border-gray-600">
             <button
               onClick={() => setActiveTab("custom")}
-              className={`w-1/2 py-3 focus:outline-none text-base ${
+              className={classNames(
+                "w-1/2 py-3 px-4 focus:outline-none lg:py-4 lg:px-6 rounded-t-lg transition-colors duration-150 text-sm sm:text-base",
                 activeTab === "custom"
-                  ? "border-b-2 border-blue-500 text-blue-500"
-                  : "text-gray-700 dark:text-gray-300"
-              }`}
+                  ? "bg-white dark:bg-gray-800/90 text-indigo-600 dark:text-indigo-400 font-semibold border-b-2 border-indigo-500 lg:border-b-4 -mb-px"
+                  : "bg-gray-50 hover:bg-gray-100 dark:bg-gray-700/40 dark:hover:bg-gray-700/60 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border-b-2 border-transparent"
+              )}
             >
               <span className="block text-center">Custom Mode</span>
             </button>
@@ -285,10 +288,10 @@ const QuizConfigPage = () => {
                 // Disable tab switching if restricted
                 disabled={!isPremium}
                 className={classNames(
-                  "w-full py-3 focus:outline-none text-base",
+                  "w-full py-3 px-4 focus:outline-none lg:py-4 lg:px-6 rounded-t-lg transition-colors duration-150 text-sm sm:text-base",
                   activeTab === "interview"
-                    ? "border-b-2 border-blue-500 text-blue-500"
-                    : "text-gray-700 dark:text-gray-300",
+                    ? "bg-white dark:bg-gray-800/90 text-indigo-600 dark:text-indigo-400 font-semibold border-b-2 border-indigo-500 lg:border-b-4 -mb-px"
+                    : "bg-gray-50 hover:bg-gray-100 dark:bg-gray-700/40 dark:hover:bg-gray-700/60 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border-b-2 border-transparent",
                   !isPremium ? "opacity-50 cursor-not-allowed" : ""
                 )}
               >
@@ -304,10 +307,12 @@ const QuizConfigPage = () => {
         </div>
 
         {/* Category Dropdown (Common for both tabs) */}
-        <div className="mb-4" ref={categoryDropdownRef}>
+        <div className="mb-6" ref={categoryDropdownRef}>
+          {" "}
+          {/* Adjusted margin */}
           <label
             htmlFor="category"
-            className="block font-medium mb-2 flex items-center gap-2 text-base"
+            className="block font-medium mb-2 flex items-center gap-2 text-sm sm:text-base text-gray-700 dark:text-gray-200"
           >
             {getCategoryIcon()}
             Category:
@@ -318,7 +323,7 @@ const QuizConfigPage = () => {
               onClick={toggleCategoryDropdown}
               disabled={!isPremium} // Disable button if restricted
               className={classNames(
-                "mt-1 p-2 border rounded-md bg-light-grey dark:bg-gray-800 dark:text-white w-full focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-between text-base",
+                "p-2.5 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 flex items-center justify-between text-sm sm:text-base",
                 !isPremium ? "cursor-not-allowed opacity-70" : "cursor-pointer"
               )}
             >
@@ -329,7 +334,7 @@ const QuizConfigPage = () => {
                 {getCurrentCategory(draftSettings.category)?.description &&
                   getCurrentCategory(draftSettings.category)?.subcategories
                     .length === 0 && (
-                    <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 ml-2 italic">
                       {getCurrentCategory(draftSettings.category)?.description}
                     </span>
                   )}
@@ -344,7 +349,7 @@ const QuizConfigPage = () => {
             </button>
             {/* Only show dropdown options if not restricted */}
             {isCategoryDropdownOpen && isPremium && (
-              <div className="absolute z-10 mt-1 w-full rounded-md bg-gray-100 dark:bg-gray-700 shadow-lg ring-1 ring-black ring-opacity-5 max-h-60 overflow-y-auto">
+              <div className="absolute z-10 mt-1 w-full rounded-md bg-white dark:bg-gray-700 shadow-lg ring-1 ring-black dark:ring-gray-600 ring-opacity-5 max-h-60 overflow-y-auto">
                 <div className="py-1">
                   {mainCategories.map((cat) => (
                     <button
@@ -353,7 +358,7 @@ const QuizConfigPage = () => {
                       // Disable other categories if restricted (redundant due to dropdown visibility, but safe)
                       disabled={!isPremium && cat.value !== "core-languages"}
                       className={classNames(
-                        "block w-full px-4 py-2 text-left text-sm border-b border-gray-300 dark:border-gray-600 last:border-b-0",
+                        "block w-full px-4 py-2 text-left text-sm sm:text-base border-b border-gray-200 dark:border-gray-600 last:border-b-0",
                         !isPremium && cat.value !== "core-languages"
                           ? "text-gray-400 cursor-not-allowed"
                           : "text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
@@ -361,7 +366,7 @@ const QuizConfigPage = () => {
                     >
                       {cat.label}
                       {cat.description && cat.subcategories.length === 0 && (
-                        <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
+                        <span className="text-xs text-gray-500 dark:text-gray-400 ml-2 italic">
                           {cat.description}
                         </span>
                       )}
@@ -373,7 +378,7 @@ const QuizConfigPage = () => {
           </div>
           {/* Show restriction message */}
           {!isPremium && (
-            <p className="text-xs text-yellow-400 dark:text-yellow-300 mt-1">
+            <p className="text-xs text-yellow-500 dark:text-yellow-400 mt-1.5">
               Only Core Languages / Java is available. Verify email for more
               options.
             </p>
@@ -383,7 +388,9 @@ const QuizConfigPage = () => {
         {/* Subcategories Section (Conditional) */}
         {currentCategoryHasSubcategories && (
           <div className="mb-6">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center mb-2">
+              {" "}
+              {/* Added mb-2 */}
               <label className="block font-medium mb-2 text-base">
                 Subcategories:
               </label>
@@ -398,10 +405,10 @@ const QuizConfigPage = () => {
                     onClick={() => handleSubcategoryChange(sub)}
                     disabled={isDisabled} // Disable button based on restriction
                     className={classNames(
-                      "flex items-center justify-center border rounded-md p-1.5 text-xs sm:text-sm transition-opacity",
+                      "flex items-center justify-center border rounded-lg p-2 text-xs sm:text-sm transition-all duration-150 shadow-sm",
                       selectedSubcategories.includes(sub)
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300",
+                        ? "bg-indigo-500 text-white border-indigo-500"
+                        : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600",
                       isDisabled
                         ? "opacity-50 cursor-not-allowed" // Style for disabled
                         : "hover:opacity-80" // Hover effect for enabled
@@ -417,27 +424,29 @@ const QuizConfigPage = () => {
 
         {/* Time Per Question (Only in Custom Mode) */}
         {activeTab === "custom" && (
-          <div className="mb-4" ref={timeDropdownRef}>
+          <div className="mb-6" ref={timeDropdownRef}>
+            {" "}
+            {/* Adjusted margin */}
             <label
               htmlFor="timePerQuestion"
-              className="block font-medium mb-2 flex items-center gap-2 text-base"
+              className="block font-medium mb-2 flex items-center gap-2 text-sm sm:text-base text-gray-700 dark:text-gray-200"
             >
-              <ClockIcon className="h-5 w-5 text-blue-500 dark:text-blue-400 animate-pulse" />
+              <ClockIcon className="h-5 w-5 text-indigo-500 animate-pulse" />
               Time Per Question:
             </label>
             <div className="relative">
               <button
                 type="button"
                 onClick={toggleTimeDropdown}
-                className="mt-1 p-2 border rounded-md bg-light-grey dark:bg-gray-800 dark:text-white w-full focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-between cursor-pointer text-base"
+                className="p-2.5 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 flex items-center justify-between cursor-pointer text-sm sm:text-base"
               >
                 {timeOptions.find(
                   (option) => option.value === draftSettings.timePerQuestion
                 )?.label || "1 minute"}
                 {isTimeDropdownOpen ? (
-                  <ChevronUpIcon className="h-5 w-5" />
+                  <ChevronUpIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                 ) : (
-                  <ChevronDownIcon className="h-5 w-5" />
+                  <ChevronDownIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                 )}
               </button>
               {isTimeDropdownOpen && (
@@ -449,7 +458,7 @@ const QuizConfigPage = () => {
                         onClick={() =>
                           handleChange("timePerQuestion", option.value)
                         }
-                        className="block w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 border-b border-gray-300 dark:border-gray-600 last:border-b-0"
+                        className="block w-full px-4 py-2 text-left text-sm sm:text-base text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 border-b border-gray-200 dark:border-gray-600 last:border-b-0"
                       >
                         {option.label}
                       </button>
@@ -458,7 +467,7 @@ const QuizConfigPage = () => {
                 </div>
               )}
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1.5">
               {draftSettings.timePerQuestion === "0"
                 ? "You will have unlimited time for each question."
                 : `You will have ${draftSettings.timePerQuestion} minute(s) per question.`}
@@ -468,30 +477,32 @@ const QuizConfigPage = () => {
 
         {/* Mode Specific Info */}
         {activeTab === "custom" && (
-          <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+          <p className="mb-6 text-xs sm:text-sm text-gray-500 dark:text-gray-400 text-center">
             Customize your quiz. The quiz will have 10 questions.
           </p>
         )}
         {activeTab === "interview" &&
           isPremium && ( // Only show if not restricted
-            <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+            <p className="mb-6 text-xs sm:text-sm text-gray-500 dark:text-gray-400 text-center">
               Prepare for your interview. The quiz will have 15 questions and 20
               minutes total time.
             </p>
           )}
 
-        {error && <div className="text-red-500 mb-2">{error}</div>}
+        {error && (
+          <div className="text-red-500 text-sm mb-3 text-center">{error}</div>
+        )}
 
         {/* Start Button */}
         <div className="relative group">
           <button
             onClick={handleApply}
             disabled={isStartButtonDisabled}
-            className={`w-full bg-green-500 ${
+            className={`w-full bg-green-500 font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 block text-center text-sm sm:text-base ${
               isStartButtonDisabled
                 ? "opacity-50 cursor-not-allowed"
                 : "hover:bg-green-600"
-            } text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 block text-center text-base`}
+            } text-white`}
           >
             Start
           </button>
