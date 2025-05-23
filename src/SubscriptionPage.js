@@ -17,9 +17,9 @@ import { Link, useNavigate } from "react-router-dom"; // Import Link for message
 import { useSubscription } from "./contexts/SubscriptionContext"; // Import useSubscription
 import Spinner from "./Spinner";
 
-const API_BASE_URL = "http://localhost:4242";
-// const API_BASE_URL =
-//   "https://devprep-backend--myproject-6969b.europe-west4.hosted.app";
+// const API_BASE_URL = "http://localhost:4242";
+const API_BASE_URL =
+  "https://devprep-backend--myproject-6969b.europe-west4.hosted.app";
 
 const SubscriptionPage = () => {
   const [selectedPlan, setSelectedPlan] = useState("monthly");

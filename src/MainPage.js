@@ -181,7 +181,7 @@ const MainPage = ({ setEmailSent }) => {
               (isEmailVerified ? (
                 <Link
                   to="/subscription"
-                  className="w-full max-w-xs bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-semibold py-3 px-6 text-lg rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
+                  className="w-full max-w-xs bg-gray-700 hover:bg-gray-800 text-yellow-300 font-semibold py-3 px-6 text-lg rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
                 >
                   <SolidStarIcon className="mr-2 h-5 w-5" />
                   Subscribe for premium

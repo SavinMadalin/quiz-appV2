@@ -380,8 +380,11 @@ const QuizPage = () => {
     return (
       <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-100 dark:bg-gray-900 pt-16 pb-24 lg:pl-52 lg:mt-8">
         <TopNavbar />
-        {/* Navbar can be added if it's part of the standard layout for loading states */}
-        <Spinner />
+        <div className="flex-grow flex justify-center items-center w-full">
+          {" "}
+          {/* Centering container for spinner */}
+          <Spinner />
+        </div>
       </div>
     );
   }
@@ -536,7 +539,7 @@ const QuizPage = () => {
             </button>
           </div>
         )}{" "}
-        <div className="mt-8 text-base sm:text-lg font-medium text-gray-700 dark:text-gray-200 text-center">
+        <div className="mt-8 text-base sm:text-lg font-medium text-gray-700 dark:text-gray-200 text-left">
           Score: {score} / {numQuestions}
         </div>
       </div>

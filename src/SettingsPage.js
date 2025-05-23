@@ -50,8 +50,9 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
   const [deleteError, setDeleteError] = useState(null); // New error state for deletion
 
   // Define API_BASE_URL (ensure consistency with other files for production/development)
-  const API_BASE_URL = "http://localhost:4242";
-  // const API_BASE_URL = "https://devprep-backend--myproject-6969b.europe-west4.hosted.app";
+  // const API_BASE_URL = "http://localhost:4242";
+  const API_BASE_URL =
+    "https://devprep-backend--myproject-6969b.europe-west4.hosted.app";
 
   // getAuthToken can be defined here or imported if it becomes a shared utility
   const getAuthToken = async () => {
