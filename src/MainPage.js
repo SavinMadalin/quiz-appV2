@@ -143,13 +143,13 @@ const MainPage = ({ setEmailSent }) => {
     <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-16 pb-24 lg:pl-52 lg:mt-8">
       <TopNavbar />
       {showPopup && <EmailSentPopup onClose={() => setShowPopup(false)} />}
-      <section className="bg-white dark:bg-dark-grey p-6 sm:p-8 rounded-lg shadow-lg max-w-4xl w-full mt-8 mb-8">
+      <section className="bg-white dark:bg-gray-800/90 p-6 sm:p-8 rounded-xl shadow-2xl max-w-4xl w-full mt-8 mb-8 border border-gray-200 dark:border-gray-700">
         <div className="text-center">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-3">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-4 text-gray-800 dark:text-white">
             <span className="text-yellow-400">Dev</span>
-            <span className="text-black dark:text-white">Prep</span>
+            Prep
           </h1>
-          <p className="text-base sm:text-lg mb-6">
+          <p className="text-base sm:text-lg mb-8 text-gray-600 dark:text-gray-300">
             Ace your tech interviews with our targeted quizzes and expert tips.
           </p>
 
@@ -159,7 +159,7 @@ const MainPage = ({ setEmailSent }) => {
             {!isAuthenticated && (
               <Link
                 to="/register"
-                className="w-full max-w-xs inline-flex items-center justify-center px-8 py-3 bg-green-500 hover:bg-green-600 text-white text-lg font-semibold rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+                className="w-full max-w-xs inline-flex items-center justify-center px-8 py-3 bg-green-500 hover:bg-green-600 text-white text-lg font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
               >
                 <UserPlusIcon className="mr-2 h-6 w-6" /> Sign up for free
                 {/* Changed Icon and added mr-2 */}
@@ -169,7 +169,7 @@ const MainPage = ({ setEmailSent }) => {
             {/* Start your dev prep journey Button */}
             <Link
               to="/quiz-config"
-              className="w-full max-w-xs bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 text-lg rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
+              className="w-full max-w-xs bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-6 text-lg rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
             >
               Start your DevPrep journey
               <OutlineArrowRightIcon className="ml-2 h-5 w-5" />
@@ -181,7 +181,7 @@ const MainPage = ({ setEmailSent }) => {
               (isEmailVerified ? (
                 <Link
                   to="/subscription"
-                  className="w-full max-w-xs bg-gray-700 hover:bg-gray-900 text-yellow-300 font-bold py-3 px-6 text-lg rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
+                  className="w-full max-w-xs bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-semibold py-3 px-6 text-lg rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
                 >
                   <SolidStarIcon className="mr-2 h-5 w-5" />
                   Subscribe for premium
@@ -190,7 +190,7 @@ const MainPage = ({ setEmailSent }) => {
                 <div className="w-full max-w-xs flex flex-col items-center">
                   <button
                     onClick={handleResendEmail}
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 text-lg rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 text-lg rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
                   >
                     <EnvelopeIcon className="mr-2 h-6 w-6" />
                     Resend Confirmation Email
@@ -219,23 +219,25 @@ const MainPage = ({ setEmailSent }) => {
       </section>
       {randomTip && !isLoading && (
         <section className="max-w-4xl w-full mb-8">
-          <div className="bg-white dark:bg-dark-grey p-6 sm:p-8 rounded-lg shadow-lg">
-            <div className="flex items-center mb-4">
+          <div className="bg-white dark:bg-gray-800/90 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center mb-5">
               <LightBulbIcon className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-400 mr-2" />
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold">
-                Tip & Trick
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 dark:text-white">
+                Tips & Tricks
               </h2>
             </div>
-            <div className="border rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow duration-300">
-              <h3 className="font-semibold text-base sm:text-lg mb-1">
+            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-5 bg-gray-50 dark:bg-gray-700/30 hover:shadow-md transition-shadow duration-300">
+              <h3 className="font-semibold text-base sm:text-lg mb-1.5 text-gray-700 dark:text-gray-100">
                 {randomTip.title}
               </h3>
-              <p className="text-xs sm:text-sm mb-1">{randomTip.description}</p>
+              <p className="text-xs sm:text-sm mb-2 text-gray-600 dark:text-gray-300">
+                {randomTip.description}
+              </p>
               <a
                 href={randomTip.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-500 hover:underline text-xs sm:text-sm"
+                className="text-indigo-500 hover:text-indigo-600 dark:text-indigo-400 dark:hover:text-indigo-300 underline text-xs sm:text-sm font-medium"
               >
                 Learn More
               </a>
@@ -246,7 +248,7 @@ const MainPage = ({ setEmailSent }) => {
       {isLoading && !randomTip && <Spinner />}{" "}
       {/* Show spinner if tips are loading and no tip is yet available */}
       <section className="max-w-4xl w-full mb-8">
-        <div className="bg-white dark:bg-dark-grey p-6 sm:p-8 rounded-lg shadow-xl">
+        <div className="bg-white dark:bg-gray-800/90 p-6 sm:p-8 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700">
           <div className="text-center mb-6">
             <h2 className="text-2xl sm:text-3xl font-bold flex items-center justify-center gap-2">
               <SolidStarIcon className="h-7 w-7 text-yellow-300" />
@@ -260,7 +262,7 @@ const MainPage = ({ setEmailSent }) => {
             {premiumBenefits.map((benefit) => (
               <div
                 key={benefit.name}
-                className="border rounded-lg flex items-start gap-3 p-3 dark:bg-white/10 bg-gray-100 rounded-lg"
+                className="border rounded-lg flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700/30 hover:shadow-md transition-shadow duration-300 rounded-lg"
               >
                 <benefit.icon className="h-6 w-6 text-yellow-300 mt-1 flex-shrink-0" />
                 <div>

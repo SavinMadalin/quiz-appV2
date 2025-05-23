@@ -19,8 +19,8 @@ const Navbar = () => {
           // "bg-gradient-to-t from-gray-200 to-gray-500 border-t border-gray-600",
           // Dark theme gradient (dark gray) and border
           // "dark:bg-gradient-to-t dark:from-gray-200 dark:to-gray-900 dark:border-gray-600",
-          "bg-gray-100 dark:bg-gray-800 sm:border-t sm:border-t-gray-300 sm:dark:border-t-gray-700", // Gray background for large screens
-          "lg:bg-indigo-100 lg:dark:bg-indigo-1000 lg:shadow-none lg:border-r lg:border-r-indigo-200 dark:border-r-gray-700 lg:rounded-tr-xl lg:rounded-br-xl", // Large screens: specific background, no top border, add right border and round right corners
+          "bg-gray-100 dark:bg-gray-800 sm:border-t sm:border-gray-300 sm:dark:border-gray-700", // Default for small screens
+          "lg:bg-gray-100 lg:dark:bg-gray-900 lg:shadow-none lg:border-t-0 lg:border-r lg:border-r-gray-300 lg:dark:border-r-gray-700 lg:rounded-tr-xl lg:rounded-br-xl", // LG: Specific background, right border, rounded corners
 
           "lg:left-0 lg:top-12 lg:bottom-auto lg:w-48 lg:h-[calc(100vh-3rem)]" // Large screens: Position, Width, Height
           // Added lg:bg-none to ensure gradient is removed
@@ -62,11 +62,10 @@ const NavLinkBottom = ({ to, label, Icon }) => {
         "flex-col text-center", // Small screens: Column layout
         "py-2 w-20", // Small screens: Padding and width
         "lg:flex-row lg:justify-start lg:w-full lg:py-3 lg:px-3 lg:gap-3", // Large screens: Row layout, start alignment, full width, padding, gap
-        isActive
-          ? // Active State: Added background for small screens, adjusted lg background
-            "font-bold text-gray-900 dark:text-white bg-gray-300 dark:bg-gray-600 lg:bg-indigo-200 lg:dark:bg-gray-600"
-          : // Default State: Removed font-bold, added background hover for small screens
-            "text-gray-800 dark:text-white hover:bg-gray-400/30 dark:hover:bg-gray-600/30 lg:text-gray-700 lg:dark:text-white lg:hover:bg-indigo-200 lg:dark:hover:bg-gray-700/50"
+        isActive // Active state styling
+          ? "font-bold text-gray-900 dark:text-white bg-gray-300 dark:bg-gray-600 lg:bg-indigo-400 lg:text-white lg:dark:bg-gray-700 lg:dark:text-white shadow-inner lg:shadow-md"
+          : // Inactive state styling
+            "text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700/60 lg:hover:bg-gray-200 lg:dark:hover:bg-gray-700 lg:hover:text-indigo-600 lg:dark:hover:text-indigo-400"
       )}
     >
       {/* Updated lg icon size */}

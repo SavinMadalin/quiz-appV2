@@ -103,8 +103,8 @@ const TopNavbar = () => {
           type="button"
           className={classNames(
             "inline-flex justify-center items-center w-full sm:w-auto h-12 rounded-md px-4 py-3 text-base font-semibold bg-transparent", // Adjusted sm:w-32 to sm:w-auto for flexibility
-            "text-gray-800 dark:text-white lg:text-white lg:dark:text-white",
-            "hover:bg-transparent lg:hover:bg-cyan-700 lg:dark:hover:bg-cyan-700" // Denim hover for light LG, Peacock hover for dark LG
+            "text-gray-800 dark:text-white lg:text-white lg:dark:text-white", // Default text color
+            "lg:text-gray-700 lg:dark:text-gray-200 lg:hover:bg-cyan-700-200 lg:dark:hover:bg-cyan-700" // LG text and hover background
           )}
           onClick={toggleDropdown}
           id="options-menu"
@@ -151,6 +151,8 @@ const TopNavbar = () => {
                 "text-gray-800 dark:text-white lg:text-white lg:dark:text-white"
               )}
             >
+              {" "}
+              {/* Ensured white on LG */}
               Login
             </span>
           )}

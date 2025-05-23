@@ -378,7 +378,9 @@ const QuizPage = () => {
 
   if (isLoading || questions.length === 0) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-900">
+      <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-100 dark:bg-gray-900 pt-16 pb-24 lg:pl-52 lg:mt-8">
+        <TopNavbar />
+        {/* Navbar can be added if it's part of the standard layout for loading states */}
         <Spinner />
       </div>
     );
@@ -386,11 +388,11 @@ const QuizPage = () => {
 
   const currentQuestionData = questions[currentQuestion];
   const isTimerRed = timer <= 10; // Determine if timer should be red
-  const isProgressBarGreen = isLastQuestion && isAnswered;
+  // const isProgressBarGreen = isLastQuestion && isAnswered;
   const questionParts = extractCodeSnippets(currentQuestionData.question);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white p-6 pt-12">
+    <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-16 pb-24 lg:pl-52 lg:mt-8">
       <TopNavbar />
 
       {showConfirmPopup && (
@@ -400,37 +402,39 @@ const QuizPage = () => {
           onCancel={handleCancelFinish}
         />
       )}
-      <div className="bg-white dark:bg-dark-grey p-8 rounded-lg shadow-lg max-w-md w-full relative overflow-x-hidden mt-8">
+      <div className="bg-white dark:bg-gray-800/90 p-6 sm:p-8 rounded-xl shadow-2xl max-w-lg w-full mt-8 border border-gray-200 dark:border-gray-700 relative">
         {/* Added max-h and overflow-y */}
         <div className="absolute -top-1 -right-1">
           {/* Reduced negative margins */}
           <button
             onClick={handleQuit}
-            className="hover:bg-red-100 dark:hover:bg-red-700 text-red-500 px-3 py-3 rounded-full transition-colors flex items-center"
+            className="p-2 text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
-            {/* Increased padding */}
-            <XMarkIcon className="h-5 w-5" />
-            {/* Increased icon size */}
+            <XMarkIcon className="h-6 w-6" />
           </button>
         </div>
         <ProgressBar
           currentQuestion={currentQuestion}
           numQuestions={numQuestions}
-          isCompleted={isProgressBarGreen}
+          isCompleted={isLastQuestion && isAnswered}
         />
         {/* Add the progress bar */}
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-bold">Question {currentQuestion + 1}</h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-white">
+            Question {currentQuestion + 1}
+          </h2>
           {/* Timer per question */}
           {!quizConfig.isMockInterviewMode &&
             quizConfig.timePerQuestion > 0 && (
               <div
-                className={`flex items-center justify-center bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-md ${
-                  isTimerRed ? "text-red-500" : ""
+                className={`flex items-center justify-center bg-gray-100 dark:bg-gray-700/50 px-3 py-1.5 rounded-md shadow-sm ${
+                  isTimerRed
+                    ? "text-red-500 dark:text-red-400"
+                    : "text-gray-700 dark:text-gray-200"
                 }`}
               >
-                <ClockIcon className="h-4 w-4 mr-2" />
-                <span className="text-base font-bold">
+                <ClockIcon className="h-5 w-5 mr-1.5" />
+                <span className="text-sm sm:text-base font-semibold">
                   {Math.floor(timer / 60)}:
                   {(timer % 60).toString().padStart(2, "0")}
                 </span>
@@ -439,12 +443,14 @@ const QuizPage = () => {
           {/* Quiz Timer */}
           {quizConfig.isMockInterviewMode && (
             <div
-              className={`flex items-center justify-center bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-md ${
-                quizTimer <= 60 ? "text-red-500" : ""
+              className={`flex items-center justify-center bg-gray-100 dark:bg-gray-700/50 px-3 py-1.5 rounded-md shadow-sm ${
+                quizTimer <= 60
+                  ? "text-red-500 dark:text-red-400"
+                  : "text-gray-700 dark:text-gray-200"
               }`}
             >
-              <ClockIcon className="h-3 w-3 mr-2" />
-              <span className="text-base font-bold">
+              <ClockIcon className="h-5 w-5 mr-1.5" />
+              <span className="text-sm sm:text-base font-semibold">
                 {Math.floor(quizTimer / 60)}:
                 {(quizTimer % 60).toString().padStart(2, "0")}
               </span>
@@ -455,14 +461,16 @@ const QuizPage = () => {
         {questions.length > 0 && !isQuizFinished && (
           <>
             <div
-              className="mb-5 text-base font-medium relative max-h-[20vh] overflow-y-auto overflow-x-hidden " // Added max-h and overflow-y and overflow-x-hidden
+              className="mb-6 text-sm sm:text-base font-medium relative max-h-[25vh] sm:max-h-[30vh] overflow-y-auto p-1 text-gray-700 dark:text-gray-200"
               ref={questionRef}
             >
               <div className="question-text break-words">
                 {questionParts.map((part, index) => (
                   <React.Fragment key={index}>
                     {part.type === "text" && (
-                      <p className="mb-2 break-words">{part.content}</p>
+                      <p className="mb-2 break-words leading-relaxed">
+                        {part.content}
+                      </p>
                     )}
                     {part.type === "code" && (
                       <CodeSnippet
@@ -471,7 +479,7 @@ const QuizPage = () => {
                       />
                     )}
                     {part.type === "inlineCode" && (
-                      <code className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-md text-sm break-words">
+                      <code className="bg-gray-200 dark:bg-gray-700/80 px-1.5 py-0.5 rounded-md text-xs sm:text-sm break-words font-mono">
                         {part.content}
                       </code>
                     )}
@@ -479,24 +487,24 @@ const QuizPage = () => {
                 ))}
               </div>
             </div>
-            <div className="grid grid-cols-1 gap-1">
+            <div className="grid grid-cols-1 gap-2 sm:gap-3">
               {currentQuestionData.answers.map((answer, index) => (
                 <button
                   key={index}
                   onClick={() => handleAnswer(answer)}
                   disabled={isAnswered}
-                  className={`w-full p-3 rounded-lg text-base text-left transition-all flex items-center justify-between border border-gray-300 dark:border-gray-400 ${
+                  className={`w-full p-3 sm:p-3.5 rounded-lg text-sm sm:text-base text-left transition-all duration-200 flex items-center justify-between border-2 shadow-sm ${
                     isAnswered
                       ? answer === currentQuestionData.correctAnswer
-                        ? "bg-green-100 dark:bg-green-700"
+                        ? "bg-green-500 border-green-600 text-white dark:bg-green-600 dark:border-green-700"
                         : currentAnswer === answer &&
                           answer !== currentQuestionData.correctAnswer
-                        ? "bg-red-100 dark:bg-red-700"
+                        ? "bg-red-500 border-red-600 text-white dark:bg-red-600 dark:border-red-700"
                         : currentAnswer === null &&
                           answer === currentQuestionData.correctAnswer
-                        ? "bg-green-100 dark:bg-green-700"
-                        : "dark:bg-gray-700 text-gray-500 opacity-50"
-                      : "hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-105" // Removed hover:bg-blue-600 hover:text-white and added active:scale-105
+                        ? "bg-green-500 border-green-600 text-white dark:bg-green-600 dark:border-green-700" // Time out, correct shown
+                        : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-600 opacity-70" // Unselected or incorrect by timeout
+                      : "bg-white dark:bg-gray-700/50 border-gray-300 dark:border-gray-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:border-indigo-400 dark:hover:border-indigo-500 text-gray-800 dark:text-gray-100 active:scale-[0.98]"
                   }`}
                 >
                   <span className="flex-grow mr-2 break-words">{answer}</span>
@@ -515,21 +523,20 @@ const QuizPage = () => {
           </>
         )}
         {showNextButton && isAnswered && (
-          <div className="absolute bottom-8 right-8">
+          <div className="absolute bottom-6 right-6 sm:bottom-8 sm:right-8">
             <button
               onClick={handleNext}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors flex items-center"
+              className="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center text-sm sm:text-base"
             >
-              <span className="mr-2 text-sm">
+              <span className="mr-1.5">
                 {" "}
                 {isLastQuestion ? "See Results" : "Next"}
               </span>{" "}
-              <ArrowRightIcon className="h-4 w-4" />
+              <ArrowRightIcon className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
           </div>
-        )}
-
-        <div className="mt-6 text-lg font-medium">
+        )}{" "}
+        <div className="mt-8 text-base sm:text-lg font-medium text-gray-700 dark:text-gray-200 text-center">
           Score: {score} / {numQuestions}
         </div>
       </div>

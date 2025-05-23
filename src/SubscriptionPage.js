@@ -236,14 +236,16 @@ const SubscriptionPage = () => {
               <h3 className="text-xl sm:text-2xl font-semibold mb-4 lg:mb-5 text-gray-800 dark:text-white">
                 Choose Your Plan
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 lg:mb-8">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6 lg:mb-8">
+                {" "}
+                {/* Changed to grid-cols-3 by default and adjusted gap */}
                 {Object.values(plans).map((plan) => (
                   <button
                     key={plan.id}
                     onClick={() => setSelectedPlan(plan.id)}
                     disabled={isLoading}
                     className={classNames(
-                      "p-3 sm:p-4 rounded-lg border-2 transition-all duration-200 text-left shadow-sm hover:shadow-md",
+                      "p-2 sm:p-3 lg:p-4 rounded-lg border-2 transition-all duration-200 text-left shadow-sm hover:shadow-md", // Adjusted padding
 
                       selectedPlan === plan.id
                         ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/40 ring-2 ring-indigo-500"
@@ -251,17 +253,25 @@ const SubscriptionPage = () => {
                       isLoading ? "opacity-50 cursor-not-allowed" : ""
                     )}
                   >
-                    <p className="font-semibold text-sm sm:text-base text-gray-800 dark:text-white mb-1">
+                    <p className="font-semibold text-xs sm:text-sm lg:text-base text-gray-800 dark:text-white mb-0.5 sm:mb-1">
+                      {" "}
+                      {/* Adjusted text size and margin */}
                       {plan.name}
                     </p>
-                    <p className="text-lg sm:text-xl font-bold text-indigo-600 dark:text-indigo-400 mb-1">
+                    <p className="text-sm sm:text-lg lg:text-xl font-bold text-indigo-600 dark:text-indigo-400 mb-0.5 sm:mb-1">
+                      {" "}
+                      {/* Adjusted text size and margin */}
                       {plan.price}
                     </p>
-                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-[10px] sm:text-xs lg:text-sm text-gray-500 dark:text-gray-400">
+                      {" "}
+                      {/* Adjusted text size */}
                       per {plan.interval}
                     </p>
                     {plan.save && (
-                      <span className="inline-block bg-yellow-400 text-gray-800 text-xs font-semibold mt-2 px-2 py-0.5 rounded-full">
+                      <span className="inline-block bg-yellow-400 text-gray-800 text-[9px] sm:text-xs font-semibold mt-1 sm:mt-2 px-1.5 py-0.5 sm:px-2 rounded-full">
+                        {" "}
+                        {/* Adjusted text size, padding, and margin */}
                         {plan.save}
                       </span>
                     )}

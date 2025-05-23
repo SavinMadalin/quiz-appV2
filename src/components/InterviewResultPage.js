@@ -174,88 +174,77 @@ const InterviewResultPage = () => {
   // ... rest of the component (return statement) remains the same ...
   return (
     // Reduced overall padding on small screens
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white p-4 sm:p-6 pt-12">
+    <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-white pt-16 pb-24 lg:pl-52 lg:mt-8">
       <TopNavbar />
       {/* Reduced padding p-6, max-w-sm */}
-      <div className="bg-white dark:bg-dark-grey p-6 rounded-lg shadow-lg max-w-sm w-full mt-8">
-        {/* Reduced title size text-2xl, mb-4 */}
-        <h1 className="text-2xl font-bold mb-4 text-center">
+      <div className="bg-white dark:bg-gray-800/90 p-6 sm:p-8 rounded-xl shadow-2xl max-w-md w-full mt-8 border border-gray-200 dark:border-gray-700">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-gray-800 dark:text-white">
           Interview Result
         </h1>
         {/* Reduced percentage size text-5xl, mb-1 */}
-        <div className="text-center mb-4">
-          <p className="text-5xl font-bold mb-1">{percentage}%</p>
-          {/* Reduced text size text-base */}
-          <p className="text-base">Correct Answers</p>
+        <div className="text-center mb-6">
+          <p className="text-5xl sm:text-6xl font-bold mb-1 text-indigo-600 dark:text-indigo-400">
+            {percentage}%
+          </p>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
+            Correct Answers
+          </p>
         </div>
-        {/* Reduced mb-4 */}
-        <div className="text-center mb-4">
+        <div className="text-center mb-6">
           {passed ? (
-            // Reduced gap-1
-            <div className="flex items-center justify-center gap-1 text-green-500 dark:text-green-400">
-              {/* Reduced icon size h-6 w-6 */}
-              <CheckCircleIcon className="h-6 w-6" />
-              {/* Reduced text size text-xl */}
-              <p className="text-xl font-bold">Passed</p>
+            <div className="flex items-center justify-center gap-1.5 text-green-500 dark:text-green-400">
+              <CheckCircleIcon className="h-7 w-7 sm:h-8 sm:w-8" />
+              <p className="text-xl sm:text-2xl font-bold">Passed</p>
             </div>
           ) : (
-            // Reduced gap-1
-            <div className="flex items-center justify-center gap-1 text-red-500 dark:text-red-400">
-              {/* Reduced icon size h-6 w-6 */}
-              <XCircleIcon className="h-6 w-6" />
-              {/* Reduced text size text-xl */}
-              <p className="text-xl font-bold">Failed</p>
+            <div className="flex items-center justify-center gap-1.5 text-red-500 dark:text-red-400">
+              <XCircleIcon className="h-7 w-7 sm:h-8 sm:w-8" />
+              <p className="text-xl sm:text-2xl font-bold">Failed</p>
             </div>
           )}
         </div>
-        {/* Reduced mb-4 */}
-        <div className="mb-4">
-          {/* Reduced title size text-lg, mb-1 */}
-          <h2 className="text-lg font-bold mb-1">Feedback:</h2>
-          {/* Reduced max-h-48, padding p-3 */}
-          <div className="max-h-48 overflow-y-auto p-3 border rounded-lg dark:border-gray-600 text-sm">
+        <div className="mb-6">
+          <h2 className="text-lg sm:text-xl font-semibold mb-2 text-gray-700 dark:text-gray-200">
+            Feedback:
+          </h2>
+          <div className="max-h-48 sm:max-h-56 overflow-y-auto p-3 sm:p-4 border-2 border-gray-200 dark:border-gray-600 rounded-lg text-sm bg-gray-50 dark:bg-gray-700/30">
             {isLoading && !feedback ? ( // Show loading only if feedback isn't already set
-              <p className="text-gray-700 dark:text-gray-300">
+              <p className="text-gray-600 dark:text-gray-300 italic">
                 Loading feedback...
               </p>
             ) : (
-              <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
+              <p className="text-gray-700 dark:text-gray-200 whitespace-pre-line leading-relaxed">
                 {feedback || "Generating feedback..."}{" "}
                 {/* Show placeholder if loading but feedback is empty */}
               </p>
             )}
           </div>
         </div>
-        {/* Reduced mb-4, gap-1 */}
-        <div className="mb-4 flex items-center justify-center gap-1">
-          {/* Reduced icon size h-5 w-5 */}
-          <ClockIcon className="h-5 w-5 text-blue-500 dark:text-blue-400" />
-          {/* Reduced text size text-sm */}
-          <p className="text-sm text-gray-700 dark:text-gray-300">
-            Time taken: {formatTime(timeTaken)}
-          </p>
+        <div className="mb-6 flex items-center justify-center gap-1.5 text-sm sm:text-base text-gray-600 dark:text-gray-300">
+          <ClockIcon className="h-5 w-5 text-indigo-500 dark:text-indigo-400" />
+          <p>Time taken: {formatTime(timeTaken)}</p>
         </div>
         {/* Reduced gap-3, mt-6 */}
-        <div className="flex flex-col sm:flex-row gap-3 mt-6">
+        <div className="flex flex-col sm:flex-row gap-3 mt-8">
           {/* Retake Interview Button */}
           {/* Reduced padding py-2 px-4, text-sm */}
           <button
             onClick={handleRetakeQuiz}
-            className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center text-sm"
+            className="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center text-sm sm:text-base"
           >
             {/* Reduced icon size h-4 w-4, mr-1 */}
-            <ArrowPathIcon className="h-4 w-4 mr-1 inline-block" />
+            <ArrowPathIcon className="h-5 w-5 mr-1.5 inline-block" />
             Retake Interview
           </button>
           {/* Go Home Button */}
           {/* Reduced padding py-2 px-4, text-sm */}
           <Link
             to="/"
-            className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center text-sm"
+            className="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center text-sm sm:text-base"
             onClick={handleGoHome}
           >
             {/* Reduced icon size h-4 w-4, mr-1 */}
-            <ArrowLeftIcon className="h-4 w-4 mr-1 inline-block" />
+            <ArrowLeftIcon className="h-5 w-5 mr-1.5 inline-block" />
             Go Back to Home
           </Link>
         </div>
