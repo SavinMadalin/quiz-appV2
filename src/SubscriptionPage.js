@@ -59,11 +59,11 @@ const SubscriptionPage = () => {
     },
     sixMonths: {
       id: "sixMonths",
-      name: "6 Months",
-      price: "$49.99",
-      interval: "6 months",
+      name: "Daily",
+      price: "$1",
+      interval: "Daily",
       save: "Save 15%",
-      stripePriceId: "price_1RInXT5v1qgAdBzCdwBOi231",
+      stripePriceId: "price_1RaYwi5v1qgAdBzCctFul34U",
     },
     yearly: {
       id: "yearly",

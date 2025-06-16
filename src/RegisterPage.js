@@ -1,6 +1,6 @@
 // src/RegisterPage.js
 import React, { useState } from "react";
-import { registerWithEmailAndPassword, checkIfEmailExists } from "./firebase";
+import { registerWithEmailAndPassword } from "./firebase";
 import { useNavigate, Link } from "react-router-dom";
 import { setUser } from "./redux/userSlice";
 import { useDispatch } from "react-redux";
@@ -48,16 +48,6 @@ const RegisterPage = ({ setEmailSent, setIsRegistering }) => {
       return;
     }
 
-    // Check if email exists
-    const emailExists = await checkIfEmailExists(email);
-    if (emailExists) {
-      setError(
-        "This email is already registered. Please use a different email."
-      );
-      setIsRegistering(false);
-      return;
-    }
-
     try {
       const userCredential = await registerWithEmailAndPassword(
         email,
@@ -72,7 +62,14 @@ const RegisterPage = ({ setEmailSent, setIsRegistering }) => {
       setEmailSent(true); // Notify App.js that the email was sent
       navigate("/", { state: { isEmailSent: true } }); // Redirect to main page and pass isEmailSent
     } catch (err) {
-      setError("Registration failed. Please try again.");
+      if (err.code === "auth/email-already-in-use") {
+        // Handle the specific Firebase error for existing email
+        setError(
+          "This email is already registered. Please use a different email."
+        );
+      } else {
+        setError("Registration failed. Please try again."); // Generic error for other issues
+      }
       console.error("Registration failed:", err);
     } finally {
       setIsRegistering(false); // Set isRegistering to false after registration (success or failure)

@@ -110,7 +110,7 @@ const ConfirmationPage = () => {
               Email Verified Successfully!
             </h2>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              Your account is now verified. You can now access all features.
+              Your account is now verified. Enjoy!
             </p>
           </div>
         );

@@ -20,6 +20,7 @@ import ResetPasswordPage from "./ResetPasswordPage";
 import AuthActionHandlerPage from "./AuthActionHandlerPage";
 import SubscriptionSuccessPage from "./SubscriptionSuccessPage";
 import SubscriptionSettingsPage from "./SubscriptionSettingsPage"; // Import the new page
+import ContactPage from "./ContactPage";
 function AppContent() {
   const dispatch = useDispatch();
   // Note: useNavigate needs to be called within a component rendered by Router
@@ -159,6 +160,8 @@ function AppContent() {
               path="/subscription-success"
               element={<SubscriptionSuccessPage />}
             />
+            <Route path="/contact" element={<ContactPage />} />{" "}
+            {/* Add Contact Page Route */}
           </Routes>
         </div>
       </Router>
