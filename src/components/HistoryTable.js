@@ -97,9 +97,9 @@ const HistoryTable = ({
       {/* Sorting Buttons Header - Responsive */}
       <div
         className={classNames(
-          "mb-2 p-2 border-b border-gray-300 dark:border-gray-600",
+          "mb-2 p-2 border-b border-gray-300 dark:border-gray-900",
           "flex flex-nowrap gap-2 overflow-x-auto justify-start", // Mobile: no wrap, horizontal scroll, start alignment
-          "md:grid md:grid-cols-12 md:items-center md:gap-1 md:px-1 md:sticky md:top-0 md:bg-white md:dark:bg-dark-grey md:py-2 md:z-10" // Desktop: grid, sticky
+          "md:grid md:grid-cols-12 md:items-center md:gap-1 md:px-1 md:sticky md:top-0 md:bg-white md:dark:bg-gray-800 md:py-2 md:z-10" // Desktop: grid, sticky
         )}
       >
         <button

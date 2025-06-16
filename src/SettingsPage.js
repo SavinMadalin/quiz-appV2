@@ -16,6 +16,7 @@ import {
   MoonIcon,
   SunIcon,
   ArrowDownTrayIcon, // For download button
+  LifebuoyIcon, // For Contact Support button
 } from "@heroicons/react/24/outline";
 import { auth, db, deleteUser, logout, updateDisplayName } from "./firebase";
 import {
@@ -25,8 +26,8 @@ import {
   getDocs,
   deleteDoc,
 } from "firebase/firestore";
-import ConfirmPopup from "./components/ConfirmPopup";
-import { useNavigate } from "react-router-dom";
+import ConfirmPopup from "./components/ConfirmPopup"; // Import Link
+import { Link, useNavigate } from "react-router-dom";
 import { setUser } from "./redux/userSlice";
 import { resendVerificationEmail } from "./firebase";
 import { toggleTheme } from "./redux/themeSlice";
@@ -442,6 +443,19 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
             </button>
           </section>
         )}
+      </div>
+      {/* Contact Support Button - Always Visible */}
+      <div className="bg-white dark:bg-gray-800/90 p-6 sm:p-8 rounded-xl shadow-2xl max-w-lg w-full mt-6 border border-gray-200 dark:border-gray-700">
+        <h3 className="text-lg sm:text-xl font-semibold mb-5 flex items-center gap-2 text-gray-700 dark:text-gray-200 border-b border-gray-300 dark:border-gray-600 pb-2">
+          <LifebuoyIcon className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-500" />
+          Support
+        </h3>
+        <Link
+          to="/contact"
+          className="w-full bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2.5 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center gap-2 text-sm sm:text-base"
+        >
+          <LifebuoyIcon className="h-5 w-5" /> Contact Support
+        </Link>
       </div>
 
       {showConfirmPopup && (

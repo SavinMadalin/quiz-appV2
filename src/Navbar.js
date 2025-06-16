@@ -5,7 +5,6 @@ import {
   ClockIcon,
   CogIcon,
   StarIcon,
-  ChatBubbleLeftEllipsisIcon, // Icon for Contact
 } from "@heroicons/react/24/outline"; // Import icons
 import classNames from "classnames"; // Import classnames
 
@@ -42,12 +41,6 @@ const Navbar = () => {
             label="Premium"
             Icon={StarIcon}
           />{" "}
-          {/* Add Subscription Link */}
-          <NavLinkBottom
-            to="/contact"
-            label="Contact"
-            Icon={ChatBubbleLeftEllipsisIcon}
-          />
         </div>
       </nav>
     </>
