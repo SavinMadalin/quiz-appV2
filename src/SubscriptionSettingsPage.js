@@ -45,6 +45,9 @@ const SubscriptionSettingsPage = () => {
   const [autoRenewError, setAutoRenewError] = useState(null);
   const [autoRenewSuccess, setAutoRenewSuccess] = useState(null);
 
+  const [isManagingBilling, setIsManagingBilling] = useState(false);
+  const [manageBillingError, setManageBillingError] = useState(null);
+
   // --- Define Plans ---
   const plans = {
     monthly: {
@@ -310,6 +313,56 @@ const SubscriptionSettingsPage = () => {
     }
   };
 
+  const handleManageBilling = async () => {
+    setIsManagingBilling(true);
+    setManageBillingError(null);
+    const token = await getAuthToken();
+
+    if (!token) {
+      setManageBillingError("You must be logged in to perform this action.");
+      setIsManagingBilling(false);
+      return;
+    }
+
+    if (!subscriptionDetails?.stripeCustomerId) {
+      setManageBillingError(
+        "Stripe customer ID not found. Cannot open billing portal."
+      );
+      setIsManagingBilling(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/create-customer-portal-session`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            stripeCustomerId: subscriptionDetails.stripeCustomerId,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.error || "Failed to create billing portal session."
+        );
+      }
+      const { url } = await response.json();
+      window.location.href = url; // Redirect to the Stripe Customer Portal
+    } catch (error) {
+      console.error("Error creating customer portal session:", error);
+      setManageBillingError(error.message || "Could not open billing portal.");
+    } finally {
+      setIsManagingBilling(false);
+    }
+  };
+
   if (isLoadingSubscription) {
     return (
       <div className="flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 bg-gray-100 dark:bg-gray-900 pt-16 pb-24 lg:pl-52 lg:mt-8">
@@ -535,21 +588,34 @@ const SubscriptionSettingsPage = () => {
           <h3 className="text-lg sm:text-xl font-semibold mb-5 flex items-center gap-2 text-gray-700 dark:text-gray-200 border-b border-gray-300 dark:border-gray-600 pb-2">
             Billing Information
           </h3>
+          {manageBillingError && (
+            <p className="text-red-500 text-sm mb-3 text-center">
+              {manageBillingError}
+            </p>
+          )}
           <button
-            onClick={() =>
-              alert(
-                "Redirect to Stripe Customer Portal functionality to be implemented."
-              )
+            onClick={handleManageBilling}
+            disabled={
+              isManagingBilling ||
+              isChangingPlan ||
+              isCancelling ||
+              isTogglingAutoRenew
             }
-            disabled={isChangingPlan || isCancelling || isTogglingAutoRenew} // Can be enabled if portal is independent
             className={classNames(
               "w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 shadow-sm hover:shadow-md transition-all text-sm sm:text-base",
-              isChangingPlan || isCancelling || isTogglingAutoRenew
+              isManagingBilling ||
+                isChangingPlan ||
+                isCancelling ||
+                isTogglingAutoRenew
                 ? "opacity-50 cursor-not-allowed"
                 : ""
             )}
           >
-            <PencilSquareIcon className="h-5 w-5" />
+            {isManagingBilling ? (
+              <ArrowPathIcon className="animate-spin h-5 w-5" />
+            ) : (
+              <PencilSquareIcon className="h-5 w-5" />
+            )}{" "}
             Manage Billing Details
           </button>
         </section>
