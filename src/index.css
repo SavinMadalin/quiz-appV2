@@ -145,6 +145,94 @@ button {
   background: #999; /* Even lighter gray on hover */
 }
 
+/* Add this to the end of your index.css file */
+.policy-content h1,
+.policy-content h2,
+.policy-content h3,
+.policy-content h4,
+.policy-content h5,
+.policy-content h6 {
+  font-weight: bold; /* Make headings bold */
+  margin-top: 1em; /* Add some space above headings */
+  margin-bottom: 0.5em; /* Add some space below headings */
+  /* You can add more styling here if needed, e.g., font-size */
+}
+
+/* Optional: Adjust font size for different heading levels if needed */
+.policy-content h1 {
+  font-size: 1.8em; /* Example size */
+}
+.policy-content h2 {
+  font-size: 1.5em; /* Example size */
+}
+.policy-content h3 {
+  font-size: 1.2em; /* Example size */
+}
+/* ... and so on for h4, h5, h6 */
+
+/* Adjust paragraph margins within the policy content */
+.policy-content p {
+  margin-bottom: 1em; /* Add space below paragraphs */
+  line-height: 1.6; /* Improve readability */
+}
+
+/* Style for inline code within the policy content */
+.policy-content code {
+  /* Assuming you have a similar style defined elsewhere,
+       you might need to ensure it applies here or redefine it */
+  font-family: monospace;
+  background-color: #e5e7eb; /* gray-200 */
+  color: #1f2937; /* gray-800 */
+  padding: 0.2em 0.4em;
+  border-radius: 0.25rem;
+  font-size: 0.875em; /* text-sm relative to parent */
+}
+
+/* Style for code blocks within the policy content */
+.policy-content pre {
+  background-color: #2d2d2d; /* Dracula background */
+  color: #f8f8f2; /* Dracula foreground */
+  padding: 1em;
+  border-radius: 0.5rem;
+  overflow-x: auto; /* Ensure horizontal scrolling for wide code */
+  margin: 1em 0; /* Add space above and below code blocks */
+}
+
+/* Style for links within the policy content */
+.policy-content a {
+  color: #4f46e5; /* indigo-600 */
+  text-decoration: underline;
+}
+.policy-content a:hover {
+  color: #4338ca; /* indigo-700 */
+}
+
+/* Add dark mode styles for the policy content */
+.dark .policy-content h1,
+.dark .policy-content h2,
+.dark .policy-content h3,
+.dark .policy-content h4,
+.dark .policy-content h5,
+.dark .policy-content h6 {
+  color: #e5e7eb; /* gray-200 */
+}
+
+.dark .policy-content p {
+  color: #d1d5db; /* gray-300 */
+}
+
+.dark .policy-content code {
+  background-color: #374151; /* gray-700 */
+  color: #f3f4f6; /* gray-100 */
+}
+
+.dark .policy-content a {
+  color: #818cf8; /* indigo-400 */
+}
+.dark .policy-content a:hover {
+  color: #a5b4fc; /* indigo-300 */
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
