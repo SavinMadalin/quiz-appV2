@@ -21,6 +21,7 @@ import AuthActionHandlerPage from "./AuthActionHandlerPage";
 import SubscriptionSuccessPage from "./SubscriptionSuccessPage";
 import SubscriptionSettingsPage from "./SubscriptionSettingsPage"; // Import the new page
 import ContactPage from "./ContactPage";
+import PoliciesPage from "./PoliciesPage";
 function AppContent() {
   const dispatch = useDispatch();
   // Note: useNavigate needs to be called within a component rendered by Router
@@ -162,6 +163,7 @@ function AppContent() {
             />
             <Route path="/contact" element={<ContactPage />} />{" "}
             {/* Add Contact Page Route */}
+            <Route path="/policies" element={<PoliciesPage />} />
           </Routes>
         </div>
       </Router>

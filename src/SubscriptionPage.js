@@ -1,9 +1,9 @@
 // src/SubscriptionPage.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import TopNavbar from "./components/TopNavbar";
 import { StarIcon } from "@heroicons/react/24/solid";
-import { auth } from "./firebase";
+import { auth, storage } from "./firebase";
 import {
   CheckIcon as OutlineCheckIcon,
   XMarkIcon as OutlineXIcon,
@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom"; // Import Link for messages
 import { useSubscription } from "./contexts/SubscriptionContext"; // Import useSubscription
 import Spinner from "./Spinner";
+import { ref, getDownloadURL } from "firebase/storage";
 
 // const API_BASE_URL = "http://localhost:4242";
 const API_BASE_URL =
@@ -26,6 +27,7 @@ const SubscriptionPage = () => {
   const [isLoading, setIsLoading] = useState(false); // This state will control the spinner
   const [error, setError] = useState(null);
   const stripe = useStripe();
+  const [faqData, setFaqData] = useState([]);
   const navigate = useNavigate(); // Initialize useNavigate
   const { user, isAuthenticated, isEmailVerified } = useSelector(
     (state) => state.user
@@ -36,6 +38,32 @@ const SubscriptionPage = () => {
     isLoadingStatus: isLoadingSubscriptionStatus,
     subscriptionDetails, // We might use this later on the settings page
   } = useSubscription();
+  const [activeFaq, setActiveFaq] = useState(null);
+
+  useEffect(() => {
+    const fetchFaqData = async () => {
+      try {
+        const storageRef = ref(storage, "policies/FAQ.json");
+        const url = await getDownloadURL(storageRef);
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch FAQ data: ${response.status} ${response.statusText}`
+          );
+        }
+
+        const data = await response.json();
+        if (Array.isArray(data)) {
+          setFaqData(data);
+        } else throw new Error("FAQ data is not an array");
+      } catch (e) {
+        console.error("Error fetching FAQ data:", e);
+      }
+    };
+
+    fetchFaqData();
+  }, []);
 
   // Feature comparison data
   const features = [
@@ -304,6 +332,34 @@ const SubscriptionPage = () => {
               </button>
             </>
           )}
+        </div>
+      </div>
+      {/* FAQ Section */}
+      <div className="bg-white dark:bg-gray-800/90 p-6 sm:p-8 rounded-xl shadow-2xl max-w-lg lg:max-w-3xl w-full mt-8 border border-gray-200 dark:border-gray-700">
+        <h3 className="text-xl sm:text-2xl font-semibold mb-4 lg:mb-5 text-gray-800 dark:text-white text-center">
+          Frequently Asked Questions
+        </h3>
+        <div className="space-y-4">
+          {faqData.map((item, index) => (
+            <div
+              key={index}
+              className="rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300"
+            >
+              <button
+                className="flex items-center justify-between w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-200 font-semibold hover:bg-gray-100 dark:hover:bg-gray-600"
+                onClick={() => setActiveFaq(activeFaq === index ? null : index)}
+              >
+                {activeFaq === index ? "− " : "> "}
+
+                {item.question}
+              </button>
+              {activeFaq === index && (
+                <div className="p-3 text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 rounded-b-lg">
+                  {item.answer}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </div>

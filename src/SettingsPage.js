@@ -17,6 +17,7 @@ import {
   SunIcon,
   ArrowDownTrayIcon, // For download button
   LifebuoyIcon, // For Contact Support button
+  DocumentTextIcon, // For Terms and Conditions button
 } from "@heroicons/react/24/outline";
 import { auth, db, deleteUser, logout, updateDisplayName } from "./firebase";
 import {
@@ -444,8 +445,9 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
           </section>
         )}
       </div>
-      {/* Contact Support Button - Always Visible */}
       <div className="bg-white dark:bg-gray-800/90 p-6 sm:p-8 rounded-xl shadow-2xl max-w-lg w-full mt-6 border border-gray-200 dark:border-gray-700">
+        {/* Contact Support Button - Always Visible */}
+        {/* <div className="bg-white dark:bg-gray-800/90 p-6 sm:p-8 rounded-xl shadow-2xl max-w-lg w-full mt-6 border border-gray-200 dark:border-gray-700"> */}
         <h3 className="text-lg sm:text-xl font-semibold mb-5 flex items-center gap-2 text-gray-700 dark:text-gray-200 border-b border-gray-300 dark:border-gray-600 pb-2">
           <LifebuoyIcon className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-500" />
           Support
@@ -455,6 +457,17 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
           className="w-full bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2.5 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center gap-2 text-sm sm:text-base"
         >
           <LifebuoyIcon className="h-5 w-5" /> Contact Support
+        </Link>
+
+        <h3 className="text-lg sm:text-xl font-semibold mb-5 flex items-center gap-2 text-gray-700 dark:text-gray-200 border-b border-gray-300 dark:border-gray-600 pb-2 mt-6">
+          <DocumentTextIcon className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-500" />
+          Policies
+        </h3>
+        <Link
+          to="/policies"
+          className="w-full bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2.5 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center gap-2 text-sm sm:text-base"
+        >
+          <DocumentTextIcon className="h-5 w-5" /> View Policies
         </Link>
       </div>
 
