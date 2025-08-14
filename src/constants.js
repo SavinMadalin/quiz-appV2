@@ -4,6 +4,8 @@ import {
   ServerStackIcon,
   CloudIcon,
   CircleStackIcon,
+  DevicePhoneMobileIcon,
+  CogIcon,
   AcademicCapIcon,
 } from "@heroicons/react/24/outline";
 
@@ -44,7 +46,7 @@ export const mainCategories = [
     value: "cloud-engineer",
     label: "Cloud Engineer",
     icon: CloudIcon,
-    subcategories: [], // No subcategories
+    subcategories: ["GCP", "AWS", "Azure"], // No subcategories
   },
   {
     value: "databases",
@@ -57,6 +59,18 @@ export const mainCategories = [
     label: "AI/Machine Learning",
     icon: AcademicCapIcon,
     subcategories: ["ml-concepts", "python-ml", "deep-learning"],
+  },
+  {
+    value: "mobile-development",
+    label: "Mobile Development",
+    icon: DevicePhoneMobileIcon,
+    subcategories: ["kotlin", "swift", "flutter"],
+  },
+  {
+    value: "qa-frameworks",
+    label: "QA Frameworks",
+    icon: CogIcon,
+    subcategories: ["selenium", "cucumber", "testNG"],
   },
 ];
 
