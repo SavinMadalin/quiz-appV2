@@ -12,6 +12,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { StarIcon as SolidStarIcon } from "@heroicons/react/24/solid"; // <-- Import Solid StarIcon
 import { GoogleLogo } from "../components/Logos";
+import { loginWithGoogle } from "../firebase";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
 import { useSubscription } from "../contexts/SubscriptionContext"; // <-- Import useSubscription
@@ -211,8 +212,8 @@ const TopNavbar = () => {
                 {/* Google Login Button (Disabled) */}
                 <div className="relative group">
                   <button
-                    disabled
-                    className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
+                    onClick={() => handleLogin(loginWithGoogle, "Google")}
+                    className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-center gap-2"
                   >
                     <GoogleLogo className="h-3 w-3 text-gray-700 dark:text-gray-300" />{" "}
                     <span className="sm:hidden"></span>
@@ -230,9 +231,9 @@ const TopNavbar = () => {
                     <span className="hidden sm:inline">Login with Apple</span>
                   </button>
                   {/* Tooltip */}
-                  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-30">
+                  {/* <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-30">
                     This will be available soon
-                  </span>
+                  </span> */}
                 </div>
               </div>
             )}

@@ -11,9 +11,10 @@
     />
     <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' 'unsafe-inline' https://js.stripe.com ;
+    script-src 'self' 'unsafe-inline' https://js.stripe.com  https://apis.google.com;
     connect-src 'self' wss://devprep--myproject-6969b.europe-west4.hosted.app:8080/ws https://devprep-backend--myproject-6969b.europe-west4.hosted.app https://devprep-backend-902764868157.europe-west4.run.app http://localhost:4242 https://api.stripe.com https://*.firebaseio.com https://firestore.googleapis.com https://*.googleapis.com https://www.googleapis.com;
-    frame-src 'self' https://js.stripe.com https://hooks.stripe.com;
+    frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://apis.google.com https://myproject-6969b.firebaseapp.com/;
+    worker-src blob:;
     style-src 'self' 'unsafe-inline';
     img-src 'self' https://*.stripe.com data:;
 ">
