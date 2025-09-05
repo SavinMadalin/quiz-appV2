@@ -2,7 +2,12 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Im
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState, useRef } from "react";
 import { setUser } from "./redux/userSlice";
-// Import necessary Firebase functions
+// --- Add these Firebase imports ---
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithCredential,
+} from "firebase/auth";
 import { onAuthStateChangedListener } from "./firebase";
 import MainPage from "./MainPage";
 import QuizConfigPage from "./QuizConfigPage";
@@ -34,6 +39,32 @@ function AppContent() {
   const pollingIntervalRef = useRef(null);
   const pollingTimeoutRef = useRef(null);
   const [isDeletingUser, setIsDeletingUser] = useState(false);
+
+  // --- Add this new useEffect hook ---
+  useEffect(() => {
+    // This function will be called by the Flutter app after a successful native sign-in
+    window.handleFlutterSignInToken = async (idToken) => {
+      if (!idToken) {
+        console.error("Received null or empty idToken from Flutter.");
+        return;
+      }
+      try {
+        console.log("Received idToken from Flutter, signing into Firebase...");
+        const auth = getAuth();
+        const credential = GoogleAuthProvider.credential(idToken);
+        await signInWithCredential(auth, credential);
+        // The onAuthStateChanged listener will handle the user state update
+        // and navigation automatically.
+      } catch (error) {
+        console.error("Error signing in with credential from Flutter:", error);
+      }
+    };
+
+    // Clean up the function when the component unmounts
+    return () => {
+      delete window.handleFlutterSignInToken;
+    };
+  }, []); // Empty dependency array ensures this runs only once
 
   // --- onAuthStateChanged Listener ---
   useEffect(() => {

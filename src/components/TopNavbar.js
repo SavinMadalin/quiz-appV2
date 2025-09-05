@@ -37,12 +37,16 @@ const TopNavbar = () => {
   const { isPremium } = useSubscription(); // <-- Get premium status
 
   // ... (handleLogin, handleLogout, toggleDropdown, handleOutsideClick, useEffect remain the same) ...
-  const handleLogin = async (loginFunction, providerName) => {
-    try {
-      await loginFunction();
-      console.log(`User logged in with ${providerName}!`);
-    } catch (error) {
-      console.error(`Login with ${providerName} failed:`, error);
+  const handleGoogleSignIn = async () => {
+    // Check if the 'GoogleSignIn' channel is available. This object is
+    // injected by the Flutter WebView.
+    if (window.GoogleSignIn) {
+      // If it exists, we are inside the Flutter WebView.
+      // Send a message to the Flutter host to start the native sign-in flow.
+      window.GoogleSignIn.postMessage("startGoogleSignIn");
+    } else {
+      // This is the normal flow for standard web browsers.
+      await loginWithGoogle();
     }
   };
 
@@ -203,28 +207,25 @@ const TopNavbar = () => {
                 {/* Email Login Link */}
                 <Link
                   to="/login"
-                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-center gap-2 hover:shadow-md transition-shadow duration-200"
+                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm font-semibold text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-start gap-2 hover:shadow-md transition-shadow duration-200"
                 >
                   <EnvelopeIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />{" "}
                   <span className="sm:hidden"></span>
                   <span className="hidden sm:inline">Login with Email</span>
                 </Link>
-                {/* Google Login Button (Disabled) */}
-                <div className="relative group">
-                  <button
-                    onClick={() => handleLogin(loginWithGoogle, "Google")}
-                    className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-center gap-2"
-                  >
-                    <GoogleLogo className="h-3 w-3 text-gray-700 dark:text-gray-300" />{" "}
-                    <span className="sm:hidden"></span>
-                    <span className="hidden sm:inline">Login with Google</span>
-                  </button>
-                </div>
+                <button
+                  onClick={handleGoogleSignIn}
+                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm font-semibold text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-start gap-2 hover:shadow-md transition-shadow duration-200"
+                >
+                  <GoogleLogo className="h-5 w-5 text-gray-700 dark:text-gray-300" />{" "}
+                  <span className="sm:hidden"></span>
+                  <span className="hidden sm:inline">Login with Google</span>
+                </button>
                 {/* Apple Login Button (Disabled) */}
                 <div className="relative group">
                   <button
                     disabled
-                    className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
+                    className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm font-semibold text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-start gap-2 opacity-50 cursor-not-allowed"
                   >
                     <AppleLogo className="h-5 w-5 text-gray-700 dark:text-gray-300" />{" "}
                     <span className="sm:hidden"></span>

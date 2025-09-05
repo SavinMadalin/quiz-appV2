@@ -403,7 +403,7 @@ const SettingsPage = ({ emailVerified, setEmailSent, setIsDeletingUser }) => {
             Application
           </h3>
           <a
-            href="https://firebasestorage.googleapis.com/v0/b/myproject-6969b.firebasestorage.app/o/app-release.apk?alt=media&token=867796c5-811b-4aec-ae20-cb8ae3a80c93"
+            href="https://firebasestorage.googleapis.com/v0/b/myproject-6969b.firebasestorage.app/o/app-release.apk?alt=media&token=a7022090-156e-4b49-ae21-310fffbab2b2"
             target="_blank"
             rel="noopener noreferrer"
             download
