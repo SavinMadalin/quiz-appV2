@@ -70,7 +70,7 @@ export const SubscriptionProvider = ({ children }) => {
       console.log("Unsubscribing from Firestore listener");
       unsubscribe();
     };
-  }, [user, isAuthenticated]); // Dependencies: Re-run when user or auth state changes
+  }, [user?.uid, isAuthenticated]); // Dependencies: Re-run when user or auth state changes
 
   const value = {
     subscriptionStatus,

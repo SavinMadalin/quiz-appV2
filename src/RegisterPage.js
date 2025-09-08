@@ -9,6 +9,7 @@ import Navbar from "./Navbar";
 import TopNavbar from "./components/TopNavbar";
 import { storage } from "./firebase"; // Import storage and resendVerificationEmail
 import { ref, getDownloadURL } from "firebase/storage"; // Import Firebase Storage functions
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
 const RegisterPage = ({ setEmailSent, setIsRegistering }) => {
   // Receive setIsRegistering
@@ -17,6 +18,7 @@ const RegisterPage = ({ setEmailSent, setIsRegistering }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState(""); // New state for name
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { serializeUser } = useSerializeUser(); // Use the hook
@@ -36,6 +38,7 @@ const RegisterPage = ({ setEmailSent, setIsRegistering }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setIsLoading(true);
     setIsRegistering(true); // Set isRegistering to true before registration
 
     if (!isValidEmail(email)) {
@@ -86,6 +89,7 @@ const RegisterPage = ({ setEmailSent, setIsRegistering }) => {
       }
       console.error("Registration failed:", err);
     } finally {
+      setIsLoading(false);
       setIsRegistering(false); // Set isRegistering to false after registration (success or failure)
     }
   };
@@ -194,10 +198,17 @@ const RegisterPage = ({ setEmailSent, setIsRegistering }) => {
           </p>
           <button
             type="submit"
-            disabled={!acceptTerms}
+            disabled={!acceptTerms || isLoading}
             className="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 text-base disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-md"
           >
-            Register
+            {isLoading ? (
+              <div className="flex items-center justify-center">
+                <ArrowPathIcon className="animate-spin h-5 w-5 mr-2" />
+                Registering...
+              </div>
+            ) : (
+              "Register"
+            )}
           </button>
         </form>
         <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-300">

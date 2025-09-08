@@ -13,7 +13,7 @@ import {
 import { StarIcon as SolidStarIcon } from "@heroicons/react/24/solid"; // <-- Import Solid StarIcon
 import { GoogleLogo } from "../components/Logos";
 import { loginWithGoogle } from "../firebase";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import { useSubscription } from "../contexts/SubscriptionContext"; // <-- Import useSubscription
 
@@ -34,6 +34,7 @@ const TopNavbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const { user } = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const { isPremium } = useSubscription(); // <-- Get premium status
 
   // ... (handleLogin, handleLogout, toggleDropdown, handleOutsideClick, useEffect remain the same) ...
@@ -47,6 +48,7 @@ const TopNavbar = () => {
     } else {
       // This is the normal flow for standard web browsers.
       await loginWithGoogle();
+      navigate("/");
     }
   };
 

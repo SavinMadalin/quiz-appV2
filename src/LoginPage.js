@@ -4,23 +4,35 @@ import { loginWithEmailAndPassword, sendPasswordReset } from "./firebase"; // Im
 import { useNavigate, Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import TopNavbar from "./components/TopNavbar";
+import { v4 as uuidv4 } from "uuid"; // Install with: npm i uuid
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { ArrowPathIcon } from "@heroicons/react/24/outline"; // For spinner icon
+import { db } from "./firebase";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [resetEmailSent, setResetEmailSent] = useState(false); // New state for reset email status
+  const [isLoading, setIsLoading] = useState(false); // New state for loading
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setResetEmailSent(false); // Reset the reset email status
+    setIsLoading(true);
 
     try {
-      await loginWithEmailAndPassword(email, password);
-      console.log("User logged in successfully!");
-      navigate("/"); // Redirect to home page after successful login
+      const user = await loginWithEmailAndPassword(email, password);
+
+      // Create and set the session ID *before* navigating
+      const sessionId = uuidv4();
+      await setDoc(doc(db, "sessions", user.uid), { sessionId });
+      localStorage.setItem("sessionId", sessionId);
+
+      // Now that all login tasks are complete, navigate to the home page
+      navigate("/");
     } catch (err) {
       if (err.code === "auth/email-not-verified") {
         setError("Please verify your email before logging in."); // Custom error message
@@ -33,6 +45,8 @@ const LoginPage = () => {
         setError("An unexpected error occurred.");
         console.error("Login failed:", err);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -99,9 +113,17 @@ const LoginPage = () => {
           />
           <button
             type="submit"
-            className="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 text-base"
+            disabled={isLoading}
+            className="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 text-base disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-md"
           >
-            Login
+            {isLoading ? (
+              <div className="flex items-center justify-center">
+                <ArrowPathIcon className="animate-spin h-5 w-5 mr-2" />
+                Logging in...
+              </div>
+            ) : (
+              "Login"
+            )}
           </button>
         </form>
         <div className="mt-4 text-center">

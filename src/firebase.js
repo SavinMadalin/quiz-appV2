@@ -15,11 +15,12 @@ import {
   updateProfile as firebaseUpdateProfile, // Import updateProfile
   deleteUser as firebaseDeleteUser, // Import deleteUser
 } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { store } from "./redux/store";
 import { getStorage } from "firebase/storage"; // Import getStorage
 import { logoutUser } from "./redux/userSlice";
 import { getVertexAI, getGenerativeModel } from "firebase/vertexai";
+import { v4 as uuidv4 } from "uuid"; // Install with: npm i uuid
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -41,7 +42,17 @@ const googleProvider = new GoogleAuthProvider();
 // Firestore Database
 const db = getFirestore(app);
 
-export const loginWithGoogle = () => signInWithPopup(auth, googleProvider);
+export const loginWithGoogle = async () => {
+  const userCredential = await signInWithPopup(auth, googleProvider);
+  const user = userCredential.user;
+
+  // Create and set the session ID
+  const sessionId = uuidv4();
+  await setDoc(doc(db, "sessions", user.uid), { sessionId });
+  localStorage.setItem("sessionId", sessionId);
+
+  return userCredential;
+};
 
 // New functions for email/password registration and login
 export const registerWithEmailAndPassword = async (email, password, name) => {
@@ -76,7 +87,15 @@ export const loginWithEmailAndPassword = async (email, password) => {
     email,
     password
   );
-  return userCredential.user; // Return the user
+  const user = userCredential.user;
+  // Generate and store session ID
+  return user;
+};
+
+export const getSessionIdForUser = async (uid) => {
+  const docRef = doc(db, "sessions", uid);
+  const docSnap = await getDoc(docRef);
+  return docSnap.exists() ? docSnap.data().sessionId : null;
 };
 
 // New function to check if email exists
@@ -92,6 +111,7 @@ export const checkIfEmailExists = async (email) => {
 
 export const logout = async () => {
   await signOut(auth);
+  localStorage.removeItem("sessionId");
   store.dispatch(logoutUser());
 };
 
