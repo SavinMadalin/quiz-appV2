@@ -354,7 +354,7 @@ const SubscriptionSettingsPage = () => {
         );
       }
       const { url } = await response.json();
-      window.location.href = url; // Redirect to the Stripe Customer Portal
+      window.open(url, "_blank", "noopener,noreferrer"); // Open in a new tab
     } catch (error) {
       console.error("Error creating customer portal session:", error);
       setManageBillingError(error.message || "Could not open billing portal.");

@@ -103,9 +103,6 @@ const QuizConfigPage = () => {
 
   // Update start button disabled state
   useEffect(() => {
-    const currentCategory = getCurrentCategory(draftSettings.category);
-    const hasSubcategories = currentCategory?.subcategories?.length > 0;
-
     if (!isPremium) {
       // Restricted: Enable only if 'core-languages' and 'java' are selected
       setIsStartButtonDisabled(
@@ -116,6 +113,8 @@ const QuizConfigPage = () => {
       );
     } else {
       // Not restricted: Enable if category has no subs OR if at least one sub is selected
+      const currentCategory = getCurrentCategory(draftSettings.category);
+      const hasSubcategories = currentCategory?.subcategories?.length > 0;
       if (hasSubcategories) {
         setIsStartButtonDisabled(selectedSubcategories.length === 0);
       } else {
@@ -125,11 +124,7 @@ const QuizConfigPage = () => {
   }, [selectedSubcategories, draftSettings.category, isPremium]);
 
   const handleChange = (name, value) => {
-    // Prevent changing category if restricted
-    if (name === "category" && !isPremium && value !== "core-languages") {
-      return;
-    }
-
+    // Allow changing category for all users
     const newDraftSettings = { ...draftSettings, [name]: value };
     setDraftSettings(newDraftSettings);
 
@@ -137,7 +132,7 @@ const QuizConfigPage = () => {
       const selectedMainCategory = getCurrentCategory(value);
       setSubcategories(selectedMainCategory?.subcategories || []);
       // Reset or enforce subcategory selection based on restriction
-      if (!isPremium && value === "core-languages") {
+      if (!isPremium) {
         setSelectedSubcategories(["java"]);
       } else {
         setSelectedSubcategories([]);
@@ -206,7 +201,6 @@ const QuizConfigPage = () => {
 
   const toggleCategoryDropdown = () => {
     // Don't open dropdown if restricted (only one option anyway)
-    if (!isPremium) return;
     setIsCategoryDropdownOpen(!isCategoryDropdownOpen);
   };
 
@@ -299,7 +293,7 @@ const QuizConfigPage = () => {
               </button>
               {!isPremium && (
                 <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max max-w-full bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity text-center">
-                  Verify your email to access Interview Mode.
+                  Subscribe to access Interview Mode.
                 </span>
               )}
             </div>
@@ -321,10 +315,9 @@ const QuizConfigPage = () => {
             <button
               type="button"
               onClick={toggleCategoryDropdown}
-              disabled={!isPremium} // Disable button if restricted
               className={classNames(
                 "p-2.5 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 flex items-center justify-between text-sm sm:text-base",
-                !isPremium ? "cursor-not-allowed opacity-70" : "cursor-pointer"
+                "cursor-pointer"
               )}
             >
               <span>
@@ -340,15 +333,14 @@ const QuizConfigPage = () => {
                   )}
               </span>
               {/* Hide dropdown icon if restricted */}
-              {isPremium &&
-                (isCategoryDropdownOpen ? (
-                  <ChevronUpIcon className="h-5 w-5" />
-                ) : (
-                  <ChevronDownIcon className="h-5 w-5" />
-                ))}
+              {isCategoryDropdownOpen ? (
+                <ChevronUpIcon className="h-5 w-5" />
+              ) : (
+                <ChevronDownIcon className="h-5 w-5" />
+              )}
             </button>
             {/* Only show dropdown options if not restricted */}
-            {isCategoryDropdownOpen && isPremium && (
+            {isCategoryDropdownOpen && (
               <div className="absolute z-10 mt-1 w-full rounded-md bg-white dark:bg-gray-700 shadow-lg ring-1 ring-black dark:ring-gray-600 ring-opacity-5 max-h-60 overflow-y-auto">
                 <div className="py-1">
                   {mainCategories.map((cat) => (
@@ -356,11 +348,10 @@ const QuizConfigPage = () => {
                       key={cat.value}
                       onClick={() => handleChange("category", cat.value)}
                       // Disable other categories if restricted (redundant due to dropdown visibility, but safe)
-                      disabled={!isPremium && cat.value !== "core-languages"}
                       className={classNames(
                         "block w-full px-4 py-2 text-left text-sm sm:text-base border-b border-gray-200 dark:border-gray-600 last:border-b-0",
-                        !isPremium && cat.value !== "core-languages"
-                          ? "text-gray-400 cursor-not-allowed"
+                        !isPremium
+                          ? "text-gray-700 dark:text-gray-300"
                           : "text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                       )}
                     >
@@ -378,8 +369,8 @@ const QuizConfigPage = () => {
           </div>
           {/* Show restriction message */}
           {!isPremium && (
-            <p className="text-xs text-yellow-500 dark:text-yellow-400 mt-1.5">
-              Only Core Languages / Java is available. Verify email for more
+            <p className="text-xs text-yellow-500 dark:text-yellow-400 mt-1.5 text-center">
+              Only Java subcategory is available. Upgrade to premium for more
               options.
             </p>
           )}

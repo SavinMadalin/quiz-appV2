@@ -209,28 +209,25 @@ const TopNavbar = () => {
                 {/* Email Login Link */}
                 <Link
                   to="/login"
-                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm font-semibold text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-start gap-2 hover:shadow-md transition-shadow duration-200"
+                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm font-semibold text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-center sm:justify-start gap-2 hover:shadow-md transition-shadow duration-200"
                 >
                   <EnvelopeIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />{" "}
-                  <span className="sm:hidden"></span>
                   <span className="hidden sm:inline">Login with Email</span>
                 </Link>
                 <button
                   onClick={handleGoogleSignIn}
-                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm font-semibold text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-start gap-2 hover:shadow-md transition-shadow duration-200"
+                  className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm font-semibold text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-center sm:justify-start gap-2 hover:shadow-md transition-shadow duration-200"
                 >
                   <GoogleLogo className="h-5 w-5 text-gray-700 dark:text-gray-300" />{" "}
-                  <span className="sm:hidden"></span>
                   <span className="hidden sm:inline">Login with Google</span>
                 </button>
                 {/* Apple Login Button (Disabled) */}
                 <div className="relative group">
                   <button
                     disabled
-                    className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm font-semibold text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-start gap-2 opacity-50 cursor-not-allowed"
+                    className="block w-full sm:w-48 h-12 px-4 py-2 bg-white text-sm font-semibold text-gray-700 dark:bg-dark-grey dark:text-gray-300 flex items-center justify-center sm:justify-start gap-2 opacity-50 cursor-not-allowed"
                   >
                     <AppleLogo className="h-5 w-5 text-gray-700 dark:text-gray-300" />{" "}
-                    <span className="sm:hidden"></span>
                     <span className="hidden sm:inline">Login with Apple</span>
                   </button>
                   {/* Tooltip */}
